@@ -1,0 +1,673 @@
+{
+  "id": "8819ad0a-2676-4ca7-86a6-47e0990bc947",
+  "prevId": "dcb9c003-1153-4906-a3ad-61e3d5d076e9",
+  "version": "5",
+  "dialect": "pg",
+  "tables": {
+    "scroll_batch_receipts": {
+      "name": "scroll_batch_receipts",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "batch_id": {
+          "name": "batch_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "commit_tx_effective_price": {
+          "name": "commit_tx_effective_price",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "finalize_tx_effective_price": {
+          "name": "finalize_tx_effective_price",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_tx_effective_price": {
+          "name": "total_tx_effective_price",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_tx_effective_unit_price": {
+          "name": "total_tx_effective_unit_price",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "scroll_batches": {
+      "name": "scroll_batches",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "index": {
+          "name": "index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hash": {
+          "name": "hash",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "rollup_status": {
+          "name": "rollup_status",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_tx_num": {
+          "name": "total_tx_num",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "commit_tx_hash": {
+          "name": "commit_tx_hash",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "finalize_tx_hash": {
+          "name": "finalize_tx_hash",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "committed_at": {
+          "name": "committed_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "end_block_number": {
+          "name": "end_block_number",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "end_chunk_hash": {
+          "name": "end_chunk_hash",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "end_chunk_index": {
+          "name": "end_chunk_index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "finalized_at": {
+          "name": "finalized_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "start_block_number": {
+          "name": "start_block_number",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "start_chunk_hash": {
+          "name": "start_chunk_hash",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "start_chunk_index": {
+          "name": "start_chunk_index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "scroll_batches_index_index": {
+          "name": "scroll_batches_index_index",
+          "columns": ["index"],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "scroll_batches_index_unique": {
+          "name": "scroll_batches_index_unique",
+          "nullsNotDistinct": false,
+          "columns": ["index"]
+        }
+      }
+    },
+    "scroll_blocks": {
+      "name": "scroll_blocks",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "base_fee_per_gas": {
+          "name": "base_fee_per_gas",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "difficulty": {
+          "name": "difficulty",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "extra_data": {
+          "name": "extra_data",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "gas_limit": {
+          "name": "gas_limit",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "gas_used": {
+          "name": "gas_used",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hash": {
+          "name": "hash",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "logs_bloom": {
+          "name": "logs_bloom",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "miner": {
+          "name": "miner",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mix_hash": {
+          "name": "mix_hash",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nonce": {
+          "name": "nonce",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "number": {
+          "name": "number",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "parent_hash": {
+          "name": "parent_hash",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "receipts_root": {
+          "name": "receipts_root",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sha3_uncles": {
+          "name": "sha3_uncles",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "size": {
+          "name": "size",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "state_root": {
+          "name": "state_root",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "timestamp": {
+          "name": "timestamp",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "total_difficulty": {
+          "name": "total_difficulty",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "transactions_root": {
+          "name": "transactions_root",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "transactions": {
+          "name": "transactions",
+          "type": "varchar[]",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "uncles": {
+          "name": "uncles",
+          "type": "varchar[]",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "scroll_blocks_number_index": {
+          "name": "scroll_blocks_number_index",
+          "columns": ["number"],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "scroll_blocks_number_unique": {
+          "name": "scroll_blocks_number_unique",
+          "nullsNotDistinct": false,
+          "columns": ["number"]
+        }
+      }
+    },
+    "zk_sync_era_batch_receipts": {
+      "name": "zk_sync_era_batch_receipts",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "batch_id": {
+          "name": "batch_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "commit_tx_fee": {
+          "name": "commit_tx_fee",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "proven_tx_fee": {
+          "name": "proven_tx_fee",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "execute_tx_fee": {
+          "name": "execute_tx_fee",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_tx_fee": {
+          "name": "total_tx_fee",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_tx_fee_per_unit": {
+          "name": "total_tx_fee_per_unit",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "zk_sync_era_batch_receipts_batch_id_zk_sync_era_batches_id_fk": {
+          "name": "zk_sync_era_batch_receipts_batch_id_zk_sync_era_batches_id_fk",
+          "tableFrom": "zk_sync_era_batch_receipts",
+          "tableTo": "zk_sync_era_batches",
+          "columnsFrom": ["batch_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "zk_sync_era_batches": {
+      "name": "zk_sync_era_batches",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "number": {
+          "name": "number",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "timestamp": {
+          "name": "timestamp",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "commit_tx_hash": {
+          "name": "commit_tx_hash",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "committed_at": {
+          "name": "committed_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "execute_tx_hash": {
+          "name": "execute_tx_hash",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "executed_at": {
+          "name": "executed_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "prove_tx_hash": {
+          "name": "prove_tx_hash",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "proven_at": {
+          "name": "proven_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "l1_gas_price": {
+          "name": "l1_gas_price",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "l1_tx_count": {
+          "name": "l1_tx_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "l2_fair_gas_price": {
+          "name": "l2_fair_gas_price",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "l2_tx_count": {
+          "name": "l2_tx_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "root_hash": {
+          "name": "root_hash",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "base_system_contracts_hashes_bootloader": {
+          "name": "base_system_contracts_hashes_bootloader",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "base_system_contracts_hashes_default_aa": {
+          "name": "base_system_contracts_hashes_default_aa",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "zk_sync_era_batches_number_index": {
+          "name": "zk_sync_era_batches_number_index",
+          "columns": ["number"],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "zk_sync_era_batches_number_unique": {
+          "name": "zk_sync_era_batches_number_unique",
+          "nullsNotDistinct": false,
+          "columns": ["number"]
+        }
+      }
+    },
+    "zk_sync_era_blocks": {
+      "name": "zk_sync_era_blocks",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "base_fee_per_gas": {
+          "name": "base_fee_per_gas",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "difficulty": {
+          "name": "difficulty",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "extra_data": {
+          "name": "extra_data",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "gas_limit": {
+          "name": "gas_limit",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "gas_used": {
+          "name": "gas_used",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hash": {
+          "name": "hash",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "logs_bloom": {
+          "name": "logs_bloom",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "miner": {
+          "name": "miner",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mix_hash": {
+          "name": "mix_hash",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nonce": {
+          "name": "nonce",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "number": {
+          "name": "number",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "parent_hash": {
+          "name": "parent_hash",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "receipts_root": {
+          "name": "receipts_root",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sha3_uncles": {
+          "name": "sha3_uncles",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "size": {
+          "name": "size",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "state_root": {
+          "name": "state_root",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "timestamp": {
+          "name": "timestamp",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "total_difficulty": {
+          "name": "total_difficulty",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "transactions_root": {
+          "name": "transactions_root",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "transactions": {
+          "name": "transactions",
+          "type": "varchar[]",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "uncles": {
+          "name": "uncles",
+          "type": "varchar[]",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "zk_sync_era_blocks_number_index": {
+          "name": "zk_sync_era_blocks_number_index",
+          "columns": ["number"],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "zk_sync_era_blocks_number_unique": {
+          "name": "zk_sync_era_blocks_number_unique",
+          "nullsNotDistinct": false,
+          "columns": ["number"]
+        }
+      }
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

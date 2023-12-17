@@ -1,0 +1,31 @@
+{
+  "name": "zk-dashboard",
+  "version": "0.1.0",
+  "scripts": {
+    "sync:run": "npm run start --workspace=synchronizer",
+    "format": "prettier --write .",
+    "lint": "eslint . --ext .ts,.tsx --fix"
+  },
+  "workspaces": [
+    "common",
+    "dashboard",
+    "infra",
+    "synchronizer"
+  ],
+  "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+    "@typescript-eslint/eslint-plugin": "^6.19.1",
+    "@typescript-eslint/parser": "^6.19.1",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "lefthook": "^1.6.5",
+    "prettier": "^3.2.4",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": "20.x",
+    "npm": ">=9"
+  },
+  "packageManager": ">=npm@9.0.0"
+}

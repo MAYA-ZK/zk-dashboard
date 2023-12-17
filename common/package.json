@@ -1,0 +1,25 @@
+{
+  "name": "@zk-dashboard/common",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "db:generate": "drizzle-kit generate:pg",
+    "db:push": "drizzle-kit push:pg",
+    "db:introspect": "drizzle-kit introspect:pg",
+    "db:drop-migration": "drizzle-kit drop",
+    "db:migrate": "bun database/migrate.ts"
+  },
+  "dependencies": {
+    "@zodios/core": "^10.9.6",
+    "bignumber.js": "^9.1.2",
+    "dotenv": "^16.4.1",
+    "drizzle-orm": "^0.29.3",
+    "etherscan-api": "^10.3.0",
+    "mobula-sdk": "^1.5.4",
+    "p-throttle": "^6.1.0",
+    "pino": "^8.17.2",
+    "postgres": "^3.4.3",
+    "web3": "^4.4.0",
+    "zod": "^3.22.4"
+  }
+}

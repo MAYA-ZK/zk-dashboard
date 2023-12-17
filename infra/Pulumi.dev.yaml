@@ -1,0 +1,19 @@
+config:
+  aws:profile: maya-zk
+  aws:region: eu-central-1
+  infra:block_pi_ethereum_api_key:
+    secure: AAABAPVTLFKKe6z5lyIUmYjdXcydVDTqTfG47cmSqQr4MhgaGpOAIon9d1mpEdPyD//WVSDA2JvPuFodebQ8+jHvcnYPn/5f
+  infra:block_pi_polygon_zk_evm_api_key:
+    secure: AAABAG2gjlAbk0ujINF6ig3PKO7iWAm+RtWq7G3HL39AXG+g0YDgk/KlpjQr9BaZKPXYCE2Lec4zd8VG2Pu76U0x7qTnte/S
+  infra:block_pi_scroll_api_key:
+    secure: AAABAMgAKXxUMMwtQIPio/NuW40qBzB0O2ki5poB0SsPKrvKYHjrGFPb/YVEEwl+ZNsuIivC0/NPQXKVQkmpWuYaLQPwF4HQ
+  infra:block_pi_zk_sync_era_api_key:
+    secure: AAABAP23mDASnKOHnTgreXxeOZooyKHVGYbCydH8UUpGg2oHKlg/Fvfm/iLcIxBJP6ZS6xXfvl9lo4qpH8udTWoiKSWSw7oc
+  infra:etherscan_api_key:
+    secure: AAABAGwSnblI4PXJwrRpVTjLmluLm8OC6EUi2sYI9PaN3RcTuTqfL0KhD4h1Jmck9mu/NR1mmREFq9f6HiqPWyvd
+  infra:mobula_api_key:
+    secure: AAABAOqChseirRz5K0lK0L/s46b+PGeNRd/MGU7ZU8c98n0V8zw1TRaDS7cB5mN8Tl8rOFgOaIDXZpH7Y+K2iJaIAzs=
+  infra:postgres_url:
+    secure: AAABAB1d6+LJQbDD4luICWlIksoiEQbIfM0TJAaw364YjWZvjjbgxFtyxu7NEKmpZN3jv0UbsEmDVXkLOn/u8O93poXQq5pZ0wPiAytCL6P7VicdR2S2jZZWURXNStB4Pa6X6KwLl+SicRG+KIn10/HLXO+lQWGCbHXXM46a8aP0IIg=
+  infra:sentry_dsn:
+    secure: AAABAKXnZ2oI66rjPs9vGU7fpDBK8HDhRUAV0OhnmYxlR583yyW3hS2KTW/gKE7FBKaVFj8lGWLq3iR5oG++v21OSCgowuYFL6RAi+FX7L74y/wOJQY5KpTDOVsprmjOIFB6yKNj+uRph1mE7ta1glNd5IFdH2/rqxfI9w==

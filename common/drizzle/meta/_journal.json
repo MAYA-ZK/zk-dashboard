@@ -1,0 +1,48 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1708868741064,
+      "tag": "0000_jittery_skin",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1708875172468,
+      "tag": "0001_wise_omega_sentinel",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1708975295950,
+      "tag": "0002_curvy_landau",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1709577722540,
+      "tag": "0003_sharp_morgan_stark",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1709720499463,
+      "tag": "0004_unknown_quasimodo",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1709985441432,
+      "tag": "0005_wise_nebula",
+      "breakpoints": true
+    }
+  ]
+}

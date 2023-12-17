@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "target": "es2022",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
+    "checkJs": true,
+
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+
+    "moduleResolution": "Bundler",
+    "module": "esnext",
+    "noEmit": true,
+
+    "lib": ["es2022"],
+
+    "incremental": true,
+  },
+  "include": ["**/*.ts", ".eslintrc.cjs", "etherscan.d.ts"],
+  "exclude": ["node_modules"],
+}
