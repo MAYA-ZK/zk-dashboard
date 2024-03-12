@@ -7,7 +7,8 @@
     "db:push": "drizzle-kit push:pg",
     "db:introspect": "drizzle-kit introspect:pg",
     "db:drop-migration": "drizzle-kit drop",
-    "db:migrate": "bun database/migrate.ts"
+    "db:migrate": "npx tsx database/migrate.ts",
+    "db:materializedView:createOrReplace": "npx tsx database/materialized-view/create-or-replace.ts"
   },
   "dependencies": {
     "@zodios/core": "^10.9.6",
