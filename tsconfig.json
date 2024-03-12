@@ -17,8 +17,8 @@
 
     "lib": ["es2022"],
 
-    "incremental": true,
+    "incremental": true
   },
   "include": ["**/*.ts", ".eslintrc.cjs", "etherscan.d.ts"],
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules"]
 }

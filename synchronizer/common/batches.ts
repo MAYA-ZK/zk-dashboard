@@ -16,15 +16,25 @@ export async function getMissingBatchesNumbers({
   end: number
 }) {
   const res = await db.execute(sql`
-    WITH BatchNumbers AS (
-      SELECT generate_series(${start}::int, ${end}::int) AS INDEX
-    )
-    SELECT ARRAY (
-        SELECT INDEX
-        FROM BatchNumbers
+    WITH
+      BatchNumbers AS (
+        SELECT
+          generate_series(
+            ${start}::int,
+            ${end}::int
+          ) AS INDEX
+      )
+    SELECT
+      ARRAY(
+        SELECT
+          INDEX
+        FROM
+          BatchNumbers
           LEFT JOIN ${table} ON BatchNumbers.INDEX = ${table.number}
-        WHERE ${table.number} IS NULL
-        ORDER BY INDEX
+        WHERE
+          ${table.number} IS NULL
+        ORDER BY
+          INDEX
       );
   `)
 

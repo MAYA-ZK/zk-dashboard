@@ -1,5 +1,9 @@
 {
-  "plugins": ["@trivago/prettier-plugin-sort-imports"],
+  "plugins": [
+    "@trivago/prettier-plugin-sort-imports",
+    "prettier-plugin-sql",
+    "prettier-plugin-embed"
+  ],
   "arrowParens": "always",
   "endOfLine": "lf",
   "semi": false,
@@ -8,5 +12,7 @@
   "trailingComma": "es5",
   "importOrder": ["^@zk-dashboard/(.*)$", "^[./]"],
   "importOrderSeparation": true,
-  "importOrderSortSpecifiers": true
+  "importOrderSortSpecifiers": true,
+  "embeddedSqlTags": ["sql"],
+  "language": "postgresql"
 }

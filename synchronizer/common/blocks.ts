@@ -69,15 +69,25 @@ export async function getMissingBlocksNumbers({
   end: number
 }) {
   const res = await db.execute(sql`
-    WITH BlockNumbers AS (
-      SELECT generate_series(${start}::int, ${end}::int) AS INDEX
-    )
-    SELECT ARRAY (
-        SELECT INDEX
-        FROM BlockNumbers
+    WITH
+      BlockNumbers AS (
+        SELECT
+          generate_series(
+            ${start}::int,
+            ${end}::int
+          ) AS INDEX
+      )
+    SELECT
+      ARRAY(
+        SELECT
+          INDEX
+        FROM
+          BlockNumbers
           LEFT JOIN ${table} ON BlockNumbers.INDEX = ${table.number}
-        WHERE ${table.number} IS NULL
-        ORDER BY INDEX
+        WHERE
+          ${table.number} IS NULL
+        ORDER BY
+          INDEX
       );
   `)
 

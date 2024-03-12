@@ -30,7 +30,9 @@ export function createDataPurge<TTable extends BlocksTable | BatchesTable>({
       .where(
         lte(
           tableColumn,
-          sql`CURRENT_DATE - INTERVAL '${sql.raw(olderThanDays.toString())} days'`
+          sql`
+            CURRENT_DATE - INTERVAL '${sql.raw(olderThanDays.toString())} days'
+          `
         )
       )
 

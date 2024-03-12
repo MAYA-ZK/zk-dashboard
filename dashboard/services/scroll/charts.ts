@@ -65,18 +65,17 @@ const normalizeChartData = <T, TKey extends string>(
 export async function avgTxPricePerDay(days: number, ethPrice: number = 1) {
   const results: Array<{ time: string; value: string }> = await db.execute(sql`
     SELECT
-        date(b.timestamp) as time,
-        AVG(r.total_tx_effective_unit_price) AS value
+      date (b.timestamp) as time,
+      AVG(r.total_tx_effective_unit_price) AS value
     FROM
-        scroll_batches b
-    JOIN
-        scroll_batch_receipts r ON b.id = r.batch_id
+      scroll_batches b
+      JOIN scroll_batch_receipts r ON b.id = r.batch_id
     WHERE
-        b.timestamp > now() - interval '${sql.raw(days.toString())} days'
+      b.timestamp > now() - interval '${sql.raw(days.toString())} days'
     GROUP BY
-    	date(b.timestamp)
+      date (b.timestamp)
     ORDER BY
-      date(b.timestamp)
+      date (b.timestamp)
   `)
 
   return normalizeChartData(results, {
@@ -148,14 +147,22 @@ export async function getAvgBlockTime(days: number) {
         'day_start'
       ),
       timestamp: scrollBlocks.timestamp,
-      prev_timestamp:
-        sql<Date>`LAG(scroll_blocks.timestamp) OVER (PARTITION BY DATE_TRUNC('day', scroll_blocks.timestamp) ORDER BY scroll_blocks.timestamp)`.as(
-          'prev_timestamp'
-        ),
-      time_between_transactions:
-        sql<number>`scroll_blocks.timestamp - LAG(scroll_blocks.timestamp) OVER (PARTITION BY DATE_TRUNC('day', scroll_blocks.timestamp) ORDER BY scroll_blocks.timestamp)`.as(
-          'time_between_transactions'
-        ),
+      prev_timestamp: sql<Date>`
+        LAG(scroll_blocks.timestamp) OVER (
+          PARTITION BY
+            DATE_TRUNC('day', scroll_blocks.timestamp)
+          ORDER BY
+            scroll_blocks.timestamp
+        )
+      `.as('prev_timestamp'),
+      time_between_transactions: sql<number>`
+        scroll_blocks.timestamp - LAG(scroll_blocks.timestamp) OVER (
+          PARTITION BY
+            DATE_TRUNC('day', scroll_blocks.timestamp)
+          ORDER BY
+            scroll_blocks.timestamp
+        )
+      `.as('time_between_transactions'),
     })
     .from(scrollBlocks)
     .where(
@@ -168,7 +175,15 @@ export async function getAvgBlockTime(days: number) {
   const res = await db
     .select({
       day_start: sql<Date>`day_start`,
-      avg_time_between_transactions: sql<number>`AVG(EXTRACT(EPOCH FROM time_between_transactions))`,
+      avg_time_between_transactions: sql<number>`
+        AVG(
+          EXTRACT(
+            EPOCH
+            FROM
+              time_between_transactions
+          )
+        )
+      `,
     })
     .from(subQuery.as('subquery'))
     .groupBy(sql`day_start`)
@@ -213,12 +228,28 @@ export async function txPerSecond(days: number) {
     db
       .select({
         timestamp: scrollBatches.timestamp,
-        lead_created_at:
-          sql<Date>`LEAD(timestamp) OVER (ORDER BY timestamp)`.as(
-            'lead_created_at'
-          ),
+        lead_created_at: sql<Date>`
+          LEAD(timestamp) OVER (
+            ORDER BY
+              timestamp
+          )
+        `.as('lead_created_at'),
         // GREATEST is used since for some reason there are some batches with the same timestamp ¯\_(ツ)_/¯
-        tx_per_second: sql<number>`total_tx_num / GREATEST(EXTRACT(EPOCH FROM (LEAD(timestamp) OVER (ORDER BY timestamp) - timestamp)), 1) AS tx_per_second`,
+        tx_per_second: sql<number>`
+          total_tx_num / GREATEST(
+            EXTRACT(
+              EPOCH
+              FROM
+                (
+                  LEAD(timestamp) OVER (
+                    ORDER BY
+                      timestamp
+                  ) - timestamp
+                )
+            ),
+            1
+          ) AS tx_per_second
+        `,
       })
       .from(scrollBatches)
       .where(
