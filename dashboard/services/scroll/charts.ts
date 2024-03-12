@@ -25,6 +25,8 @@ type ChartData<T extends string> = {
   datasets: Record<T, Array<number>>
 }
 
+// TODO: Replace with materialized views
+
 /**
  * Normalize the data to be used in the chart
  * @param data: the array of data to be normalized
