@@ -35,7 +35,7 @@ interface LineChartProps extends ComponentProps<typeof Line> {
   unit?: 'day' | 'hour'
 }
 
-export function BarChart({
+export function LineChart({
   unit,
   currency,
   options,
