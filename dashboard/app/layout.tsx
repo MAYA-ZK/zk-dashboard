@@ -7,6 +7,7 @@ import Link from 'next/link'
 
 import { Providers } from '../components/providers'
 import './globals.css'
+import type { ReactNode } from 'react'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -15,11 +16,7 @@ export const metadata: Metadata = {
   description: 'ZK Dashboard',
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     // https://github.com/pacocoursey/next-themes?tab=readme-ov-file#with-app
     <html lang="en" suppressHydrationWarning>

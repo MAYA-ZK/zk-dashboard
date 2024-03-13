@@ -7,6 +7,7 @@
     "db:push": "drizzle-kit push:pg",
     "db:introspect": "drizzle-kit introspect:pg",
     "db:drop-migration": "drizzle-kit drop",
+    "db:studio": "drizzle-kit studio",
     "db:migrate": "npx tsx database/migrate.ts",
     "db:materializedView:createOrReplace": "npx tsx database/materialized-view/create-or-replace.ts"
   },
@@ -22,5 +23,8 @@
     "postgres": "^3.4.3",
     "web3": "^4.4.0",
     "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "pg": "^8.11.3"
   }
 }

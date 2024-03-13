@@ -7,11 +7,19 @@ import('dotenv').then(async ({ config }) => {
     config({ path: '../.env' })
   }
 
-  const { createOrReplaceScrollBatchesMV } = await import('./scroll')
+  const {
+    createOrReplaceScrollBatchCostMV,
+    createOrReplaceScrollBatchAvgCostMV,
+    createOrReplaceScrollBatchCreatedMv,
+    createOrReplaceScrollBatchFinalityMv,
+  } = await import('./scroll')
   const { client } = await import('../utils')
 
   const createOrReplaceMaterializedView = async () => {
-    await Promise.all([createOrReplaceScrollBatchesMV()])
+    await createOrReplaceScrollBatchCostMV()
+    await createOrReplaceScrollBatchFinalityMv()
+    await createOrReplaceScrollBatchCreatedMv()
+    await createOrReplaceScrollBatchAvgCostMV()
   }
 
   console.log('Creating materialized views...')

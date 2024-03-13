@@ -11,3 +11,7 @@ export type UnionToIntersection<U> = (
 ) extends (k: infer I) => void
   ? I
   : never
+
+/** USE ONLY IF TOTALLY NECESSARY */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type FORCE_ANY = any
