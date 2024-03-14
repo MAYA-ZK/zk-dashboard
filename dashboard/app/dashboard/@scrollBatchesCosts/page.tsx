@@ -1,3 +1,4 @@
+import { TABLE_PAGE_SEARCH_PARAM } from '@/app/dashboard/@scrollBatchesCosts/config'
 import { BatchesTable } from '@/app/dashboard/@scrollBatchesCosts/table'
 import { getBatchesCosts, getBatchesCount } from '@/services/scroll/batches'
 
@@ -5,10 +6,12 @@ export default async function Page({
   searchParams,
 }: {
   searchParams: {
-    page?: string
+    [TABLE_PAGE_SEARCH_PARAM]?: string
   }
 }) {
-  const page = searchParams.page ? parseInt(searchParams.page) : 1
+  const page = searchParams[TABLE_PAGE_SEARCH_PARAM]
+    ? parseInt(searchParams[TABLE_PAGE_SEARCH_PARAM])
+    : 1
   const batches = await getBatchesCosts(page, 10)
 
   const batchesCount = await getBatchesCount()

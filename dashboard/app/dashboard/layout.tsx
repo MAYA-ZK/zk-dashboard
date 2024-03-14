@@ -5,11 +5,13 @@ export default async function Layout({
   scrollDailyAvg,
   scrollBatchesCosts,
   scrollBatchesAvgCost,
+  scrollBatchesFinality,
 }: {
   children: ReactNode
   scrollDailyAvg: ReactNode
   scrollBatchesCosts: ReactNode
   scrollBatchesAvgCost: ReactNode
+  scrollBatchesFinality: ReactNode
 }) {
   return (
     <main className="flex h-full grow flex-col items-center gap-8 p-5 md:p-10">
@@ -17,6 +19,7 @@ export default async function Layout({
       {scrollDailyAvg}
       {scrollBatchesAvgCost}
       {scrollBatchesCosts}
+      {scrollBatchesFinality}
     </main>
   )
 }
