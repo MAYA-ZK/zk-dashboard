@@ -5,6 +5,6 @@ pre-commit:
   parallel: true
   commands:
     format:
-      run: 'npm run format'
+      run: 'npm run format:check'
     eslint:
       run: 'npm run lint'

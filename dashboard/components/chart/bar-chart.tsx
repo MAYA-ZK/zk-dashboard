@@ -1,8 +1,8 @@
 'use client'
 
-import 'chartjs-adapter-date-fns'
-import { Line } from 'react-chartjs-2'
+import { formatToUsd } from '@/lib/formatters'
 import {
+  BarElement,
   CategoryScale,
   Chart as ChartJS,
   Legend,
@@ -13,36 +13,33 @@ import {
   Title,
   Tooltip,
 } from 'chart.js'
+import 'chartjs-adapter-date-fns'
 import { format } from 'date-fns'
 import type { ComponentProps } from 'react'
-import { formatToUsd } from '@/lib/formatters'
+import { Bar } from 'react-chartjs-2'
 
 ChartJS.register(
   CategoryScale,
   TimeScale,
   LinearScale,
-  PointElement,
   LineElement,
+  BarElement,
+  PointElement,
   Title,
   Tooltip,
   Legend
 )
 
-interface LineChartProps extends ComponentProps<typeof Line> {
+interface BarChartProps extends ComponentProps<typeof Bar> {
   currency?: {
     usd?: boolean
   }
   unit?: 'day' | 'hour'
 }
 
-export function LineChart({
-  unit,
-  currency,
-  options,
-  ...props
-}: LineChartProps) {
+export function BarChart({ unit, currency, options, ...props }: BarChartProps) {
   return (
-    <Line
+    <Bar
       options={{
         ...options,
         scales: {

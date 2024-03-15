@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "scripts": {
     "sync:run": "npm run start --workspace=synchronizer",
-    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "format:fix": "prettier --write .",
     "lint": "eslint . --ext .ts,.tsx --fix"
   },
   "workspaces": [

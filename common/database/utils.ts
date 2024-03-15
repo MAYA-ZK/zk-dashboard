@@ -8,10 +8,7 @@ function createClient() {
     ? process.env.POSTGRES_URL
     : 'postgres://postgres:postgres@localhost:5432/postgres'
 
-  return postgres(url, {
-    // TODO: figure out how to use drizzle with SSL and aws rds
-    // ssl: Boolean(process.env.POSTGRES_URL),
-  })
+  return postgres(url)
 }
 
 export const client = createClient()

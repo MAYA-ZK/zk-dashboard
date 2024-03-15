@@ -3,4 +3,8 @@ export const routes = {
   scroll: {
     home: '/scroll',
   },
+  maya: {
+    title: 'MAYA.com',
+    home: 'https://maya-zk.com',
+  },
 }
