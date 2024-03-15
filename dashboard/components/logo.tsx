@@ -3,6 +3,34 @@ import type { ImageProps } from 'next/image'
 import Image from 'next/image'
 
 const logos = {
+  mayaPrimary: {
+    light: {
+      alt: 'Maya Primary Logo',
+      width: 72,
+      height: 72,
+      src: 'maya-primary-logo-light.svg',
+    },
+    dark: {
+      alt: 'Maya Primary Logo',
+      width: 72,
+      height: 72,
+      src: 'maya-primary-logo-dark.svg',
+    },
+  },
+  mayaSecondary: {
+    light: {
+      alt: 'Maya Secondary Logo',
+      width: 72,
+      height: 72,
+      src: 'maya-secondary-logo-light.svg',
+    },
+    dark: {
+      alt: 'Maya Secondary Logo',
+      width: 72,
+      height: 72,
+      src: 'maya-secondary-logo-light.svg',
+    },
+  },
   scrollBlockchain: {
     light: {
       alt: 'Scroll Blockchain Logo',
