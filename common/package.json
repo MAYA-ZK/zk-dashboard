@@ -9,14 +9,15 @@
     "db:drop-migration": "drizzle-kit drop",
     "db:studio": "drizzle-kit studio",
     "db:migrate": "npx tsx database/migrate.ts",
-    "db:materializedView:createOrReplace": "npx tsx database/materialized-view/create-or-replace.ts"
+    "db:mv:cor:scroll": "npx tsx database/materialized-view/create-or-replace.ts --target scroll",
+    "db:mv:cor:polygon-zk-evm": "npx tsx database/materialized-view/create-or-replace.ts --target polygon-zk-evm",
+    "db:mv:cor:zk-sync-era": "npx tsx database/materialized-view/create-or-replace.ts --target zk-sync-era"
   },
   "dependencies": {
     "@zodios/core": "^10.9.6",
     "bignumber.js": "^9.1.2",
     "dotenv": "^16.4.1",
     "drizzle-orm": "^0.29.3",
-    "etherscan-api": "^10.3.0",
     "mobula-sdk": "^1.5.4",
     "p-throttle": "^6.1.0",
     "pino": "^8.17.2",

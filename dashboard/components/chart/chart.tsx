@@ -1,11 +1,7 @@
 'use client'
 
-import type { ChartType, DefaultDataPoint } from 'chart.js'
-import 'chartjs-adapter-date-fns'
-import type { ComponentProps } from 'react'
-import { Chart as ReactChart } from 'react-chartjs-2'
-
 import type { FORCE_ANY } from '@/lib/types'
+import type { ChartType, DefaultDataPoint } from 'chart.js'
 import {
   BarElement,
   CategoryScale,
@@ -19,7 +15,10 @@ import {
   Title,
   Tooltip,
 } from 'chart.js'
+import 'chartjs-adapter-date-fns'
 import { format } from 'date-fns'
+import type { ComponentProps } from 'react'
+import { Chart as ReactChart } from 'react-chartjs-2'
 
 ChartJS.register(
   LineController,

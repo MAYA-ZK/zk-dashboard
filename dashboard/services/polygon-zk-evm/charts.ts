@@ -1,16 +1,16 @@
 import { normalizeChartData } from '@/services/chart'
 
 import {
-  scrollBatchAvgCostMV,
-  scrollBatchCreatedMv,
-} from '@zk-dashboard/common/database/materialized-view/scroll'
+  polygonZkEvmBatchAvgCostMv,
+  polygonZkEvmBatchCreatedMv,
+} from '@zk-dashboard/common/database/materialized-view/polygon-zk-evm'
 import { db } from '@zk-dashboard/common/database/utils'
 
 /**
  *  Batches that are created daily with the average number of transactions per batch
  */
 export async function getDailyCreatedBatchesWithAverage() {
-  const result = await db.select().from(scrollBatchCreatedMv)
+  const result = await db.select().from(polygonZkEvmBatchCreatedMv)
 
   return normalizeChartData(result, {
     getLabel: (value) => value.tx_date,
@@ -22,7 +22,7 @@ export async function getDailyCreatedBatchesWithAverage() {
 }
 
 export async function getBatchesAvgCosts() {
-  const result = await db.select().from(scrollBatchAvgCostMV)
+  const result = await db.select().from(polygonZkEvmBatchAvgCostMv)
 
   return normalizeChartData(result, {
     getLabel: (value) => value.tx_date,

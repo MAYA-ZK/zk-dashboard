@@ -1,19 +1,20 @@
 'use client'
 
-import React from 'react'
-import Link from 'next/link'
 import { routes } from '@/config/routes'
-import { ThemeSwitcher } from '../theme-switcher'
 import {
   Navbar,
   NavbarBrand,
-  NavbarMenuToggle,
   NavbarContent,
-  NavbarMenu,
   NavbarItem,
+  NavbarMenu,
+  NavbarMenuToggle,
 } from '@nextui-org/react'
+import Link from 'next/link'
+import React from 'react'
+
 import { MenuIconDynamic } from '../icons'
 import { Logo } from '../logo'
+import { ThemeSwitcher } from '../theme-switcher'
 
 const blockchains = [
   {

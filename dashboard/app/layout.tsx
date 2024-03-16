@@ -1,11 +1,11 @@
+import MayaNavbar from '@/components/ui/navbar'
 import { cn } from '@nextui-org/system'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import type { ReactNode } from 'react'
 
 import { Providers } from '../components/providers'
 import './globals.css'
-import type { ReactNode } from 'react'
-import MayaNavbar from '@/components/ui/navbar'
 
 const inter = Inter({ subsets: ['latin'] })
 

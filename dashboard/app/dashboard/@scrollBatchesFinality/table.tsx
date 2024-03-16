@@ -1,5 +1,8 @@
 'use client'
 
+import { TABLE_PAGE_SEARCH_PARAM } from '@/app/dashboard/@scrollBatchesFinality/config'
+import { usePagination } from '@/lib/hooks/pagination'
+import type { GetBatchesFinalityReturnType } from '@/services/scroll/batches'
 import {
   ArrowTopRightOnSquareIcon,
   ChevronLeftIcon,
@@ -15,10 +18,6 @@ import {
   TableHeader,
   TableRow,
 } from '@nextui-org/table'
-
-import { TABLE_PAGE_SEARCH_PARAM } from '@/app/dashboard/@scrollBatchesFinality/config'
-import { usePagination } from '@/lib/hooks/pagination'
-import type { GetBatchesFinalityReturnType } from '@/services/scroll/batches'
 
 type Batch = {
   [K in keyof GetBatchesFinalityReturnType[number]]: GetBatchesFinalityReturnType[number][K] extends Date
