@@ -1,10 +1,22 @@
 export const routes = {
-  home: '/',
+  home: {
+    title: '',
+    path: '/',
+  },
   scroll: {
-    home: '/scroll',
+    title: 'Scroll',
+    path: '/dashboard/scroll',
+  },
+  zkSync: {
+    title: 'zkSync Era',
+    path: '/dashboard/zksync-era',
+  },
+  polygon: {
+    title: 'Polygon zkEVM',
+    path: '/dashboard/polygon-zkevm',
   },
   maya: {
     title: 'MAYA.com',
-    home: 'https://maya-zk.com',
+    path: 'https://maya-zk.com',
   },
 }

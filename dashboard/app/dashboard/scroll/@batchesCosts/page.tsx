@@ -1,6 +1,7 @@
-import { TABLE_PAGE_SEARCH_PARAM } from '@/app/dashboard/@scrollBatchesCosts/config'
-import { BatchesTable } from '@/app/dashboard/@scrollBatchesCosts/table'
+import { BatchesTable } from '@/app/dashboard/scroll/@batchesCosts/table'
 import { getBatchesCosts, getBatchesCount } from '@/services/scroll/batches'
+
+import { TABLE_PAGE_SEARCH_PARAM } from './config'
 
 export default async function Page({
   searchParams,

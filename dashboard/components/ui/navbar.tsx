@@ -1,5 +1,7 @@
 'use client'
 
+import { MenuIconDynamic } from '@/components/icons'
+import { Logo } from '@/components/logo'
 import { routes } from '@/config/routes'
 import {
   Navbar,
@@ -10,26 +12,21 @@ import {
   NavbarMenuToggle,
 } from '@nextui-org/react'
 import Link from 'next/link'
-import React from 'react'
+import { usePathname } from 'next/navigation'
+import React, { useCallback } from 'react'
 
-import { MenuIconDynamic } from '../icons'
-import { Logo } from '../logo'
-import { ThemeSwitcher } from '../theme-switcher'
-
-const blockchains = [
-  {
-    name: 'Scroll',
-  },
-  {
-    name: 'zkSync Era',
-  },
-  {
-    name: 'Polygon zkEVM',
-  },
-]
+const ROUTES = Object.values(routes).slice(-4)
 
 export default function MayaNavbar() {
   const [isMenuOpen, setIsMenuOpen] = React.useState<boolean>(false)
+  const path = usePathname()
+
+  const isLinkActive = useCallback(
+    (linkPath: string) => {
+      return path === linkPath
+    },
+    [path]
+  )
 
   return (
     <Navbar
@@ -54,17 +51,19 @@ export default function MayaNavbar() {
         justify="end"
         className="hidden space-x-3 sm:flex"
       >
-        {blockchains.map((item, index) => (
-          <NavbarItem key={`${item}-${index}`}>
-            <Link href="/">{item.name}</Link>
+        {ROUTES.map((item, index: number) => (
+          <NavbarItem key={`${item.title}-${index}`}>
+            <Link
+              href={item.path}
+              className={`${index === ROUTES.length - 1 ? 'underline' : ''} ${isLinkActive(item.path) ? 'text-primary' : 'text-black'}`}
+            >
+              {item.title}
+            </Link>
           </NavbarItem>
         ))}
-        <NavbarItem>
-          <Link href={routes.maya.home} className="underline">
-            {routes.maya.title}
-          </Link>
-        </NavbarItem>
-        <ThemeSwitcher />
+
+        {/* TODO: Disabled - re-enable when dark mode assets/colors are finalized */}
+        {/* <ThemeSwitcher /> */}
       </NavbarContent>
 
       <NavbarMenuToggle
@@ -74,17 +73,18 @@ export default function MayaNavbar() {
       />
 
       <NavbarMenu className="bg-primary">
-        {blockchains.map((item, index) => (
-          <NavbarItem key={`${item}-${index}`}>
-            <Link href="/">{item.name}</Link>
+        {ROUTES.map((item, index) => (
+          <NavbarItem key={`${item.title}-${index}`}>
+            <Link
+              href={item.path}
+              className={`${index === ROUTES.length - 1 ? 'underline' : ''} ${isLinkActive(item.path) ? 'text-primary' : 'text-black'}`}
+            >
+              {item.title}
+            </Link>
           </NavbarItem>
         ))}
-        <NavbarItem>
-          <Link href={routes.maya.home} className="underline">
-            {routes.maya.title}
-          </Link>
-        </NavbarItem>
-        <ThemeSwitcher />
+        {/* TODO: Disabled - re-enable when dark mode assets/colors are finalized */}
+        {/* <ThemeSwitcher /> */}
       </NavbarMenu>
     </Navbar>
   )

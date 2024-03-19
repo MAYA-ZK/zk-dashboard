@@ -1,8 +1,7 @@
 'use client'
 
-import { TABLE_PAGE_SEARCH_PARAM } from '@/app/dashboard/@scrollBatchesCosts/config'
 import { usePagination } from '@/lib/hooks/pagination'
-import type { GetBatchesCostsReturnType } from '@/services/scroll/batches'
+import type { GetBatchesFinalityReturnType } from '@/services/polygon-zk-evm/batches'
 import {
   ArrowTopRightOnSquareIcon,
   ChevronLeftIcon,
@@ -18,12 +17,19 @@ import {
   TableHeader,
   TableRow,
 } from '@nextui-org/table'
-import { useSearchParams } from 'next/navigation'
+
+import { TABLE_PAGE_SEARCH_PARAM } from './config'
+
+type Batch = {
+  [K in keyof GetBatchesFinalityReturnType[number]]: GetBatchesFinalityReturnType[number][K] extends Date
+    ? string
+    : GetBatchesFinalityReturnType[number][K]
+}
 
 interface BatchTableInteractiveProps extends TableProps {
   page: number
   pages: number
-  batches: GetBatchesCostsReturnType
+  batches: Array<Batch>
 }
 
 const columns = [
@@ -32,48 +38,41 @@ const columns = [
     label: 'Number',
   },
   {
-    key: 'total_tx_count',
-    label: 'Total transactions',
+    key: 'batch_created',
+    label: 'Created',
   },
   {
-    key: 'est_commit_cost_usd',
-    label: 'Commit cost',
+    key: 'batch_committed',
+    label: 'Committed',
   },
   {
-    key: 'est_verification_cost_usd',
-    label: 'Verification cost',
-  },
-  {
-    key: 'est_batch_total_cost_usd',
-    label: 'Batch cost',
+    key: 'batch_verified',
+    label: 'Verified',
   },
   {
     key: 'batch_status',
-    label: 'Batch status',
+    label: 'Status',
   },
   {
     key: 'batch_link',
     label: 'Link',
   },
 ] satisfies Array<{
-  key: keyof GetBatchesCostsReturnType[number]
+  key: keyof Batch
   label: string
 }>
 
-export function BatchesTable({
+export function BatchesFinalityTable({
   batches,
   page,
   pages,
   ...tableProps
 }: BatchTableInteractiveProps) {
-  const searchParams = useSearchParams()
   const {
     isPending,
     page: optimisticPage,
     changePage,
   } = usePagination(page, TABLE_PAGE_SEARCH_PARAM)
-
-  console.log('bc', searchParams.toString())
 
   return (
     <div>
@@ -81,7 +80,7 @@ export function BatchesTable({
         classNames={{
           wrapper: cn('rounded-none shadow-none'),
         }}
-        aria-label="Batches that are created daily with the average number of transactions per batch"
+        aria-label="Batches finality"
         {...tableProps}
       >
         <TableHeader columns={columns}>
@@ -119,7 +118,7 @@ export function BatchesTable({
                         className="flex gap-2 whitespace-nowrap"
                         href={item.batch_link}
                       >
-                        Scroll Scan
+                        Polygon zkEVM Scan
                         <ArrowTopRightOnSquareIcon className="size-5" />
                       </a>
                     </TableCell>

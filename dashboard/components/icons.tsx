@@ -42,7 +42,7 @@ export function MenuIconDynamic({ isMenuOpen }: { isMenuOpen: boolean }) {
   return (
     <div className="relative">
       <div
-        className={`$absolute inset-0 transition-transform duration-500 ease-in-out ${isMenuOpen ? 'rotate-180 opacity-0' : 'rotate-0 opacity-100'}`}
+        className={`absolute inset-0 transition-transform duration-500 ease-in-out ${isMenuOpen ? 'rotate-180 opacity-0' : 'rotate-0 opacity-100'}`}
       >
         <MenuIcon />
       </div>

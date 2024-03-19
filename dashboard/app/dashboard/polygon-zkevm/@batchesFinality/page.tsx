@@ -1,10 +1,11 @@
-import { TABLE_PAGE_SEARCH_PARAM } from '@/app/dashboard/@scrollBatchesFinality/config'
-import { BatchesFinalityTable } from '@/app/dashboard/@scrollBatchesFinality/table'
+import { BatchesFinalityTable } from '@/app/dashboard/polygon-zkevm/@batchesFinality/table'
 import {
   getBatchesFinality,
   getBatchesFinalityCount,
-} from '@/services/scroll/batches'
+} from '@/services/polygon-zk-evm/batches'
 import { format } from 'date-fns'
+
+import { TABLE_PAGE_SEARCH_PARAM } from './config'
 
 export default async function Page({
   searchParams,

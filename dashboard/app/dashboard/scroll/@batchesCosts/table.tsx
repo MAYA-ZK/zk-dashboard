@@ -1,8 +1,7 @@
 'use client'
 
-import { TABLE_PAGE_SEARCH_PARAM } from '@/app/dashboard/@scrollBatchesFinality/config'
 import { usePagination } from '@/lib/hooks/pagination'
-import type { GetBatchesFinalityReturnType } from '@/services/scroll/batches'
+import type { GetBatchesCostsReturnType } from '@/services/scroll/batches'
 import {
   ArrowTopRightOnSquareIcon,
   ChevronLeftIcon,
@@ -18,17 +17,14 @@ import {
   TableHeader,
   TableRow,
 } from '@nextui-org/table'
+import { useSearchParams } from 'next/navigation'
 
-type Batch = {
-  [K in keyof GetBatchesFinalityReturnType[number]]: GetBatchesFinalityReturnType[number][K] extends Date
-    ? string
-    : GetBatchesFinalityReturnType[number][K]
-}
+import { TABLE_PAGE_SEARCH_PARAM } from './config'
 
 interface BatchTableInteractiveProps extends TableProps {
   page: number
   pages: number
-  batches: Array<Batch>
+  batches: GetBatchesCostsReturnType
 }
 
 const columns = [
@@ -37,41 +33,48 @@ const columns = [
     label: 'Number',
   },
   {
-    key: 'batch_created',
-    label: 'Created',
+    key: 'total_tx_count',
+    label: 'Total transactions',
   },
   {
-    key: 'batch_committed',
-    label: 'Committed',
+    key: 'est_commit_cost_usd',
+    label: 'Commit cost',
   },
   {
-    key: 'batch_verified',
-    label: 'Verified',
+    key: 'est_verification_cost_usd',
+    label: 'Verification cost',
+  },
+  {
+    key: 'est_batch_total_cost_usd',
+    label: 'Batch cost',
   },
   {
     key: 'batch_status',
-    label: 'Status',
+    label: 'Batch status',
   },
   {
     key: 'batch_link',
     label: 'Link',
   },
 ] satisfies Array<{
-  key: keyof Batch
+  key: keyof GetBatchesCostsReturnType[number]
   label: string
 }>
 
-export function BatchesFinalityTable({
+export function BatchesTable({
   batches,
   page,
   pages,
   ...tableProps
 }: BatchTableInteractiveProps) {
+  const searchParams = useSearchParams()
   const {
     isPending,
     page: optimisticPage,
     changePage,
   } = usePagination(page, TABLE_PAGE_SEARCH_PARAM)
+
+  console.log('bc', searchParams.toString())
 
   return (
     <div>
@@ -79,7 +82,7 @@ export function BatchesFinalityTable({
         classNames={{
           wrapper: cn('rounded-none shadow-none'),
         }}
-        aria-label="Batches finality"
+        aria-label="Batches that are created daily with the average number of transactions per batch"
         {...tableProps}
       >
         <TableHeader columns={columns}>

@@ -1,4 +1,4 @@
-import { DailyCreatedBatchesWithAverage } from '@/app/dashboard/@scrollDailyAvg/chart'
+import { DailyCreatedBatchesWithAverage } from '@/app/dashboard/zksync-era/@dailyAvg/chart'
 
 export default async function Page() {
   return (
