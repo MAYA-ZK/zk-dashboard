@@ -6,95 +6,92 @@ import {
   numeric,
   text,
   timestamp,
-  varchar,
 } from 'drizzle-orm/pg-core'
 
 import { createPgMaterializedView } from './utils'
 
 export const {
-  materializedView: scrollBatchCostMV,
-  createOrReplace: createOrReplaceScrollBatchCostMV,
+  materializedView: polygonZkEvmBatchCostMv,
+  createOrReplace: createOrReplacePolygonZkEvmBatchCostMv,
 } = createPgMaterializedView(
-  'scroll_batch_cost_mv',
+  'polygon_zkevm_batch_cost_mv',
   {
-    average_total_cost_eth: numeric('average_total_cost_eth').notNull(),
+    chain_id: integer('chain_id').notNull(),
+    blockchain: text('blockchain').notNull(),
+    batch_num: bigint('batch_num', { mode: 'number' }).notNull(),
+    batch_status: text('batch_status').notNull(),
+    batch_verification: timestamp('batch_verification').notNull(),
+    total_tx_count: integer('total_tx_count').notNull(),
+    commit_tx_fee_eth: numeric('commit_tx_fee_eth').notNull(),
+    verification_tx_fee_eth: numeric('verification_tx_fee_eth').notNull(),
+    total_tx_fee_eth: numeric('total_tx_fee_eth').notNull(),
+    total_tx_fee_per_unit_eth: numeric('total_tx_fee_per_unit_eth').notNull(),
+    max_cost_eth: numeric('max_cost_eth').notNull(),
+    avg_cost_eth: numeric('avg_cost_eth').notNull(),
+    min_cost_eth: numeric('min_cost_eth').notNull(),
+    cumulative_cost_eth: numeric('cumulative_cost_eth').notNull(),
+    est_commit_cost_usd: numeric('est_commit_cost_usd').notNull(),
+    est_verification_cost_usd: numeric('est_verification_cost_usd').notNull(),
+    est_batch_total_cost_usd: numeric('est_batch_total_cost_usd').notNull(),
     avg_est_batch_total_cost_daily_usd: numeric(
       'avg_est_batch_total_cost_daily_usd'
     ).notNull(),
-    batch_link: text('batch_link').notNull(),
-    batch_num: integer('batch_num').notNull(),
-    batch_status: text('batch_status', { enum: ['finalized'] }).notNull(),
-    batch_total_cost_eth: numeric('batch_total_cost_eth').notNull(),
-    batch_txs_recorded_divided_eth: numeric(
-      'batch_txs_recorded_divided_eth'
-    ).notNull(),
-    batch_verification: timestamp('batch_verification').notNull(),
-    blockchain: text('blockchain').notNull(),
-    chain_id: integer('chain_id').notNull(),
-    commit_cost_eth: numeric('commit_cost_eth').notNull(),
-    cumulative_cost_eth: numeric('cumulative_cost_eth').notNull(),
-    est_batch_cumulative_cost_usd: numeric(
-      'est_batch_cumulative_cost_usd'
-    ).notNull(),
-    est_batch_total_cost_usd: numeric('est_batch_total_cost_usd').notNull(),
     est_batch_txs_recorded_divided_usd: numeric(
       'est_batch_txs_recorded_divided_usd'
     ).notNull(),
-    est_commit_cost_usd: numeric('est_commit_cost_usd').notNull(),
-    est_verification_cost_usd: numeric('est_verification_cost_usd').notNull(),
-    highest_total_cost_eth: numeric('highest_total_cost_eth').notNull(),
-    lowest_total_cost_eth: numeric('lowest_total_cost_eth').notNull(),
-    total_tx_count: integer('total_tx_count').notNull(),
-    verification_cost_eth: numeric('verification_cost_eth').notNull(),
+    est_batch_cumulative_cost_usd: numeric(
+      'est_batch_cumulative_cost_usd'
+    ).notNull(),
+    batch_link: text('batch_link').notNull(),
   },
   sql`
     WITH
       batch_costs as (
         SELECT
           batch_id,
-          commit_tx_effective_price / 1e18 as commit_tx_fee_eth,
-          finalize_tx_effective_price / 1e18 as verification_tx_fee_eth,
-          total_tx_effective_price / 1e18 as total_tx_fee_eth,
-          total_tx_effective_unit_price / 1e18 as total_tx_fee_per_unit_eth
+          send_sequences_tx_fee / 1e18 as commit_tx_fee_eth,
+          verify_batch_tx_fee / 1e18 as verification_tx_fee_eth,
+          total_tx_fee / 1e18 as total_tx_fee_eth,
+          total_tx_fee_per_unit / 1e18 as total_tx_fee_per_unit_eth
         FROM
-          scroll_batch_receipts
+          polygon_zk_evm_batch_receipts
       ),
       aggregates as (
         SELECT
-          MAX(total_tx_effective_price) / 1e18 as max_cost_eth,
-          AVG(total_tx_effective_price) / 1e18 as avg_cost_eth,
-          MIN(total_tx_effective_price) / 1e18 as min_cost_eth
+          MAX(total_tx_fee) / 1e18 as max_cost_eth,
+          AVG(total_tx_fee) / 1e18 as avg_cost_eth,
+          MIN(total_tx_fee) / 1e18 as min_cost_eth
         FROM
-          scroll_batch_receipts
+          polygon_zk_evm_batch_receipts
       ),
-      daily_avg_cost as (
+      daily_avg_cost AS (
         SELECT
-          date_trunc('day', sb.finalized_at) as day,
-          AVG(bc.total_tx_fee_eth * (ep.price / 100.0)) as avg_daily_cost_usd
+          date_trunc('day', pb.verified_at) AS day,
+          AVG(bc.total_tx_fee_eth * (ep.price / 100.0)) AS avg_daily_cost_usd
         FROM
-          scroll_batches sb
-          JOIN batch_costs bc ON sb.id = bc.batch_id
-          JOIN eth_usd_price ep ON date_trunc('day', sb.finalized_at) = date_trunc('day', ep."date")
+          polygon_zk_evm_batches pb
+          JOIN batch_costs bc ON pb.id = bc.batch_id
+          JOIN eth_usd_price ep ON date_trunc('day', pb.verified_at) = date_trunc('day', ep."date")
         GROUP BY
           day
       )
     SELECT
-      '534352'::INTEGER as chain_id,
-      'scroll' as blockchain,
-      sb."number" as batch_num,
-      sb.rollup_status as batch_status,
-      sb.finalized_at as batch_verification,
-      sb.total_tx_num as total_tx_count,
-      bc.commit_tx_fee_eth as commit_cost_eth,
-      bc.verification_tx_fee_eth as verification_cost_eth,
-      bc.total_tx_fee_eth as batch_total_cost_eth,
-      bc.total_tx_fee_per_unit_eth as batch_txs_recorded_divided_eth,
-      ag.max_cost_eth as highest_total_cost_eth,
-      ag.avg_cost_eth as average_total_cost_eth,
-      ag.min_cost_eth as lowest_total_cost_eth,
+      '1101'::INTEGER as chain_id,
+      'polygon zkevm' as blockchain,
+      pb."number" as batch_num,
+      'finalized' as batch_status,
+      pb.verified_at as batch_verification,
+      cardinality(pb.transactions) as total_tx_count,
+      bc.commit_tx_fee_eth,
+      bc.verification_tx_fee_eth,
+      bc.total_tx_fee_eth,
+      bc.total_tx_fee_per_unit_eth,
+      ag.max_cost_eth,
+      ag.avg_cost_eth,
+      ag.min_cost_eth,
       SUM(bc.total_tx_fee_eth) OVER (
         ORDER BY
-          sb.finalized_at
+          pb.verified_at
       ) as cumulative_cost_eth,
       ROUND((ep.price / 100.0) * bc.commit_tx_fee_eth, 2) as est_commit_cost_usd,
       ROUND(
@@ -110,16 +107,16 @@ export const {
       ROUND(
         (ep.price / 100.0) * SUM(bc.total_tx_fee_eth) OVER (
           ORDER BY
-            sb.finalized_at
+            pb.verified_at
         ),
         2
       ) as est_batch_cumulative_cost_usd,
-      'https://scroll.io/rollupscan/batch/' || sb."number"::TEXT as batch_link
+      'https://zkevm.polygonscan.com/batch/' || pb."number"::text as batch_link
     FROM
-      scroll_batches sb
-      JOIN batch_costs bc ON sb.id = bc.batch_id
-      JOIN eth_usd_price ep ON date_trunc('day', sb.finalized_at) = date_trunc('day', ep."date")
-      JOIN daily_avg_cost dac ON date_trunc('day', sb.finalized_at) = dac.day,
+      polygon_zk_evm_batches pb
+      JOIN batch_costs bc ON pb.id = bc.batch_id
+      JOIN eth_usd_price ep ON date_trunc('day', pb.verified_at) = date_trunc('day', ep."date")
+      JOIN daily_avg_cost dac ON date_trunc('day', pb.verified_at) = dac.day,
       LATERAL (
         SELECT
           *
@@ -127,23 +124,23 @@ export const {
           aggregates
       ) ag
     WHERE
-      sb.finalized_at IS NOT NULL
-      AND finalized_at < date_trunc('day', CURRENT_DATE)
+      pb.verified_at is not NULL
+      AND pb.verified_at < date_trunc('day', CURRENT_DATE)
     ORDER BY
-      batch_num DESC;
+      pb."number" DESC;
   `
 )
 
 export const {
-  materializedView: scrollBatchFinalityMv,
-  createOrReplace: createOrReplaceScrollBatchFinalityMv,
+  materializedView: polygonZkEvmBatchFinalityMv,
+  createOrReplace: createOrReplacePolygonZkEvmBatchFinalityMv,
 } = createPgMaterializedView(
-  'scroll_batch_finality_mv',
+  'polygon_zkevm_batch_finality_mv',
   {
     chain_id: integer('chain_id').notNull(),
     blockchain: text('blockchain').notNull(),
-    batch_num: integer('batch_num').notNull(),
-    batch_status: varchar('batch_status').notNull(),
+    batch_num: bigint('batch_num', { mode: 'number' }).notNull(),
+    batch_status: text('batch_status').notNull(),
     batch_created: timestamp('batch_created').notNull(),
     batch_committed: timestamp('batch_committed').notNull(),
     batch_verified: timestamp('batch_verified').notNull(),
@@ -159,13 +156,15 @@ export const {
         SELECT
           id,
           DATE_TRUNC('day', "timestamp") AS batch_day,
-          finalized_at - "timestamp" AS duration
+          verified_at - "timestamp" AS duration
         FROM
-          scroll_batches
+          polygon_zk_evm_batches
         WHERE
-          finalized_at IS NOT NULL
+          verified_at IS NOT NULL
           AND "timestamp" IS NOT NULL
-          AND finalized_at < DATE_TRUNC('day', CURRENT_DATE)
+          AND verified_at < DATE_TRUNC('day', CURRENT_DATE)
+        ORDER BY
+          "timestamp" ASC
       ),
       aggregates AS (
         SELECT
@@ -179,35 +178,35 @@ export const {
           batch_day
       )
     SELECT
-      '534352'::INTEGER AS chain_id,
-      'scroll' AS blockchain,
-      sb."number" AS batch_num,
-      sb.rollup_status AS batch_status,
-      sb."timestamp" AS batch_created,
-      sb.committed_at AS batch_committed,
-      sb.finalized_at AS batch_verified,
-      sb.finalized_at - sb."timestamp" AS batch_time_duration,
+      '1101'::INTEGER AS chain_id,
+      'polygon zkevm' AS blockchain,
+      pb."number" AS batch_num,
+      'finalized' AS batch_status,
+      pb."timestamp" AS batch_created,
+      pb.sent_at AS batch_committed,
+      pb.verified_at AS batch_verified,
+      pb.verified_at - pb."timestamp" AS batch_time_duration,
       agg.daily_max_duration,
       agg.daily_avg_duration,
       agg.daily_min_duration,
-      'https://scroll.io/rollupscan/batch/' || sb."number"::TEXT AS batch_link
+      'https://zkevm.polygonscan.com/batch/' || pb."number"::text AS batch_link
     FROM
-      scroll_batches sb
-      JOIN aggregates agg ON DATE_TRUNC('day', sb."timestamp") = agg.batch_day
+      polygon_zk_evm_batches pb
+      JOIN aggregates agg ON DATE_TRUNC('day', pb."timestamp") = agg.batch_day
     WHERE
-      sb.finalized_at IS NOT NULL
-      AND sb."timestamp" IS NOT NULL
-      AND sb.finalized_at < DATE_TRUNC('day', CURRENT_DATE)
+      pb.verified_at IS NOT NULL
+      AND pb."timestamp" IS NOT NULL
+      AND pb.verified_at < DATE_TRUNC('day', CURRENT_DATE)
     ORDER BY
-      sb."number" DESC;
+      pb."number" DESC;
   `
 )
 
 export const {
-  materializedView: scrollBatchCreatedMv,
-  createOrReplace: createOrReplaceScrollBatchCreatedMv,
+  materializedView: polygonZkEvmBatchCreatedMv,
+  createOrReplace: createOrReplacePolygonZkEvmBatchCreatedMv,
 } = createPgMaterializedView(
-  'scroll_batch_created_mv',
+  'polygon_zkevm_batch_created_mv',
   {
     chain_id: integer('chain_id').notNull(),
     blockchain: text('blockchain').notNull(),
@@ -230,22 +229,22 @@ export const {
     WITH
       batches as (
         SELECT
-          date_trunc('day', finalized_at) as tx_date,
-          count(hash) as batch_count,
+          date_trunc('day', "timestamp") as tx_date,
+          count("number") as batch_count,
           count(
             DISTINCT CASE
-              WHEN commit_tx_hash IS NOT NULL THEN hash
+              WHEN send_sequences_tx_hash IS NOT NULL THEN "number"
             END
           ) as batch_count_committed,
           count(
             DISTINCT CASE
-              WHEN finalized_at IS NOT NULL THEN hash
+              WHEN "timestamp" IS NOT NULL THEN "number"
             END
           ) as batch_count_verified
         FROM
-          scroll_batches
+          polygon_zk_evm_batches
         WHERE
-          finalized_at < date_trunc('day', CURRENT_DATE)
+          "timestamp" < date_trunc('day', CURRENT_DATE)
         GROUP BY
           1
       ),
@@ -255,7 +254,7 @@ export const {
           count(*) as block_count,
           sum(cardinality(transactions)) as txs_total
         FROM
-          scroll_blocks
+          polygon_zk_evm_batches
         WHERE
           "timestamp" < date_trunc('day', CURRENT_DATE)
         GROUP BY
@@ -274,8 +273,8 @@ export const {
           LEFT JOIN batched_blocks bb ON b.tx_date = bb.tx_date
       )
     SELECT
-      '534352'::INTEGER as chain_id,
-      'scroll' as blockchain,
+      '1101'::INTEGER as chain_id,
+      'polygon zkevm' as blockchain,
       tx_date,
       batch_count,
       batch_count_committed,
@@ -290,10 +289,10 @@ export const {
 )
 
 export const {
-  materializedView: scrollBatchAvgCostMV,
-  createOrReplace: createOrReplaceScrollBatchAvgCostMV,
+  materializedView: polygonZkEvmBatchAvgCostMv,
+  createOrReplace: createOrReplacePolygonZkEvmBatchAvgCostMv,
 } = createPgMaterializedView(
-  'scroll_batch_avg_cost_mv',
+  'polygon_zkevm_batch_avg_cost_mv',
   {
     tx_date: timestamp('tx_date').notNull(),
     avg_commit_cost_usd: numeric('avg_commit_cost_usd').notNull(),
@@ -305,7 +304,7 @@ export const {
       AVG(est_commit_cost_usd) AS avg_commit_cost_usd,
       AVG(est_verification_cost_usd) AS avg_verification_cost_usd
     FROM
-      scroll_batch_cost_mv
+      polygon_zkevm_batch_cost_mv
     GROUP BY
       DATE_TRUNC('day', batch_verification)
     ORDER BY

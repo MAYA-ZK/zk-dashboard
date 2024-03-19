@@ -1,8 +1,9 @@
 import type { SQL } from 'drizzle-orm'
 import { sql } from 'drizzle-orm'
-import { db } from '../utils'
 import type { PgColumnBuilderBase } from 'drizzle-orm/pg-core'
 import { pgMaterializedView } from 'drizzle-orm/pg-core'
+
+import { db } from '../utils'
 
 // Drizzle ORM or Drizzle Kit does not support materialized views migrations. This is a workaround to create or replace materialized views.
 

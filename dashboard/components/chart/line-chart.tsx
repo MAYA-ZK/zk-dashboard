@@ -1,7 +1,6 @@
 'use client'
 
-import 'chartjs-adapter-date-fns'
-import { Line } from 'react-chartjs-2'
+import { formatToUsd } from '@/lib/formatters'
 import {
   CategoryScale,
   Chart as ChartJS,
@@ -13,9 +12,10 @@ import {
   Title,
   Tooltip,
 } from 'chart.js'
+import 'chartjs-adapter-date-fns'
 import { format } from 'date-fns'
 import type { ComponentProps } from 'react'
-import { formatToUsd } from '@/lib/formatters'
+import { Line } from 'react-chartjs-2'
 
 ChartJS.register(
   CategoryScale,

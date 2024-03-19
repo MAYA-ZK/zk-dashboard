@@ -1,6 +1,7 @@
-import { COLORS } from './config/colors'
 import { nextui } from '@nextui-org/react'
 import type { Config } from 'tailwindcss'
+
+import { COLORS } from './config/colors'
 
 const config: Config = {
   content: [
