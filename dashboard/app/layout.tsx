@@ -1,4 +1,4 @@
-import MayaNavbar from '@/components/ui/navbar'
+import { MayaNavbar } from '@/components/ui/navbar'
 import { cn } from '@nextui-org/system'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'

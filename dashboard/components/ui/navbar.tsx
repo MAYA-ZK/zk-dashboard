@@ -2,6 +2,7 @@
 
 import { MenuIconDynamic } from '@/components/icons'
 import { Logo } from '@/components/logo'
+import { NAV_CONFIG } from '@/config/navigation'
 import { routes } from '@/config/routes'
 import {
   Navbar,
@@ -13,12 +14,10 @@ import {
 } from '@nextui-org/react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 
-const ROUTES = Object.values(routes).slice(-4)
-
-export default function MayaNavbar() {
-  const [isMenuOpen, setIsMenuOpen] = React.useState<boolean>(false)
+export function MayaNavbar() {
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false)
   const path = usePathname()
 
   const isLinkActive = useCallback(
@@ -38,10 +37,12 @@ export default function MayaNavbar() {
     >
       <NavbarBrand>
         <div className="flex items-center space-x-2">
-          <Logo
-            id="mayaPrimary"
-            className="h-[34px] w-[116px] sm:h-[56px] sm:w-[150px]"
-          />
+          <Link href={routes.home}>
+            <Logo
+              id="mayaPrimary"
+              className="h-[34px] w-[116px] sm:h-[56px] sm:w-[150px]"
+            />
+          </Link>
           <p>Dashboard</p>
         </div>
       </NavbarBrand>
@@ -51,11 +52,11 @@ export default function MayaNavbar() {
         justify="end"
         className="hidden space-x-3 sm:flex"
       >
-        {ROUTES.map((item, index: number) => (
+        {NAV_CONFIG.map((item, index: number) => (
           <NavbarItem key={`${item.title}-${index}`}>
             <Link
               href={item.path}
-              className={`${index === ROUTES.length - 1 ? 'underline' : ''} ${isLinkActive(item.path) ? 'text-primary' : 'text-black'}`}
+              className={`${index === NAV_CONFIG.length - 1 ? 'underline' : ''} ${isLinkActive(item.path) ? 'text-primary' : 'text-black'}`}
             >
               {item.title}
             </Link>
@@ -73,11 +74,11 @@ export default function MayaNavbar() {
       />
 
       <NavbarMenu className="bg-primary">
-        {ROUTES.map((item, index) => (
+        {NAV_CONFIG.map((item, index) => (
           <NavbarItem key={`${item.title}-${index}`}>
             <Link
               href={item.path}
-              className={`${index === ROUTES.length - 1 ? 'underline' : ''} ${isLinkActive(item.path) ? 'text-primary' : 'text-black'}`}
+              className={`${index === NAV_CONFIG.length - 1 ? 'underline' : ''} ${isLinkActive(item.path) ? 'text-primary' : 'text-black'}`}
             >
               {item.title}
             </Link>
