@@ -1,5 +1,5 @@
 import { TABLE_PAGE_SEARCH_PARAM } from '@/app/dashboard/zksync-era/@batchesFinality/config'
-import { BatchesFinalityTable } from '@/app/dashboard/zksync-era/@batchesFinality/table'
+import { ZkSyncBatchesFinalityTable } from '@/app/dashboard/zksync-era/@batchesFinality/table'
 import {
   getBatchesFinality,
   getBatchesFinalityCount,
@@ -24,7 +24,7 @@ export default async function Page({
   return (
     <div className="flex w-full flex-col gap-8 rounded-md bg-content1 p-8">
       <h2 className="text-center">Batches finality</h2>
-      <BatchesFinalityTable
+      <ZkSyncBatchesFinalityTable
         batches={batches.map((batch) => {
           return {
             ...batch,

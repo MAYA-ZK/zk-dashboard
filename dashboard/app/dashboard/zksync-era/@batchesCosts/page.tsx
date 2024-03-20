@@ -1,4 +1,4 @@
-import { BatchesTable } from '@/app/dashboard/zksync-era/@batchesCosts/table'
+import { ZkSyncBatchTable } from '@/app/dashboard/zksync-era/@batchesCosts/table'
 import {
   getBatchesCosts,
   getBatchesCount,
@@ -27,7 +27,7 @@ export default async function Page({
         Batches that are created daily with the average number of transactions
         per batch
       </h2>
-      <BatchesTable batches={batches} page={page} pages={pages} />
+      <ZkSyncBatchTable batches={batches} page={page} pages={pages} />
     </div>
   )
 }

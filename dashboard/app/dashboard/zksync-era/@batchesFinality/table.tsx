@@ -1,34 +1,13 @@
 'use client'
 
 import { TABLE_PAGE_SEARCH_PARAM } from '@/app/dashboard/zksync-era/@batchesFinality/config'
-import { usePagination } from '@/lib/hooks/pagination'
+import { BatchTable } from '@/components/table/batch-table'
 import type { GetBatchesFinalityReturnType } from '@/services/scroll/batches'
-import {
-  ArrowTopRightOnSquareIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-} from '@heroicons/react/24/solid'
-import { Button, Spinner, cn, getKeyValue } from '@nextui-org/react'
-import type { TableProps } from '@nextui-org/table'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-} from '@nextui-org/table'
 
 type Batch = {
   [K in keyof GetBatchesFinalityReturnType[number]]: GetBatchesFinalityReturnType[number][K] extends Date
     ? string
     : GetBatchesFinalityReturnType[number][K]
-}
-
-interface BatchTableInteractiveProps extends TableProps {
-  page: number
-  pages: number
-  batches: Array<Batch>
 }
 
 const columns = [
@@ -61,6 +40,32 @@ const columns = [
   label: string
 }>
 
+interface ZkSyncBatchesFinalityTableProps {
+  page: number
+  pages: number
+  batches: Array<Batch>
+}
+
+export function ZkSyncBatchesFinalityTable({
+  batches,
+  page,
+  pages,
+  ...tableProps
+}: ZkSyncBatchesFinalityTableProps) {
+  return (
+    <BatchTable<Batch>
+      page={page}
+      pages={pages}
+      batches={batches}
+      searchParam={TABLE_PAGE_SEARCH_PARAM}
+      columns={columns}
+      linkLabel="zkSync Explorer"
+      {...tableProps}
+    />
+  )
+}
+
+/*
 export function BatchesFinalityTable({
   batches,
   page,
@@ -164,3 +169,4 @@ export function BatchesFinalityTable({
     </div>
   )
 }
+*/

@@ -1,5 +1,5 @@
 import { TABLE_PAGE_SEARCH_PARAM } from '@/app/dashboard/scroll/@batchesFinality/config'
-import { BatchesFinalityTable } from '@/app/dashboard/scroll/@batchesFinality/table'
+import { ScrollBatchesFinalityTable } from '@/app/dashboard/scroll/@batchesFinality/table'
 import {
   getBatchesFinality,
   getBatchesFinalityCount,
@@ -24,7 +24,8 @@ export default async function Page({
   return (
     <div className="flex w-full flex-col gap-8 rounded-md bg-content1 p-8">
       <h2 className="text-center">Batches finality</h2>
-      <BatchesFinalityTable
+
+      <ScrollBatchesFinalityTable
         batches={batches.map((batch) => {
           return {
             ...batch,

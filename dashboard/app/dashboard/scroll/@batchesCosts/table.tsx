@@ -1,31 +1,9 @@
 'use client'
 
-import { usePagination } from '@/lib/hooks/pagination'
+import { BatchTable } from '@/components/table/batch-table'
 import type { GetBatchesCostsReturnType } from '@/services/scroll/batches'
-import {
-  ArrowTopRightOnSquareIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-} from '@heroicons/react/24/solid'
-import { Button, Spinner, cn, getKeyValue } from '@nextui-org/react'
-import type { TableProps } from '@nextui-org/table'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-} from '@nextui-org/table'
-import { useSearchParams } from 'next/navigation'
 
 import { TABLE_PAGE_SEARCH_PARAM } from './config'
-
-interface BatchTableInteractiveProps extends TableProps {
-  page: number
-  pages: number
-  batches: GetBatchesCostsReturnType
-}
 
 const columns = [
   {
@@ -61,20 +39,43 @@ const columns = [
   label: string
 }>
 
+interface ScrollBatchTableProps {
+  page: number
+  pages: number
+  batches: GetBatchesCostsReturnType
+}
+
+export function ScrollBatchTable({
+  batches,
+  page,
+  pages,
+  ...tableProps
+}: ScrollBatchTableProps) {
+  return (
+    <BatchTable<GetBatchesCostsReturnType[number]>
+      page={page}
+      pages={pages}
+      batches={batches}
+      searchParam={TABLE_PAGE_SEARCH_PARAM}
+      columns={columns}
+      linkLabel="Scroll scan"
+      {...tableProps}
+    />
+  )
+}
+
+/*
 export function BatchesTable({
   batches,
   page,
   pages,
   ...tableProps
 }: BatchTableInteractiveProps) {
-  const searchParams = useSearchParams()
   const {
     isPending,
     page: optimisticPage,
     changePage,
   } = usePagination(page, TABLE_PAGE_SEARCH_PARAM)
-
-  console.log('bc', searchParams.toString())
 
   return (
     <div>
@@ -167,3 +168,4 @@ export function BatchesTable({
     </div>
   )
 }
+*/

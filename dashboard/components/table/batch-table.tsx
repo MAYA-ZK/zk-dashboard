@@ -1,83 +1,45 @@
 'use client'
 
-import { BatchTable } from '@/components/table/batch-table'
-import type { GetBatchesFinalityReturnType } from '@/services/polygon-zk-evm/batches'
+import { usePagination } from '@/lib/hooks/pagination'
+import {
+  ArrowTopRightOnSquareIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from '@heroicons/react/24/solid'
+import { Button, Spinner, cn, getKeyValue } from '@nextui-org/react'
+import type { TableProps } from '@nextui-org/table'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+} from '@nextui-org/table'
 
-import { TABLE_PAGE_SEARCH_PARAM } from './config'
-
-type Batch = {
-  [K in keyof GetBatchesFinalityReturnType[number]]: GetBatchesFinalityReturnType[number][K] extends Date
-    ? string
-    : GetBatchesFinalityReturnType[number][K]
-}
-
-const columns = [
-  {
-    key: 'batch_num',
-    label: 'Number',
-  },
-  {
-    key: 'batch_created',
-    label: 'Created',
-  },
-  {
-    key: 'batch_committed',
-    label: 'Committed',
-  },
-  {
-    key: 'batch_verified',
-    label: 'Verified',
-  },
-  {
-    key: 'batch_status',
-    label: 'Status',
-  },
-  {
-    key: 'batch_link',
-    label: 'Link',
-  },
-] satisfies Array<{
-  key: keyof Batch
-  label: string
-}>
-
-interface PolygonBatchesFinalityTableProps {
+export interface BatchTableInteractiveProps<BatchT> extends TableProps {
   page: number
   pages: number
-  batches: Array<Batch>
+  columns: Array<{ key: keyof BatchT; label: string }>
+  searchParam: string
+  linkLabel: string
+  batches: Array<BatchT>
 }
 
-export function PolygonBatchesFinalityTable({
+export function BatchTable<BatchT>({
   batches,
   page,
   pages,
+  columns,
+  searchParam,
+  linkLabel,
   ...tableProps
-}: PolygonBatchesFinalityTableProps) {
-  return (
-    <BatchTable<Batch>
-      page={page}
-      pages={pages}
-      batches={batches}
-      searchParam={TABLE_PAGE_SEARCH_PARAM}
-      columns={columns}
-      linkLabel="Polygon zkEVM Scan"
-      {...tableProps}
-    />
-  )
-}
-
-/*
-export function BatchesFinalityTable({
-  batches,
-  page,
-  pages,
-  ...tableProps
-}: BatchTableInteractiveProps) {
+}: BatchTableInteractiveProps<BatchT>) {
   const {
     isPending,
     page: optimisticPage,
     changePage,
-  } = usePagination(page, TABLE_PAGE_SEARCH_PARAM)
+  } = usePagination(page, searchParam)
 
   return (
     <div>
@@ -94,7 +56,7 @@ export function BatchesFinalityTable({
               className={cn({
                 'text-right w-px': column.key === 'batch_link',
               })}
-              key={column.key}
+              key={column.key as string}
             >
               {column.label}
             </TableColumn>
@@ -112,7 +74,7 @@ export function BatchesFinalityTable({
           {(item) => (
             <TableRow
               className="overflow-hidden rounded-md hover:bg-primary/50"
-              key={item.batch_num}
+              key={(item as any).batch_num}
             >
               {(columnKey) => {
                 if (columnKey === 'batch_link') {
@@ -121,9 +83,9 @@ export function BatchesFinalityTable({
                       <a
                         target="_blank"
                         className="flex gap-2 whitespace-nowrap"
-                        href={item.batch_link}
+                        href={(item as any).batch_link}
                       >
-                        Polygon zkEVM Scan
+                        {linkLabel}
                         <ArrowTopRightOnSquareIcon className="size-5" />
                       </a>
                     </TableCell>
@@ -170,4 +132,3 @@ export function BatchesFinalityTable({
     </div>
   )
 }
-*/

@@ -1,4 +1,4 @@
-import { BatchesTable } from '@/app/dashboard/scroll/@batchesCosts/table'
+import { ScrollBatchTable } from '@/app/dashboard/scroll/@batchesCosts/table'
 import { getBatchesCosts, getBatchesCount } from '@/services/scroll/batches'
 
 import { TABLE_PAGE_SEARCH_PARAM } from './config'
@@ -24,7 +24,7 @@ export default async function Page({
         Batches that are created daily with the average number of transactions
         per batch
       </h2>
-      <BatchesTable batches={batches} page={page} pages={pages} />
+      <ScrollBatchTable batches={batches} page={page} pages={pages} />
     </div>
   )
 }

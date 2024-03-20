@@ -12,6 +12,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      colors: {
+        'maya-warm-white': COLORS.BACKGROUND,
+      },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':
