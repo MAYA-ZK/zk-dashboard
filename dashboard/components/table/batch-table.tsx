@@ -1,8 +1,6 @@
 'use client'
 
-import { TABLE_PAGE_SEARCH_PARAM } from '@/app/dashboard/@scrollBatchesCosts/config'
 import { usePagination } from '@/lib/hooks/pagination'
-import type { GetBatchesCostsReturnType } from '@/services/scroll/batches'
 import {
   ArrowTopRightOnSquareIcon,
   ChevronLeftIcon,
@@ -18,62 +16,34 @@ import {
   TableHeader,
   TableRow,
 } from '@nextui-org/table'
-import { useSearchParams } from 'next/navigation'
 
-interface BatchTableInteractiveProps extends TableProps {
+export interface BatchTableInteractiveProps<
+  TBatch extends { batch_num: number; batch_link: string },
+> extends TableProps {
   page: number
   pages: number
-  batches: GetBatchesCostsReturnType
+  columns: Array<{ key: keyof TBatch; label: string }>
+  searchParam: string
+  linkLabel: string
+  batches: Array<TBatch>
 }
 
-const columns = [
-  {
-    key: 'batch_num',
-    label: 'Number',
-  },
-  {
-    key: 'total_tx_count',
-    label: 'Total transactions',
-  },
-  {
-    key: 'est_commit_cost_usd',
-    label: 'Commit cost',
-  },
-  {
-    key: 'est_verification_cost_usd',
-    label: 'Verification cost',
-  },
-  {
-    key: 'est_batch_total_cost_usd',
-    label: 'Batch cost',
-  },
-  {
-    key: 'batch_status',
-    label: 'Batch status',
-  },
-  {
-    key: 'batch_link',
-    label: 'Link',
-  },
-] satisfies Array<{
-  key: keyof GetBatchesCostsReturnType[number]
-  label: string
-}>
-
-export function BatchesTable({
+export function BatchTable<
+  TBatch extends { batch_num: number; batch_link: string },
+>({
   batches,
   page,
   pages,
+  columns,
+  searchParam,
+  linkLabel,
   ...tableProps
-}: BatchTableInteractiveProps) {
-  const searchParams = useSearchParams()
+}: BatchTableInteractiveProps<TBatch>) {
   const {
     isPending,
     page: optimisticPage,
     changePage,
-  } = usePagination(page, TABLE_PAGE_SEARCH_PARAM)
-
-  console.log('bc', searchParams.toString())
+  } = usePagination(page, searchParam)
 
   return (
     <div>
@@ -81,7 +51,7 @@ export function BatchesTable({
         classNames={{
           wrapper: cn('rounded-none shadow-none'),
         }}
-        aria-label="Batches that are created daily with the average number of transactions per batch"
+        aria-label="Batches finality"
         {...tableProps}
       >
         <TableHeader columns={columns}>
@@ -90,7 +60,7 @@ export function BatchesTable({
               className={cn({
                 'text-right w-px': column.key === 'batch_link',
               })}
-              key={column.key}
+              key={column.key as string}
             >
               {column.label}
             </TableColumn>
@@ -119,7 +89,7 @@ export function BatchesTable({
                         className="flex gap-2 whitespace-nowrap"
                         href={item.batch_link}
                       >
-                        Scroll Scan
+                        {linkLabel}
                         <ArrowTopRightOnSquareIcon className="size-5" />
                       </a>
                     </TableCell>

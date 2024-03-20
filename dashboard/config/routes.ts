@@ -1,10 +1,7 @@
 export const routes = {
   home: '/',
-  scroll: {
-    home: '/scroll',
-  },
-  maya: {
-    title: 'MAYA.com',
-    home: 'https://maya-zk.com',
-  },
-}
+  scroll: '/dashboard/scroll',
+  zkSync: '/dashboard/zksync-era',
+  polygon: '/dashboard/polygon-zkevm',
+  maya: 'https://maya-zk.com',
+} as const

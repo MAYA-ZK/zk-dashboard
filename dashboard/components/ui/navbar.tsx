@@ -1,6 +1,10 @@
 'use client'
 
+import { MenuIconDynamic } from '@/components/icons'
+import { Logo } from '@/components/logo'
+import { NAV_CONFIG } from '@/config/navigation'
 import { routes } from '@/config/routes'
+import { useMatchPath } from '@/lib/hooks/match-path'
 import {
   Navbar,
   NavbarBrand,
@@ -8,43 +12,64 @@ import {
   NavbarItem,
   NavbarMenu,
   NavbarMenuToggle,
+  cn,
 } from '@nextui-org/react'
 import Link from 'next/link'
-import React from 'react'
+import type { ComponentProps } from 'react'
+import { useState } from 'react'
 
-import { MenuIconDynamic } from '../icons'
-import { Logo } from '../logo'
-import { ThemeSwitcher } from '../theme-switcher'
+function NavLink({ href, className, ...props }: ComponentProps<typeof Link>) {
+  const path = typeof href === 'string' ? href : href.pathname
+  const isLinkActive = useMatchPath(path ?? null)
 
-const blockchains = [
-  {
-    name: 'Scroll',
-  },
-  {
-    name: 'zkSync Era',
-  },
-  {
-    name: 'Polygon zkEVM',
-  },
-]
+  return (
+    <Link
+      href={href}
+      className={cn(
+        'text-black',
+        isLinkActive && 'text-maya-warm-white sm:text-primary',
+        className
+      )}
+      {...props}
+    />
+  )
+}
 
-export default function MayaNavbar() {
-  const [isMenuOpen, setIsMenuOpen] = React.useState<boolean>(false)
+export function MayaNavbar() {
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false)
+
+  const Links = NAV_CONFIG.map((item, index: number) => (
+    <NavbarItem key={`${item.title}-${index}`}>
+      <NavLink
+        className={cn({
+          underline: item.path === routes.maya,
+        })}
+        href={item.path}
+      >
+        {item.title}
+      </NavLink>
+    </NavbarItem>
+  ))
 
   return (
     <Navbar
       maxWidth="full"
-      className={`transition-colors duration-500 ease-in-out ${isMenuOpen ? 'bg-primary' : 'bg-background'} px-1 md:px-5`}
+      className={cn(
+        'px-1 transition-colors duration-500 ease-in-out md:px-5',
+        isMenuOpen ? 'bg-primary' : 'bg-background'
+      )}
       isMenuOpen={isMenuOpen}
       onMenuOpenChange={setIsMenuOpen}
       shouldHideOnScroll
     >
       <NavbarBrand>
         <div className="flex items-center space-x-2">
-          <Logo
-            id="mayaPrimary"
-            className="h-[34px] w-[116px] sm:h-[56px] sm:w-[150px]"
-          />
+          <Link href={routes.home}>
+            <Logo
+              id="mayaPrimary"
+              className="h-[34px] w-[116px] sm:h-[56px] sm:w-[150px]"
+            />
+          </Link>
           <p>Dashboard</p>
         </div>
       </NavbarBrand>
@@ -54,17 +79,10 @@ export default function MayaNavbar() {
         justify="end"
         className="hidden space-x-3 sm:flex"
       >
-        {blockchains.map((item, index) => (
-          <NavbarItem key={`${item}-${index}`}>
-            <Link href="/">{item.name}</Link>
-          </NavbarItem>
-        ))}
-        <NavbarItem>
-          <Link href={routes.maya.home} className="underline">
-            {routes.maya.title}
-          </Link>
-        </NavbarItem>
-        <ThemeSwitcher />
+        {Links}
+
+        {/* TODO: Disabled - re-enable when dark mode assets/colors are finalized */}
+        {/* <ThemeSwitcher /> */}
       </NavbarContent>
 
       <NavbarMenuToggle
@@ -74,17 +92,9 @@ export default function MayaNavbar() {
       />
 
       <NavbarMenu className="bg-primary">
-        {blockchains.map((item, index) => (
-          <NavbarItem key={`${item}-${index}`}>
-            <Link href="/">{item.name}</Link>
-          </NavbarItem>
-        ))}
-        <NavbarItem>
-          <Link href={routes.maya.home} className="underline">
-            {routes.maya.title}
-          </Link>
-        </NavbarItem>
-        <ThemeSwitcher />
+        {Links}
+        {/* TODO: Disabled - re-enable when dark mode assets/colors are finalized */}
+        {/* <ThemeSwitcher /> */}
       </NavbarMenu>
     </Navbar>
   )
