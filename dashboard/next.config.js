@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  /*
   redirects: () => [
     {
       source: '/',
@@ -7,6 +8,7 @@ const nextConfig = {
       permanent: false,
     },
   ],
+  */
 }
 
 module.exports = nextConfig
