@@ -52,7 +52,7 @@ export function ScrollBatchTable({
   ...tableProps
 }: ScrollBatchTableProps) {
   return (
-    <BatchTable<GetBatchesCostsReturnType[number]>
+    <BatchTable
       page={page}
       pages={pages}
       batches={batches}

@@ -17,16 +17,20 @@ import {
   TableRow,
 } from '@nextui-org/table'
 
-export interface BatchTableInteractiveProps<BatchT> extends TableProps {
+export interface BatchTableInteractiveProps<
+  TBatch extends { batch_num: number; batch_link: string },
+> extends TableProps {
   page: number
   pages: number
-  columns: Array<{ key: keyof BatchT; label: string }>
+  columns: Array<{ key: keyof TBatch; label: string }>
   searchParam: string
   linkLabel: string
-  batches: Array<BatchT>
+  batches: Array<TBatch>
 }
 
-export function BatchTable<BatchT>({
+export function BatchTable<
+  TBatch extends { batch_num: number; batch_link: string },
+>({
   batches,
   page,
   pages,
@@ -34,7 +38,7 @@ export function BatchTable<BatchT>({
   searchParam,
   linkLabel,
   ...tableProps
-}: BatchTableInteractiveProps<BatchT>) {
+}: BatchTableInteractiveProps<TBatch>) {
   const {
     isPending,
     page: optimisticPage,
@@ -74,7 +78,7 @@ export function BatchTable<BatchT>({
           {(item) => (
             <TableRow
               className="overflow-hidden rounded-md hover:bg-primary/50"
-              key={(item as any).batch_num}
+              key={item.batch_num}
             >
               {(columnKey) => {
                 if (columnKey === 'batch_link') {
@@ -83,7 +87,7 @@ export function BatchTable<BatchT>({
                       <a
                         target="_blank"
                         className="flex gap-2 whitespace-nowrap"
-                        href={(item as any).batch_link}
+                        href={item.batch_link}
                       >
                         {linkLabel}
                         <ArrowTopRightOnSquareIcon className="size-5" />

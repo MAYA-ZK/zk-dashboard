@@ -4,4 +4,4 @@ export const routes = {
   zkSync: '/dashboard/zksync-era',
   polygon: '/dashboard/polygon-zkevm',
   maya: 'https://maya-zk.com',
-}
+} as const

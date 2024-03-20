@@ -15,31 +15,41 @@ import {
   cn,
 } from '@nextui-org/react'
 import Link from 'next/link'
-import React, { useState } from 'react'
+import type { ComponentProps } from 'react'
+import { useState } from 'react'
 
-type NavConfigType = (typeof NAV_CONFIG)[0]
-
-function NavLink({ item, key }: { item: NavConfigType; key: string }) {
-  const isLinkActive = useMatchPath(item.path)
+function NavLink({ href, className, ...props }: ComponentProps<typeof Link>) {
+  const path = typeof href === 'string' ? href : href.pathname
+  const isLinkActive = useMatchPath(path ?? null)
 
   return (
-    <NavbarItem key={key}>
-      <Link
-        href={item.path}
-        className={cn(
-          'text-black',
-          isLinkActive && 'text-maya-warm-white sm:text-primary',
-          item.path === routes.maya && 'underline'
-        )}
-      >
-        {item.title}
-      </Link>
-    </NavbarItem>
+    <Link
+      href={href}
+      className={cn(
+        'text-black',
+        isLinkActive && 'text-maya-warm-white sm:text-primary',
+        className
+      )}
+      {...props}
+    />
   )
 }
 
 export function MayaNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false)
+
+  const Links = NAV_CONFIG.map((item, index: number) => (
+    <NavbarItem key={`${item.title}-${index}`}>
+      <NavLink
+        className={cn({
+          underline: item.path === routes.maya,
+        })}
+        href={item.path}
+      >
+        {item.title}
+      </NavLink>
+    </NavbarItem>
+  ))
 
   return (
     <Navbar
@@ -69,9 +79,7 @@ export function MayaNavbar() {
         justify="end"
         className="hidden space-x-3 sm:flex"
       >
-        {NAV_CONFIG.map((item, index: number) => (
-          <NavLink key={`${item.title}-${index}`} item={item} />
-        ))}
+        {Links}
 
         {/* TODO: Disabled - re-enable when dark mode assets/colors are finalized */}
         {/* <ThemeSwitcher /> */}
@@ -84,9 +92,7 @@ export function MayaNavbar() {
       />
 
       <NavbarMenu className="bg-primary">
-        {NAV_CONFIG.map((item, index) => (
-          <NavLink key={`${item.title}-${index}`} item={item} />
-        ))}
+        {Links}
         {/* TODO: Disabled - re-enable when dark mode assets/colors are finalized */}
         {/* <ThemeSwitcher /> */}
       </NavbarMenu>

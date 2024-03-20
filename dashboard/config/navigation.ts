@@ -17,4 +17,4 @@ export const NAV_CONFIG = [
     title: 'MAYA.com',
     path: routes.maya,
   },
-]
+] as const

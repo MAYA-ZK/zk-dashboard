@@ -28,7 +28,6 @@ const config = {
     'react/self-closing-comp': 'warn',
     'react/function-component-definition': 'error',
     'react/display-name': 'off',
-    '@typescript-eslint/no-explicit-any': 'off',
   },
 }
 

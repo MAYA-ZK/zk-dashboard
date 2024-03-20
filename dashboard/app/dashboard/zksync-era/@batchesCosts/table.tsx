@@ -52,7 +52,7 @@ export function ZkSyncBatchTable({
   ...tableProps
 }: ZkSyncBatchTableProps) {
   return (
-    <BatchTable<GetBatchesCostsReturnType[number]>
+    <BatchTable
       page={page}
       pages={pages}
       batches={batches}
