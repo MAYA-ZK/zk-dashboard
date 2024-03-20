@@ -4,6 +4,7 @@ import {
   integer,
   interval,
   numeric,
+  pgEnum,
   text,
   timestamp,
 } from 'drizzle-orm/pg-core'
@@ -14,7 +15,7 @@ export const {
   materializedView: polygonZkEvmBatchCostMv,
   createOrReplace: createOrReplacePolygonZkEvmBatchCostMv,
 } = createPgMaterializedView(
-  'polygon_zkevm_batch_cost_mv',
+  'polygon_zk_evm_batch_cost_mv',
   {
     chain_id: integer('chain_id').notNull(),
     blockchain: text('blockchain').notNull(),
@@ -135,7 +136,7 @@ export const {
   materializedView: polygonZkEvmBatchFinalityMv,
   createOrReplace: createOrReplacePolygonZkEvmBatchFinalityMv,
 } = createPgMaterializedView(
-  'polygon_zkevm_batch_finality_mv',
+  'polygon_zk_evm_batch_finality_mv',
   {
     chain_id: integer('chain_id').notNull(),
     blockchain: text('blockchain').notNull(),
@@ -206,7 +207,7 @@ export const {
   materializedView: polygonZkEvmBatchCreatedMv,
   createOrReplace: createOrReplacePolygonZkEvmBatchCreatedMv,
 } = createPgMaterializedView(
-  'polygon_zkevm_batch_created_mv',
+  'polygon_zk_evm_batch_created_mv',
   {
     chain_id: integer('chain_id').notNull(),
     blockchain: text('blockchain').notNull(),
@@ -292,7 +293,7 @@ export const {
   materializedView: polygonZkEvmBatchAvgCostMv,
   createOrReplace: createOrReplacePolygonZkEvmBatchAvgCostMv,
 } = createPgMaterializedView(
-  'polygon_zkevm_batch_avg_cost_mv',
+  'polygon_zk_evm_batch_avg_cost_mv',
   {
     tx_date: timestamp('tx_date').notNull(),
     avg_commit_cost_usd: numeric('avg_commit_cost_usd').notNull(),
@@ -304,10 +305,316 @@ export const {
       AVG(est_commit_cost_usd) AS avg_commit_cost_usd,
       AVG(est_verification_cost_usd) AS avg_verification_cost_usd
     FROM
-      polygon_zkevm_batch_cost_mv
+      polygon_zk_evm_batch_cost_mv
     GROUP BY
       DATE_TRUNC('day', batch_verification)
     ORDER BY
       tx_date DESC;
+  `
+)
+
+const period = pgEnum('period', ['7_days', '30_days', '90_days'])
+
+export const {
+  materializedView: polygonZkEvmAvgCostOfBatchesDateRange,
+  createOrReplace: createOrReplacePolygonZkEvmAvgCostOfBatchesDateRange,
+} = createPgMaterializedView(
+  'polygon_zk_evm_avg_cost_of_batches_date_range',
+  {
+    chain_id: integer('chain_id').notNull(),
+    blockchain: text('blockchain').notNull(),
+    period: period('period').notNull(),
+    start_date: text('start_date').notNull(),
+    end_date: text('end_date').notNull(),
+    avg_txs_inside_a_batch: numeric('avg_txs_inside_a_batch').notNull(),
+    avg_commit_cost_eth: numeric('avg_commit_cost_eth').notNull(),
+    avg_verification_cost_eth: numeric('avg_verification_cost_eth').notNull(),
+    avg_total_cost_eth: numeric('avg_total_cost_eth').notNull(),
+    avg_commit_cost_usd: numeric('avg_commit_cost_usd').notNull(),
+    avg_verification_cost_usd: numeric('avg_verification_cost_usd').notNull(),
+    avg_total_cost_usd: numeric('avg_total_cost_usd').notNull(),
+  },
+  sql`
+    WITH
+      date_range AS (
+        SELECT
+          '7_days' AS period,
+          MIN(batch_verification) AS start_date,
+          MAX(batch_verification) AS end_date,
+          AVG(total_tx_count) AS avg_txs_inside_a_batch,
+          AVG(commit_tx_fee_eth) AS avg_commit_cost_eth,
+          AVG(verification_tx_fee_eth) AS avg_verification_cost_eth,
+          AVG(total_tx_fee_eth) AS avg_total_cost_eth,
+          AVG(est_commit_cost_usd) AS avg_commit_cost_usd,
+          AVG(est_verification_cost_usd) AS avg_verification_cost_usd,
+          AVG(est_batch_total_cost_usd) AS avg_total_cost_usd
+        FROM
+          polygon_zk_evm_batch_cost_mv
+        WHERE
+          batch_verification >= CURRENT_DATE - INTERVAL '7 days'
+        UNION ALL
+        SELECT
+          '30_days' AS period,
+          MIN(batch_verification) AS start_date,
+          MAX(batch_verification) AS end_date,
+          AVG(total_tx_count) AS avg_txs_inside_a_batch,
+          AVG(commit_tx_fee_eth) AS avg_commit_cost_eth,
+          AVG(verification_tx_fee_eth) AS avg_verification_cost_eth,
+          AVG(total_tx_fee_eth) AS avg_total_cost_eth,
+          AVG(est_commit_cost_usd) AS avg_commit_cost_usd,
+          AVG(est_verification_cost_usd) AS avg_verification_cost_usd,
+          AVG(est_batch_total_cost_usd) AS avg_total_cost_usd
+        FROM
+          polygon_zk_evm_batch_cost_mv
+        WHERE
+          batch_verification >= CURRENT_DATE - INTERVAL '30 days'
+        UNION ALL
+        SELECT
+          '90_days' AS period,
+          MIN(batch_verification) AS start_date,
+          MAX(batch_verification) AS end_date,
+          AVG(total_tx_count) AS avg_txs_inside_a_batch,
+          AVG(commit_tx_fee_eth) AS avg_commit_cost_eth,
+          AVG(verification_tx_fee_eth) AS avg_verification_cost_eth,
+          AVG(total_tx_fee_eth) AS avg_total_cost_eth,
+          AVG(est_commit_cost_usd) AS avg_commit_cost_usd,
+          AVG(est_verification_cost_usd) AS avg_verification_cost_usd,
+          AVG(est_batch_total_cost_usd) AS avg_total_cost_usd
+        FROM
+          polygon_zk_evm_batch_cost_mv
+        WHERE
+          batch_verification >= CURRENT_DATE - INTERVAL '90 days'
+      )
+    SELECT
+      '1101'::INTEGER as chain_id,
+      'polygon zkevm' as blockchain,
+      period,
+      TO_CHAR(start_date, 'YYYY-MM-DD') AS start_date,
+      TO_CHAR(end_date, 'YYYY-MM-DD') AS end_date,
+      avg_txs_inside_a_batch,
+      avg_commit_cost_eth,
+      avg_verification_cost_eth,
+      avg_total_cost_eth,
+      avg_commit_cost_usd,
+      avg_verification_cost_usd,
+      avg_total_cost_usd
+    FROM
+      date_range
+    ORDER BY
+      CASE
+        WHEN period = '7_days' THEN 1
+        WHEN period = '30_days' THEN 2
+        WHEN period = '90_days' THEN 3
+      END;
+  `
+)
+
+export const {
+  materializedView: polygonZkEvmBatchAvgDuration,
+  createOrReplace: createOrReplacePolygonZkEvmBatchAvgDuration,
+} = createPgMaterializedView(
+  'polygon_zk_evm_batch_avg_duration',
+  {
+    chain_id: integer('chain_id').notNull(),
+    blockchain: text('blockchain').notNull(),
+    period: period('period').notNull(),
+    start_date: text('start_date').notNull(),
+    end_date: text('end_date').notNull(),
+    avg_finality: text('avg_finality').notNull(),
+  },
+  sql`
+    WITH
+      averages AS (
+        SELECT
+          '7_days' AS period,
+          MIN(batch_verified) AS start_date,
+          MAX(batch_verified) AS end_date,
+          AVG(
+            EXTRACT(
+              EPOCH
+              FROM
+                batch_time_duration
+            )
+          ) AS avg_finality_seconds
+        FROM
+          polygon_zk_evm_batch_finality_mv
+        WHERE
+          batch_created >= CURRENT_DATE - INTERVAL '7 days'
+        UNION ALL
+        SELECT
+          '30_days' AS period,
+          MIN(batch_verified) AS start_date,
+          MAX(batch_verified) AS end_date,
+          AVG(
+            EXTRACT(
+              EPOCH
+              FROM
+                batch_time_duration
+            )
+          ) AS avg_finality_seconds
+        FROM
+          polygon_zk_evm_batch_finality_mv
+        WHERE
+          batch_created >= CURRENT_DATE - INTERVAL '30 days'
+        UNION ALL
+        SELECT
+          '90_days' AS period,
+          MIN(batch_verified) AS start_date,
+          MAX(batch_verified) AS end_date,
+          AVG(
+            EXTRACT(
+              EPOCH
+              FROM
+                batch_time_duration
+            )
+          ) AS avg_finality_seconds
+        FROM
+          polygon_zk_evm_batch_finality_mv
+        WHERE
+          batch_created >= CURRENT_DATE - INTERVAL '90 days'
+      )
+    SELECT
+      '1101'::INTEGER as chain_id,
+      'polygon zkevm' as blockchain,
+      period,
+      TO_CHAR(start_date, 'YYYY-MM-DD') AS start_date,
+      TO_CHAR(end_date, 'YYYY-MM-DD') AS end_date,
+      TO_CHAR(TO_TIMESTAMP(avg_finality_seconds), 'HH24:MI:SS') AS avg_finality
+    FROM
+      averages
+    ORDER BY
+      CASE
+        WHEN period = '7_days' THEN 1
+        WHEN period = '30_days' THEN 2
+        WHEN period = '90_days' THEN 3
+      END;
+  `
+)
+
+export const {
+  materializedView: polygonZkEvmNormalizationBatchedTxs,
+  createOrReplace: createOrReplacePolygonZkEvmNormalizationBatchedTxs,
+} = createPgMaterializedView(
+  'polygon_zk_evm_normalization_batched_txs',
+  {
+    chain_id: integer('chain_id').notNull(),
+    blockchain: text('blockchain').notNull(),
+    period: period('period').notNull(),
+    start_date: text('start_date').notNull(),
+    end_date: text('end_date').notNull(),
+    avg_total_tx_num: numeric('avg_total_tx_num').notNull(),
+    avg_total_eth_cost_by_100: numeric('avg_total_eth_cost_by_100').notNull(),
+    avg_total_usd_cost_by_100: numeric('avg_total_usd_cost_by_100').notNull(),
+    avg_duration_by_100: text('avg_duration_by_100').notNull(),
+  },
+  // IF NULL has been applied here since we have batches with zero transactions, examples being batch number 1719174 and 1984750
+  sql`
+    WITH
+      date_range AS (
+        SELECT
+          '7_days' AS period,
+          MIN(pb.batch_verified) AS start_date,
+          MAX(pb.batch_verified) AS end_date,
+          AVG(txs.total_tx_count) AS avg_total_tx_num,
+          AVG(
+            (txs.total_tx_fee_eth) / NULLIF(txs.total_tx_count, 0)
+          ) * 100 AS avg_total_eth_cost_by_100,
+          AVG(
+            (txs.est_batch_total_cost_usd) / NULLIF(txs.total_tx_count, 0)
+          ) * 100 AS avg_total_usd_cost_by_100,
+          AVG(
+            EXTRACT(
+              EPOCH
+              FROM
+                (pb.batch_verified - pb.batch_created)
+            ) / NULLIF(txs.total_tx_count, 0)
+          ) * 100 AS avg_duration_seconds
+        FROM
+          polygon_zk_evm_batch_finality_mv pb
+          JOIN polygon_zk_evm_batch_cost_mv txs ON pb.batch_num = txs.batch_num
+        WHERE
+          pb.batch_verified IS NOT NULL
+          AND pb.batch_created IS NOT NULL
+          AND pb.batch_verified >= DATE_TRUNC('day', CURRENT_DATE) - INTERVAL '7 days'
+          AND pb.batch_verified < DATE_TRUNC('day', CURRENT_DATE)
+        GROUP BY
+          period
+        UNION ALL
+        SELECT
+          '30_days' AS period,
+          MIN(pb.batch_verified) AS start_date,
+          MAX(pb.batch_verified) AS end_date,
+          AVG(txs.total_tx_count) AS avg_total_tx_num,
+          AVG(
+            (txs.total_tx_fee_eth) / NULLIF(txs.total_tx_count, 0)
+          ) * 100 AS avg_total_eth_cost_by_100,
+          AVG(
+            (txs.est_batch_total_cost_usd) / NULLIF(txs.total_tx_count, 0)
+          ) * 100 AS avg_total_usd_cost_by_100,
+          AVG(
+            EXTRACT(
+              EPOCH
+              FROM
+                (pb.batch_verified - pb.batch_created)
+            ) / NULLIF(txs.total_tx_count, 0)
+          ) * 100 AS avg_duration_seconds
+        FROM
+          polygon_zk_evm_batch_finality_mv pb
+          JOIN polygon_zk_evm_batch_cost_mv txs ON pb.batch_num = txs.batch_num
+        WHERE
+          pb.batch_verified IS NOT NULL
+          AND pb.batch_created IS NOT NULL
+          AND pb.batch_verified >= DATE_TRUNC('day', CURRENT_DATE) - INTERVAL '30 days'
+          AND pb.batch_verified < DATE_TRUNC('day', CURRENT_DATE)
+        GROUP BY
+          period
+        UNION ALL
+        SELECT
+          '90_days' AS period,
+          MIN(pb.batch_verified) AS start_date,
+          MAX(pb.batch_verified) AS end_date,
+          AVG(txs.total_tx_count) AS avg_total_tx_num,
+          AVG(
+            (txs.total_tx_fee_eth) / NULLIF(txs.total_tx_count, 0)
+          ) * 100 AS avg_total_eth_cost_by_100,
+          AVG(
+            (txs.est_batch_total_cost_usd) / NULLIF(txs.total_tx_count, 0)
+          ) * 100 AS avg_total_usd_cost_by_100,
+          AVG(
+            EXTRACT(
+              EPOCH
+              FROM
+                (pb.batch_verified - pb.batch_created)
+            ) / NULLIF(txs.total_tx_count, 0)
+          ) * 100 AS avg_duration_seconds
+        FROM
+          polygon_zk_evm_batch_finality_mv pb
+          JOIN polygon_zk_evm_batch_cost_mv txs ON pb.batch_num = txs.batch_num
+        WHERE
+          pb.batch_verified IS NOT NULL
+          AND pb.batch_created IS NOT NULL
+          AND pb.batch_verified >= DATE_TRUNC('day', CURRENT_DATE) - INTERVAL '90 days'
+          AND pb.batch_verified < DATE_TRUNC('day', CURRENT_DATE)
+        GROUP BY
+          period
+      )
+    SELECT
+      '1101'::INTEGER as chain_id,
+      'polygon zkevm' as blockchain,
+      period,
+      TO_CHAR(start_date, 'YYYY-MM-DD') AS start_date,
+      TO_CHAR(end_date, 'YYYY-MM-DD') AS end_date,
+      avg_total_tx_num,
+      avg_total_eth_cost_by_100,
+      avg_total_usd_cost_by_100,
+      TO_CHAR(TO_TIMESTAMP(avg_duration_seconds), 'HH24:MI:SS') AS avg_duration_by_100
+    FROM
+      date_range
+    ORDER BY
+      CASE
+        WHEN period = '7_days' THEN 1
+        WHEN period = '30_days' THEN 2
+        ELSE 3
+      END;
   `
 )
