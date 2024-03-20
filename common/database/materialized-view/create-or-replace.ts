@@ -28,6 +28,9 @@ import('dotenv').then(async ({ config }) => {
     createOrReplaceScrollBatchAvgCostMV,
     createOrReplaceScrollBatchCreatedMv,
     createOrReplaceScrollBatchFinalityMv,
+    createOrReplaceScrollAvgCostOfBatchesDateRange,
+    createOrReplaceScrollBatchAvgDuration,
+    createOrReplaceScrollNormalizationBatchedTxs,
   } = await import('./scroll')
 
   const {
@@ -35,6 +38,9 @@ import('dotenv').then(async ({ config }) => {
     createOrReplacePolygonZkEvmBatchCostMv,
     createOrReplacePolygonZkEvmBatchCreatedMv,
     createOrReplacePolygonZkEvmBatchFinalityMv,
+    createOrReplacePolygonZkEvmBatchAvgDuration,
+    createOrReplacePolygonZkEvmAvgCostOfBatchesDateRange,
+    createOrReplacePolygonZkEvmNormalizationBatchedTxs,
   } = await import('./polygon-zk-evm')
 
   const {
@@ -42,6 +48,9 @@ import('dotenv').then(async ({ config }) => {
     createOrReplaceZkSyncEraBatchCostMv,
     createOrReplaceZkSyncEraBatchCreatedMv,
     createOrReplaceZkSyncEraBatchFinalityMv,
+    createOrReplaceZkSyncEraAvgCostOfBatchesDateRange,
+    createOrReplaceZkSyncEraBatchAvgDuration,
+    createOrReplaceZkSyncEraNormalizationBatchedTxs,
   } = await import('./zk-sync-era')
 
   const createOrReplaceScrollMv = async () => {
@@ -50,6 +59,9 @@ import('dotenv').then(async ({ config }) => {
     await createOrReplaceScrollBatchFinalityMv()
     await createOrReplaceScrollBatchCreatedMv()
     await createOrReplaceScrollBatchAvgCostMV()
+    await createOrReplaceScrollBatchAvgDuration()
+    await createOrReplaceScrollAvgCostOfBatchesDateRange()
+    await createOrReplaceScrollNormalizationBatchedTxs()
     console.log('Materialized views for Scroll created!')
   }
 
@@ -59,6 +71,9 @@ import('dotenv').then(async ({ config }) => {
     await createOrReplacePolygonZkEvmBatchFinalityMv()
     await createOrReplacePolygonZkEvmBatchCreatedMv()
     await createOrReplacePolygonZkEvmBatchAvgCostMv()
+    await createOrReplacePolygonZkEvmBatchAvgDuration()
+    await createOrReplacePolygonZkEvmAvgCostOfBatchesDateRange()
+    await createOrReplacePolygonZkEvmNormalizationBatchedTxs()
     console.log("Materialized views for Polygon's ZK-EVM created!")
   }
 
@@ -68,6 +83,9 @@ import('dotenv').then(async ({ config }) => {
     await createOrReplaceZkSyncEraBatchFinalityMv()
     await createOrReplaceZkSyncEraBatchCreatedMv()
     await createOrReplaceZkSyncEraBatchAvgCostMv()
+    await createOrReplaceZkSyncEraBatchAvgDuration()
+    await createOrReplaceZkSyncEraAvgCostOfBatchesDateRange()
+    await createOrReplaceZkSyncEraNormalizationBatchedTxs()
     console.log('Materialized views for zkSync era created!')
   }
 
