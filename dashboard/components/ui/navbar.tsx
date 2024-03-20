@@ -19,11 +19,11 @@ import React, { useState } from 'react'
 
 type NavConfigType = (typeof NAV_CONFIG)[0]
 
-function NavLink({ item, ...props }: { item: NavConfigType }) {
+function NavLink({ item, key }: { item: NavConfigType; key: string }) {
   const isLinkActive = useMatchPath(item.path)
 
   return (
-    <NavbarItem key={props.key}>
+    <NavbarItem key={key}>
       <Link
         href={item.path}
         className={cn(
