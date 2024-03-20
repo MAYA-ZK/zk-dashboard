@@ -1,3 +1,5 @@
+import { cn } from '@nextui-org/system'
+
 function MenuIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
   return (
     <svg
@@ -42,12 +44,18 @@ export function MenuIconDynamic({ isMenuOpen }: { isMenuOpen: boolean }) {
   return (
     <div className="relative">
       <div
-        className={`$absolute inset-0 transition-transform duration-500 ease-in-out ${isMenuOpen ? 'rotate-180 opacity-0' : 'rotate-0 opacity-100'}`}
+        className={cn(
+          'absolute transition-transform duration-500 ease-in-out',
+          isMenuOpen ? 'rotate-180 opacity-0' : 'rotate-0 opacity-100'
+        )}
       >
         <MenuIcon />
       </div>
       <div
-        className={`absolute inset-0 transition-transform duration-500 ease-in-out ${isMenuOpen ? 'rotate-45 opacity-100' : '-rotate-45 opacity-0'}`}
+        className={cn(
+          'absolute transition-transform duration-500 ease-in-out',
+          isMenuOpen ? 'rotate-45 opacity-100' : '-rotate-45 opacity-0'
+        )}
       >
         <CloseIcon />
       </div>

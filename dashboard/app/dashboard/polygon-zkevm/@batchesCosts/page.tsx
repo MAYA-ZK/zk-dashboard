@@ -1,6 +1,10 @@
-import { TABLE_PAGE_SEARCH_PARAM } from '@/app/dashboard/@scrollBatchesCosts/config'
-import { BatchesTable } from '@/app/dashboard/@scrollBatchesCosts/table'
-import { getBatchesCosts, getBatchesCount } from '@/services/scroll/batches'
+import { PolygonBatchTable } from '@/app/dashboard/polygon-zkevm/@batchesCosts/table'
+import {
+  getBatchesCosts,
+  getBatchesCount,
+} from '@/services/polygon-zk-evm/batches'
+
+import { TABLE_PAGE_SEARCH_PARAM } from './config'
 
 export default async function Page({
   searchParams,
@@ -23,7 +27,7 @@ export default async function Page({
         Batches that are created daily with the average number of transactions
         per batch
       </h2>
-      <BatchesTable batches={batches} page={page} pages={pages} />
+      <PolygonBatchTable batches={batches} page={page} pages={pages} />
     </div>
   )
 }

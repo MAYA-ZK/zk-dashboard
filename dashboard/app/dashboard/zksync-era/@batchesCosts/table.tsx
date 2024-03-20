@@ -1,35 +1,9 @@
 'use client'
 
-import { TABLE_PAGE_SEARCH_PARAM } from '@/app/dashboard/@scrollBatchesFinality/config'
-import { usePagination } from '@/lib/hooks/pagination'
-import type { GetBatchesFinalityReturnType } from '@/services/scroll/batches'
-import {
-  ArrowTopRightOnSquareIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-} from '@heroicons/react/24/solid'
-import { Button, Spinner, cn, getKeyValue } from '@nextui-org/react'
-import type { TableProps } from '@nextui-org/table'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-} from '@nextui-org/table'
+import { BatchTable } from '@/components/table/batch-table'
+import type { GetBatchesCostsReturnType } from '@/services/zk-sync-era/batches'
 
-type Batch = {
-  [K in keyof GetBatchesFinalityReturnType[number]]: GetBatchesFinalityReturnType[number][K] extends Date
-    ? string
-    : GetBatchesFinalityReturnType[number][K]
-}
-
-interface BatchTableInteractiveProps extends TableProps {
-  page: number
-  pages: number
-  batches: Array<Batch>
-}
+import { TABLE_PAGE_SEARCH_PARAM } from './config'
 
 const columns = [
   {
@@ -37,31 +11,61 @@ const columns = [
     label: 'Number',
   },
   {
-    key: 'batch_created',
-    label: 'Created',
+    key: 'total_tx_count',
+    label: 'Total transactions',
   },
   {
-    key: 'batch_committed',
-    label: 'Committed',
+    key: 'est_commit_cost_usd',
+    label: 'Commit cost',
   },
   {
-    key: 'batch_verified',
-    label: 'Verified',
+    key: 'est_verification_cost_usd',
+    label: 'Verification cost',
+  },
+  {
+    key: 'est_batch_total_cost_usd',
+    label: 'Batch cost',
   },
   {
     key: 'batch_status',
-    label: 'Status',
+    label: 'Batch status',
   },
   {
     key: 'batch_link',
     label: 'Link',
   },
 ] satisfies Array<{
-  key: keyof Batch
+  key: keyof GetBatchesCostsReturnType[number]
   label: string
 }>
 
-export function BatchesFinalityTable({
+interface ZkSyncBatchTableProps {
+  page: number
+  pages: number
+  batches: GetBatchesCostsReturnType
+}
+
+export function ZkSyncBatchTable({
+  batches,
+  page,
+  pages,
+  ...tableProps
+}: ZkSyncBatchTableProps) {
+  return (
+    <BatchTable
+      page={page}
+      pages={pages}
+      batches={batches}
+      searchParam={TABLE_PAGE_SEARCH_PARAM}
+      columns={columns}
+      linkLabel="zkSync Explorer"
+      {...tableProps}
+    />
+  )
+}
+
+/*
+export function BatchesTable({
   batches,
   page,
   pages,
@@ -79,7 +83,7 @@ export function BatchesFinalityTable({
         classNames={{
           wrapper: cn('rounded-none shadow-none'),
         }}
-        aria-label="Batches finality"
+        aria-label="Batches that are created daily with the average number of transactions per batch"
         {...tableProps}
       >
         <TableHeader columns={columns}>
@@ -117,7 +121,7 @@ export function BatchesFinalityTable({
                         className="flex gap-2 whitespace-nowrap"
                         href={item.batch_link}
                       >
-                        Scroll Scan
+                        zkSync Explorer
                         <ArrowTopRightOnSquareIcon className="size-5" />
                       </a>
                     </TableCell>
@@ -164,3 +168,4 @@ export function BatchesFinalityTable({
     </div>
   )
 }
+*/

@@ -1,4 +1,4 @@
-import { BatchesAvgCost } from '@/app/dashboard/@scrollBatchesAvgCost/chart'
+import { BatchesAvgCost } from './chart'
 
 export default async function Page() {
   return (

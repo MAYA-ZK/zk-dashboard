@@ -8,13 +8,13 @@ const logos = {
       alt: 'Maya Primary Logo',
       width: 72,
       height: 72,
-      src: 'maya-primary-logo-light.svg',
+      src: '/maya-primary-logo-light.svg',
     },
     dark: {
       alt: 'Maya Primary Logo',
       width: 72,
       height: 72,
-      src: 'maya-primary-logo-dark.svg',
+      src: '/maya-primary-logo-dark.svg',
     },
   },
   mayaSecondary: {
@@ -22,13 +22,13 @@ const logos = {
       alt: 'Maya Secondary Logo',
       width: 72,
       height: 72,
-      src: 'maya-secondary-logo-light.svg',
+      src: '/maya-secondary-logo-light.svg',
     },
     dark: {
       alt: 'Maya Secondary Logo',
       width: 72,
       height: 72,
-      src: 'maya-secondary-logo-light.svg',
+      src: '/maya-secondary-logo-dark.svg',
     },
   },
   scrollBlockchain: {
