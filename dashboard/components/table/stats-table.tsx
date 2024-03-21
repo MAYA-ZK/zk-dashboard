@@ -12,6 +12,7 @@ import {
   TableRow,
   getKeyValue,
 } from '@nextui-org/table'
+import Image from 'next/image'
 import type { Key } from 'react'
 import { useEffect, useMemo, useState } from 'react'
 
@@ -34,6 +35,7 @@ export function StatsTable({
       {
         key: 0,
         blockchain: 'Scroll',
+        img: './scroll-icon.svg',
         avgTotalCost:
           currency === 'usd'
             ? scrollStatsRow.avgTotalCostUsd
@@ -48,6 +50,7 @@ export function StatsTable({
       {
         key: 1,
         blockchain: 'zkSync Era',
+        img: './zkSync-icon.svg',
         avgTotalCost:
           currency === 'usd'
             ? zkSyncStatsRow.avgTotalCostUsd
@@ -62,6 +65,7 @@ export function StatsTable({
       {
         key: 2,
         blockchain: 'Polygon zkEVM',
+        img: './polygon-icon.svg',
         avgTotalCost:
           currency === 'usd'
             ? polygonStatsRow.avgTotalCostUsd
@@ -129,9 +133,44 @@ export function StatsTable({
               className="overflow-hidden rounded-md hover:bg-primary/50"
               key={item.key}
             >
-              {(columnKey) => (
-                <TableCell>{getKeyValue(item, columnKey)}</TableCell>
-              )}
+              {(columnKey) => {
+                if (columnKey === 'blockchain') {
+                  return (
+                    <TableCell className="flex gap-x-2">
+                      <Image
+                        src={item.img}
+                        width={20}
+                        height={20}
+                        alt={item.blockchain}
+                      />
+                      {getKeyValue(item, columnKey)}
+                    </TableCell>
+                  )
+                } else if (columnKey === 'avgTotalCost') {
+                  {
+                    /* TODO: FIX: need to do this for 'avgTotalCostBy100' but for whatever reason
+                     * including it in this if results in the `avgTotalCost` column being populated
+                     * with `avgTotalCostBy100` also - :shrug: */
+                  }
+                  return (
+                    <TableCell className="flex gap-x-2">
+                      <Image
+                        src={
+                          currency === 'usd'
+                            ? './usdc-logo.svg'
+                            : './eth-logo.svg'
+                        }
+                        width={20}
+                        height={20}
+                        alt="currency"
+                      />
+                      {getKeyValue(item, columnKey)}
+                    </TableCell>
+                  )
+                }
+
+                return <TableCell>{getKeyValue(item, columnKey)}</TableCell>
+              }}
             </TableRow>
           )}
         </TableBody>
