@@ -21,6 +21,9 @@ const avgCostOfBatchesDateRangeQuery = db
     avgCommitCostUsd: zkSyncEraAvgCostOfBatchesDateRange.avg_commit_cost_usd,
     avgVerifyCostUsd:
       zkSyncEraAvgCostOfBatchesDateRange.avg_verification_cost_usd,
+    avgExecuteCostEth: zkSyncEraAvgCostOfBatchesDateRange.avg_execute_cost_eth,
+    avgExecuteCostUsd:
+      zkSyncEraAvgCostOfBatchesDateRange.avg_est_execute_cost_usd,
   })
   .from(zkSyncEraAvgCostOfBatchesDateRange)
   .prepare('avgCostOfBatchesDateRange')
@@ -29,6 +32,7 @@ const avgBatchDurationQuery = db
   .select({
     period: zkSyncEraBatchAvgDuration.period,
     avgFinality: zkSyncEraBatchAvgDuration.avg_finality,
+    avgExecution: zkSyncEraBatchAvgDuration.avg_execution,
   })
   .from(zkSyncEraBatchAvgDuration)
   .prepare('avgBatchDuration')
@@ -39,13 +43,13 @@ const normalizationBatchedTxsQuery = db
     avgTotalEthCostBy100:
       zkSyncEraNormalizationBatchedTxs.avg_total_eth_cost_by_100_with_state_diff,
     avgTotalUsdCostBy100:
-      zkSyncEraNormalizationBatchedTxs.avg_total_eth_cost_by_100_with_state_diff,
+      zkSyncEraNormalizationBatchedTxs.avg_total_usd_cost_by_100_with_state_diff,
     avgDurationBy100: zkSyncEraNormalizationBatchedTxs.avg_duration_by_100,
   })
   .from(zkSyncEraNormalizationBatchedTxs)
   .prepare('normalizationBatchedTxs')
 
-export async function getzkSyncEraStats() {
+export async function getZkSyncEraStats() {
   const [avgCostOfBatchesDateRange, avgBatchDuration, normalizationBatchedTxs] =
     await Promise.all([
       (await avgCostOfBatchesDateRangeQuery.execute()).map((item) => ({
