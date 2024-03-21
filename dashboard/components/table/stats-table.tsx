@@ -2,9 +2,7 @@
 
 import type { FORCE_ANY } from '@/lib/types'
 import { InformationCircleIcon } from '@heroicons/react/24/solid'
-import { cn } from '@nextui-org/react'
-import { Tab, Tabs } from '@nextui-org/react'
-import { Tooltip } from '@nextui-org/react'
+import { Tab, Tabs, Tooltip, cn } from '@nextui-org/react'
 import {
   Table,
   TableBody,
@@ -16,13 +14,13 @@ import {
 } from '@nextui-org/table'
 import Image from 'next/image'
 import type { Key } from 'react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 
 export function StatsTable({
   columns,
   stats,
 }: {
-  columns: Array<{ key: string; label: string }>
+  columns: Array<{ key: string; label: string; description?: string }>
   stats: FORCE_ANY
 }) {
   const [period, setPeriod] = useState<string>('7_days')
@@ -38,53 +36,118 @@ export function StatsTable({
         key: 0,
         blockchain: 'Scroll',
         img: './scroll-icon.svg',
-        avgTotalCost:
-          currency === 'usd'
-            ? scrollStatsRow.avgTotalCostUsd
-            : scrollStatsRow.avgTotalCostEth,
-        avgTotalCostBy100:
-          currency === 'usd'
-            ? scrollStatsRow.avgTotalUsdCostBy100
-            : scrollStatsRow.avgTotalEthCostBy100,
-
-        ...scrollStatsRow,
+        avgFinality: scrollStatsRow.avgFinality,
+        avgDurationBy100: scrollStatsRow.avgDurationBy100,
+        avgTxsInsideBatch: Number(scrollStatsRow.avgTxsInsideBatch).toFixed(3),
+        avgTotalCost: {
+          cost:
+            currency === 'usd'
+              ? Number(scrollStatsRow.avgTotalCostUsd).toFixed(3)
+              : Number(scrollStatsRow.avgTotalCostEth).toString(3),
+          breakdown: {
+            description: 'Average cost breakdown:',
+            commitCost:
+              currency === 'usd'
+                ? Number(scrollStatsRow.avgCommitCostUsd).toFixed(3)
+                : Number(scrollStatsRow.avgCommitCostEth).toFixed(3),
+            verifyCost:
+              currency === 'usd'
+                ? Number(scrollStatsRow.avgVerifyCostUsd).toFixed(3)
+                : Number(scrollStatsRow.avgVerifyCostEth).toFixed(3),
+          },
+        },
+        avgTotalCostBy100: {
+          cost:
+            currency === 'usd'
+              ? Number(scrollStatsRow.avgTotalUsdCostBy100).toFixed(3)
+              : Number(scrollStatsRow.avgTotalEthCostBy100).toFixed(3),
+          breakdown: {
+            description: 'Average cost breakdown:',
+            txCost:
+              currency === 'usd'
+                ? Number(scrollStatsRow.avgTxsCostUsd).toFixed(6)
+                : Number(scrollStatsRow.avgTxsCostEth).toFixed(6),
+          },
+        },
       },
       {
         key: 1,
         blockchain: 'zkSync Era',
         img: './zkSync-icon.svg',
-        avgTotalCost:
-          currency === 'usd'
-            ? zkSyncStatsRow.avgTotalCostUsd
-            : zkSyncStatsRow.avgTotalCostEth,
-        avgTotalCostBy100:
-          currency === 'usd'
-            ? zkSyncStatsRow.avgTotalUsdCostBy100
-            : zkSyncStatsRow.avgTotalEthCostBy100,
-
-        ...zkSyncStatsRow,
+        avgFinality: zkSyncStatsRow.avgFinality,
+        avgDurationBy100: zkSyncStatsRow.avgDurationBy100,
+        avgTxsInsideBatch: Number(zkSyncStatsRow.avgTxsInsideBatch).toFixed(3),
+        avgTotalCost: {
+          cost:
+            currency === 'usd'
+              ? Number(zkSyncStatsRow.avgTotalCostUsd).toFixed(3)
+              : Number(zkSyncStatsRow.avgTotalCostEth).toString(3),
+          breakdown: {
+            description: 'Average cost breakdown:',
+            commitCost:
+              currency === 'usd'
+                ? Number(zkSyncStatsRow.avgCommitCostUsd).toFixed(3)
+                : Number(zkSyncStatsRow.avgCommitCostEth).toFixed(3),
+            verifyCost:
+              currency === 'usd'
+                ? Number(zkSyncStatsRow.avgVerifyCostUsd).toFixed(3)
+                : Number(zkSyncStatsRow.avgVerifyCostEth).toFixed(3),
+          },
+        },
+        avgTotalCostBy100: {
+          cost:
+            currency === 'usd'
+              ? Number(zkSyncStatsRow.avgTotalUsdCostBy100).toFixed(3)
+              : Number(zkSyncStatsRow.avgTotalEthCostBy100).toFixed(3),
+          breakdown: {
+            description: 'Average cost breakdown:',
+            txCost:
+              currency === 'usd'
+                ? Number(zkSyncStatsRow.avgTxsCostUsd).toFixed(6)
+                : Number(zkSyncStatsRow.avgTxsCostEth).toFixed(6),
+          },
+        },
       },
       {
         key: 2,
         blockchain: 'Polygon zkEVM',
         img: './polygon-icon.svg',
-        avgTotalCost:
-          currency === 'usd'
-            ? polygonStatsRow.avgTotalCostUsd
-            : polygonStatsRow.avgTotalCostEth,
-        avgTotalCostBy100:
-          currency === 'usd'
-            ? polygonStatsRow.avgTotalUsdCostBy100
-            : polygonStatsRow.avgTotalEthCostBy100,
-
-        ...polygonStatsRow,
+        avgFinality: polygonStatsRow.avgFinality,
+        avgDurationBy100: polygonStatsRow.avgDurationBy100,
+        avgTxsInsideBatch: Number(polygonStatsRow.avgTxsInsideBatch).toFixed(3),
+        avgTotalCost: {
+          cost:
+            currency === 'usd'
+              ? Number(polygonStatsRow.avgTotalCostUsd).toFixed(3)
+              : Number(polygonStatsRow.avgTotalCostEth).toString(3),
+          breakdown: {
+            description: 'Average cost breakdown:',
+            commitCost:
+              currency === 'usd'
+                ? Number(polygonStatsRow.avgCommitCostUsd).toFixed(3)
+                : Number(polygonStatsRow.avgCommitCostEth).toFixed(3),
+            verifyCost:
+              currency === 'usd'
+                ? Number(polygonStatsRow.avgVerifyCostUsd).toFixed(3)
+                : Number(polygonStatsRow.avgVerifyCostEth).toFixed(3),
+          },
+        },
+        avgTotalCostBy100: {
+          cost:
+            currency === 'usd'
+              ? Number(polygonStatsRow.avgTotalUsdCostBy100).toFixed(3)
+              : Number(polygonStatsRow.avgTotalEthCostBy100).toFixed(3),
+          breakdown: {
+            description: 'Average cost breakdown:',
+            txCost:
+              currency === 'usd'
+                ? Number(polygonStatsRow.avgTxsCostUsd).toFixed(6)
+                : Number(polygonStatsRow.avgTxsCostEth).toFixed(6),
+          },
+        },
       },
     ]
   }, [stats, period, currency])
-
-  useEffect(() => {
-    console.log('[StatsTable] statsRow', rows)
-  }, [rows])
 
   return (
     <div className="h-unit-8xl w-full rounded-md bg-content1 p-8">
@@ -160,35 +223,67 @@ export function StatsTable({
               {(columnKey) => {
                 if (columnKey === 'blockchain') {
                   return (
-                    <TableCell className="flex gap-x-2">
-                      <Image
-                        src={item.img}
-                        width={20}
-                        height={20}
-                        alt={item.blockchain}
-                      />
-                      {getKeyValue(item, columnKey)}
+                    <TableCell>
+                      <div className="flex gap-x-2">
+                        <Image
+                          src={item.img}
+                          width={20}
+                          height={20}
+                          alt={item.blockchain}
+                        />
+                        {getKeyValue(item, columnKey)}
+                      </div>
                     </TableCell>
                   )
-                } else if (columnKey === 'avgTotalCost') {
-                  {
-                    /* TODO: FIX: need to do this for 'avgTotalCostBy100' but for whatever reason
-                     * including it in this if results in the `avgTotalCost` column being populated
-                     * with `avgTotalCostBy100` also - :shrug: */
-                  }
+                } else if (
+                  columnKey === 'avgTotalCost' ||
+                  columnKey === 'avgTotalCostBy100'
+                ) {
+                  const columnValue = getKeyValue(item, columnKey)
+                  const breakdown = columnValue.breakdown
+
                   return (
-                    <TableCell className="flex gap-x-2">
-                      <Image
-                        src={
-                          currency === 'usd'
-                            ? './usdc-logo.svg'
-                            : './eth-logo.svg'
+                    <TableCell>
+                      <Tooltip
+                        className="bg-primary"
+                        content={
+                          <div className="max-w-48 p-2">
+                            <div className="pb-4 text-medium font-normal">
+                              {breakdown.description}
+                            </div>
+                            {columnKey === 'avgTotalCost' ? (
+                              <>
+                                <div className="pb-1 text-xs font-normal">
+                                  Commit Cost: {breakdown.commitCost}
+                                </div>
+                                <div className="pb-2 text-xs font-normal">
+                                  Verify Cost: {breakdown.verifyCost}
+                                </div>
+                              </>
+                            ) : (
+                              <>
+                                <div className="pb-1 text-xs font-normal">
+                                  Proving cost per tx: {breakdown.txCost}
+                                </div>
+                              </>
+                            )}
+                          </div>
                         }
-                        width={20}
-                        height={20}
-                        alt="currency"
-                      />
-                      {getKeyValue(item, columnKey)}
+                      >
+                        <div className="flex gap-x-2 rounded-lg bg-background p-2">
+                          <Image
+                            src={
+                              currency === 'usd'
+                                ? './usdc-logo.svg'
+                                : './eth-logo.svg'
+                            }
+                            width={20}
+                            height={20}
+                            alt="currency"
+                          />
+                          {Number(columnValue.cost).toFixed(3)}
+                        </div>
+                      </Tooltip>
                     </TableCell>
                   )
                 }
