@@ -11,22 +11,28 @@ const columns = [
   {
     key: 'avgFinality',
     label: 'Avg. Batch Proving time',
+    description:
+      'Avgerage time it takes for a batch to of transactions to be proven',
   },
   {
     key: 'avgDurationBy100',
     label: 'Avg. Proving time for 100txs',
+    description: 'Avg. Proving time for 100txs',
   },
   {
     key: 'avgTxsInsideBatch',
     label: 'Avg. Txs per Batch',
+    description: 'Avg. Txs per Batch',
   },
   {
     key: 'avgTotalCost',
     label: 'Avg. Batch Proving Cost',
+    description: 'Avg. Batch Proving Cost',
   },
   {
     key: 'avgTotalCostBy100',
     label: 'Avg. Proving Cost for 100txs',
+    description: 'Avg. Proving Cost for 100txs',
   },
 ]
 

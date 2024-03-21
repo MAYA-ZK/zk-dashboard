@@ -1,8 +1,10 @@
 'use client'
 
 import type { FORCE_ANY } from '@/lib/types'
+import { InformationCircleIcon } from '@heroicons/react/24/solid'
 import { cn } from '@nextui-org/react'
 import { Tab, Tabs } from '@nextui-org/react'
+import { Tooltip } from '@nextui-org/react'
 import {
   Table,
   TableBody,
@@ -123,9 +125,31 @@ export function StatsTable({
         aria-label="Table description"
       >
         <TableHeader columns={columns}>
-          {(column) => (
-            <TableColumn key={column.key}>{column.label}</TableColumn>
-          )}
+          {(column) => {
+            if (column.key !== 'blockchain') {
+              return (
+                <TableColumn key={column.key}>
+                  <Tooltip
+                    className="bg-primary"
+                    content={
+                      <div className="max-w-48 p-2">
+                        <div className="text-xs font-normal">
+                          {column.description}
+                        </div>
+                      </div>
+                    }
+                  >
+                    <div className="flex gap-x-2">
+                      {column.label}
+                      <InformationCircleIcon width={20} height={20} />
+                    </div>
+                  </Tooltip>
+                </TableColumn>
+              )
+            }
+
+            return <TableColumn key={column.key}>{column.label}</TableColumn>
+          }}
         </TableHeader>
         <TableBody items={rows}>
           {(item) => (
