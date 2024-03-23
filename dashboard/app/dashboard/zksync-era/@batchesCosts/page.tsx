@@ -21,13 +21,5 @@ export default async function Page({
   const batchesCount = await getBatchesCount()
   const pages = Math.ceil(batchesCount / 10)
 
-  return (
-    <div className="flex w-full flex-col gap-8 rounded-md bg-content1 p-8">
-      <h2 className="text-center">
-        Batches that are created daily with the average number of transactions
-        per batch
-      </h2>
-      <ZkSyncBatchTable batches={batches} page={page} pages={pages} />
-    </div>
-  )
+  return <ZkSyncBatchTable batches={batches} page={page} pages={pages} />
 }

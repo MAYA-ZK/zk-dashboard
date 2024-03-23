@@ -15,7 +15,15 @@ export type GetBatchesFinalityReturnType = Awaited<
 
 export async function getBatchesCosts(page: number = 1, pageSize: number = 10) {
   return await db
-    .select()
+    .select({
+      batchNum: zkSyncEraBatchCostMv.batch_num,
+      totalTxCount: zkSyncEraBatchCostMv.total_tx_count,
+      estCommitCostUsd: zkSyncEraBatchCostMv.est_commit_cost_usd,
+      estVerificationCostUsd: zkSyncEraBatchCostMv.est_verification_cost_usd,
+      estBatchTotalCostUsd: zkSyncEraBatchCostMv.est_batch_total_cost_usd,
+      batchStatus: zkSyncEraBatchCostMv.batch_status,
+      batchLink: zkSyncEraBatchCostMv.batch_link,
+    })
     .from(zkSyncEraBatchCostMv)
     .orderBy(desc(zkSyncEraBatchCostMv.batch_num))
     .limit(pageSize)
@@ -37,12 +45,12 @@ export async function getBatchesFinality(
 ) {
   return await db
     .select({
-      batch_num: zkSyncEraBatchFinalityMv.batch_num,
-      batch_created: zkSyncEraBatchFinalityMv.batch_created,
-      batch_committed: zkSyncEraBatchFinalityMv.batch_committed,
-      batch_verified: zkSyncEraBatchFinalityMv.batch_verified,
-      batch_status: zkSyncEraBatchFinalityMv.batch_status,
-      batch_link: zkSyncEraBatchFinalityMv.batch_link,
+      batchNum: zkSyncEraBatchFinalityMv.batch_num,
+      batchCreated: zkSyncEraBatchFinalityMv.batch_created,
+      batchCommitted: zkSyncEraBatchFinalityMv.batch_committed,
+      batchVerified: zkSyncEraBatchFinalityMv.batch_verified,
+      batchStatus: zkSyncEraBatchFinalityMv.batch_status,
+      batchLink: zkSyncEraBatchFinalityMv.batch_link,
     })
     .from(zkSyncEraBatchFinalityMv)
     .orderBy(desc(zkSyncEraBatchFinalityMv.batch_num))

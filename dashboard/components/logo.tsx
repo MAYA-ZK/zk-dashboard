@@ -1,4 +1,4 @@
-import { cn } from '@nextui-org/system'
+import { cn } from '@/lib/utils'
 import type { ImageProps } from 'next/image'
 import Image from 'next/image'
 

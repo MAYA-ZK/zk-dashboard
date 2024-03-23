@@ -1,13 +1,19 @@
 import { DailyCreatedBatchesWithAverage } from '@/app/dashboard/zksync-era/@dailyAvg/chart'
+import { ChartHeading } from '@/components/chart/chart-heading'
+import { ChartWrapper } from '@/components/chart/wrapper'
 
 export default async function Page() {
   return (
-    <div className="h-unit-8xl w-full rounded-md bg-content1 p-8">
-      <h2 className="text-center">
-        Batches that are created daily with the average number of transactions
-        per batch
-      </h2>
-      <DailyCreatedBatchesWithAverage />
+    <div className="flex flex-col gap-6 rounded-md bg-background p-4">
+      <ChartHeading
+        subheading="Batches created daily with the average number of transactions
+        per batch"
+      >
+        Daily batches
+      </ChartHeading>
+      <ChartWrapper>
+        <DailyCreatedBatchesWithAverage />
+      </ChartWrapper>
     </div>
   )
 }

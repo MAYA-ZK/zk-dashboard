@@ -1,21 +1,16 @@
-import type { ButtonProps } from '@nextui-org/react'
-import { Button } from '@nextui-org/react'
+import type { ButtonProps } from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 import type { LinkProps } from 'next/link'
 import Link from 'next/link'
 
-interface ButtonLinkProps
-  extends Omit<ButtonProps, keyof Omit<LinkProps, 'as'>>,
-    Omit<LinkProps, 'as'> {
+interface ButtonLinkProps extends ButtonProps {
   href: LinkProps['href']
 }
 
 export function ButtonLink({ href, ...props }: ButtonLinkProps) {
   return (
-    <Button
-      as={Link}
-      // @ts-expect-error: `next/link` types are not compatible with `@nextui-org/react` types for `href`
-      href={href}
-      {...props}
-    />
+    <Button asChild {...props}>
+      <Link href={href}>{props.children}</Link>
+    </Button>
   )
 }

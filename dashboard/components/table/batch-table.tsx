@@ -1,25 +1,30 @@
 'use client'
 
-import { usePagination } from '@/lib/hooks/pagination'
-import {
-  ArrowTopRightOnSquareIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-} from '@heroicons/react/24/solid'
-import { Button, Spinner, cn, getKeyValue } from '@nextui-org/react'
-import type { TableProps } from '@nextui-org/table'
+import { Button } from '@/components/ui/button'
 import {
   Table,
   TableBody,
   TableCell,
-  TableColumn,
+  TableHead,
   TableHeader,
   TableRow,
-} from '@nextui-org/table'
+} from '@/components/ui/table'
+import { usePagination } from '@/lib/hooks/pagination'
+import { cn } from '@/lib/utils'
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ExternalLink,
+  LoaderCircle,
+} from 'lucide-react'
 
-export interface BatchTableInteractiveProps<
-  TBatch extends { batch_num: number; batch_link: string },
-> extends TableProps {
+type Batch = { batchNum: number; batchLink: string } & Record<
+  string | number,
+  string | number
+>
+
+export interface BatchTableInteractiveProps<TBatch extends Batch> {
+  title: string
   page: number
   pages: number
   columns: Array<{ key: keyof TBatch; label: string }>
@@ -28,9 +33,8 @@ export interface BatchTableInteractiveProps<
   batches: Array<TBatch>
 }
 
-export function BatchTable<
-  TBatch extends { batch_num: number; batch_link: string },
->({
+export function BatchTable<TBatch extends Batch>({
+  title,
   batches,
   page,
   pages,
@@ -46,65 +50,66 @@ export function BatchTable<
   } = usePagination(page, searchParam)
 
   return (
-    <div>
-      <Table
-        classNames={{
-          wrapper: cn('rounded-none shadow-none'),
-        }}
-        aria-label="Batches finality"
-        {...tableProps}
-      >
-        <TableHeader columns={columns}>
-          {(column) => (
-            <TableColumn
-              className={cn({
-                'text-right w-px': column.key === 'batch_link',
-              })}
-              key={column.key as string}
-            >
-              {column.label}
-            </TableColumn>
-          )}
-        </TableHeader>
-        <TableBody
-          items={batches}
-          isLoading={isPending}
-          loadingContent={
-            <div className="flex size-full items-center justify-center bg-white opacity-80">
-              <Spinner />
-            </div>
-          }
+    <div className="flex w-full flex-col gap-4 rounded-md bg-background px-5 py-3">
+      <h2 className="p-2 text-2xl font-semibold">{title}</h2>
+      <div className="relative">
+        {isPending && (
+          <div className="absolute z-10 flex size-full items-center justify-center bg-background/30">
+            <LoaderCircle className="animate-spin text-primary" size={32} />
+          </div>
+        )}
+        <Table
+          className={cn('rounded-none shadow-none')}
+          aria-label="Batches finality"
+          {...tableProps}
         >
-          {(item) => (
-            <TableRow
-              className="overflow-hidden rounded-md hover:bg-primary/50"
-              key={item.batch_num}
-            >
-              {(columnKey) => {
-                if (columnKey === 'batch_link') {
-                  return (
-                    <TableCell className="rounded-r-md">
-                      <a
-                        target="_blank"
-                        className="flex gap-2 whitespace-nowrap"
-                        href={item.batch_link}
-                      >
-                        {linkLabel}
-                        <ArrowTopRightOnSquareIcon className="size-5" />
-                      </a>
-                    </TableCell>
-                  )
-                }
+          <TableHeader>
+            <TableRow isHeader>
+              {columns.map((column, index) => {
                 return (
-                  <TableCell className="first:rounded-l-md">
-                    {getKeyValue(item, columnKey)}
-                  </TableCell>
+                  <TableHead
+                    key={column.key.toString()}
+                    className={cn({
+                      'text-end w-1': index === columns.length - 1,
+                    })}
+                  >
+                    {column.label}
+                  </TableHead>
                 )
-              }}
+              })}
             </TableRow>
-          )}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {batches.map((batch) => {
+              return (
+                <TableRow key={batch.batchNum}>
+                  {columns.map((column) => {
+                    if (column.key === 'batchLink') {
+                      return (
+                        <TableCell key={column.key.toString()}>
+                          <a
+                            target="_blank"
+                            className="flex items-center justify-end gap-2 whitespace-nowrap"
+                            href={batch.batchLink}
+                          >
+                            {linkLabel}
+                            <ExternalLink size={16} />
+                          </a>
+                        </TableCell>
+                      )
+                    }
+                    return (
+                      <TableCell key={column.key.toString()}>
+                        {batch[column.key]}
+                      </TableCell>
+                    )
+                  })}
+                </TableRow>
+              )
+            })}
+          </TableBody>
+        </Table>
+      </div>
       <div className="flex items-center justify-center gap-4">
         <Button
           size="sm"
@@ -117,9 +122,8 @@ export function BatchTable<
         >
           <ChevronLeftIcon width={16} height={16} />
         </Button>
-        <p className="w-24 text-center text-default-400">
-          <span className="text-default-foreground">{optimisticPage}</span> /{' '}
-          {pages}
+        <p className="w-24 text-center">
+          <span className="">{optimisticPage}</span> / {pages}
         </p>
         <Button
           size="sm"

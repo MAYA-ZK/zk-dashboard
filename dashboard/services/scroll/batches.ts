@@ -15,7 +15,15 @@ export type GetBatchesFinalityReturnType = Awaited<
 
 export async function getBatchesCosts(page: number = 1, pageSize: number = 10) {
   return await db
-    .select()
+    .select({
+      batchNum: scrollBatchCostMV.batch_num,
+      totalTxCount: scrollBatchCostMV.total_tx_count,
+      estCommitCostUsd: scrollBatchCostMV.est_commit_cost_usd,
+      estVerificationCostUsd: scrollBatchCostMV.est_verification_cost_usd,
+      estBatchTotalCostUsd: scrollBatchCostMV.est_batch_total_cost_usd,
+      batchStatus: scrollBatchCostMV.batch_status,
+      batchLink: scrollBatchCostMV.batch_link,
+    })
     .from(scrollBatchCostMV)
     .orderBy(desc(scrollBatchCostMV.batch_num))
     .limit(pageSize)
@@ -37,12 +45,12 @@ export async function getBatchesFinality(
 ) {
   return await db
     .select({
-      batch_num: scrollBatchFinalityMv.batch_num,
-      batch_created: scrollBatchFinalityMv.batch_created,
-      batch_committed: scrollBatchFinalityMv.batch_committed,
-      batch_verified: scrollBatchFinalityMv.batch_verified,
-      batch_status: scrollBatchFinalityMv.batch_status,
-      batch_link: scrollBatchFinalityMv.batch_link,
+      batchNum: scrollBatchFinalityMv.batch_num,
+      batchCreated: scrollBatchFinalityMv.batch_created,
+      batchCommitted: scrollBatchFinalityMv.batch_committed,
+      batchVerified: scrollBatchFinalityMv.batch_verified,
+      batchStatus: scrollBatchFinalityMv.batch_status,
+      batchLink: scrollBatchFinalityMv.batch_link,
     })
     .from(scrollBatchFinalityMv)
     .orderBy(desc(scrollBatchFinalityMv.batch_num))

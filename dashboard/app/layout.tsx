@@ -1,5 +1,5 @@
-import { MayaNavbar } from '@/components/ui/navbar'
-import { cn } from '@nextui-org/system'
+import { Navbar } from '@/components/navbar'
+import { cn } from '@/lib/utils'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import type { ReactNode } from 'react'
@@ -16,12 +16,18 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    // https://github.com/pacocoursey/next-themes?tab=readme-ov-file#with-app
-    <html lang="en" suppressHydrationWarning>
-      <body className={cn(inter.className, 'flex h-screen flex-col')}>
+    <html lang="en">
+      <body
+        className={cn(
+          inter.className,
+          'flex min-h-screen flex-col items-center bg-muted'
+        )}
+      >
         <Providers>
-          <MayaNavbar />
-          {children}
+          <Navbar />
+          <div className="flex size-full max-w-screen-2xl flex-col px-2 pt-16 md:px-10">
+            {children}
+          </div>
         </Providers>
       </body>
     </html>

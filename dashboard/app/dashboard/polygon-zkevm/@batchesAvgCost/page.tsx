@@ -1,10 +1,15 @@
+import { ChartHeading } from '@/components/chart/chart-heading'
+import { ChartWrapper } from '@/components/chart/wrapper'
+
 import { BatchesAvgCost } from './chart'
 
 export default async function Page() {
   return (
-    <div className="h-unit-8xl w-full rounded-md bg-content1 p-8">
-      <h2 className="text-center">Batch cost</h2>
-      <BatchesAvgCost />
+    <div className="flex flex-col gap-6 rounded-md bg-background p-4">
+      <ChartHeading>Batch cost</ChartHeading>
+      <ChartWrapper>
+        <BatchesAvgCost />
+      </ChartWrapper>
     </div>
   )
 }
