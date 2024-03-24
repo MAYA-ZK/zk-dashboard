@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/* https://ui.jln.dev/ */
 @layer base {
   :root {
     --background: 240 0% 100%;

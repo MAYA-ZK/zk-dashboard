@@ -4,13 +4,26 @@ import { PeriodToggle } from '@/app/_components/period-toggle'
 import { PolygonZkEvmStats } from '@/app/_components/stats/polygon-zk-evm'
 import { ScrollStats } from '@/app/_components/stats/scroll'
 import { ZkSynEraStats } from '@/app/_components/stats/zk-sync-era.tsx'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
   TableBody,
+  TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { Suspense } from 'react'
+
+function LoadingRow() {
+  return (
+    <TableRow className="hover:bg-accent/40">
+      <TableCell colSpan={6} className="px-0 py-0.5 text-center">
+        <Skeleton className="h-10 w-full" />
+      </TableCell>
+    </TableRow>
+  )
+}
 
 export default async function Home() {
   return (
@@ -70,9 +83,15 @@ export default async function Home() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              <ScrollStats />
-              <ZkSynEraStats />
-              <PolygonZkEvmStats />
+              <Suspense fallback={<LoadingRow />}>
+                <ScrollStats />
+              </Suspense>
+              <Suspense fallback={<LoadingRow />}>
+                <ZkSynEraStats />
+              </Suspense>
+              <Suspense fallback={<LoadingRow />}>
+                <PolygonZkEvmStats />
+              </Suspense>
             </TableBody>
           </Table>
         </div>
