@@ -24,7 +24,13 @@ function NavLink({ href, className, ...props }: ComponentProps<typeof Link>) {
   return (
     <Link
       href={href}
-      className={cn('text-black', isLinkActive && 'sm:text-primary', className)}
+      className={cn(
+        'text-primary-foreground',
+        {
+          'text-muted  md:text-primary': isLinkActive,
+        },
+        className
+      )}
       {...props}
     />
   )
@@ -51,19 +57,19 @@ export function Navbar() {
   return (
     <Collapsible>
       <nav className="fixed left-0 top-0 z-10 flex h-16 w-full justify-center bg-muted px-6">
-        <CollapsibleContent className="CollapsibleContent absolute left-0 top-0 size-full h-screen">
+        <CollapsibleContent className="CollapsibleContent absolute left-0 top-0 size-full h-screen md:hidden">
           <div className="flex size-full flex-col gap-4 bg-primary px-8 pt-16">
             {links}
           </div>
         </CollapsibleContent>
         <div className="z-10 flex h-16 w-full max-w-screen-2xl items-center justify-between">
-          <div className="flex items-center gap-2">
+          <Link href={routes.home} className="flex items-center gap-2">
             <Logo
               id="mayaPrimary"
               className="h-[34px] w-[116px] sm:h-[56px] sm:w-[150px]"
             />
             <p>Dashboard</p>
-          </div>
+          </Link>
           <CollapsibleTrigger className="md:hidden" asChild>
             <Button
               variant="ghost"

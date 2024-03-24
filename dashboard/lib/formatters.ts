@@ -9,3 +9,15 @@ export function formatDate(
 ) {
   return new Intl.DateTimeFormat(config?.locales, config?.options).format(date)
 }
+
+export function formatStringNumber(number: string, decimals = 2) {
+  const split = number.split('.')
+  const num = split[0]
+  const decimal = split[1]
+
+  if (decimal) {
+    return `${num}.${decimal.slice(0, decimals)}`
+  }
+
+  return num
+}

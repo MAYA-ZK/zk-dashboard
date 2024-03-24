@@ -4,12 +4,12 @@ import {
   integer,
   interval,
   numeric,
-  pgEnum,
   text,
   timestamp,
   varchar,
 } from 'drizzle-orm/pg-core'
 
+import { period } from './common'
 import { createPgMaterializedView } from './utils'
 
 export const {
@@ -332,8 +332,6 @@ export const {
       tx_date DESC;
   `
 )
-
-const period = pgEnum('period', ['7_days', '30_days', '90_days'])
 
 export const {
   materializedView: zkSyncEraAvgCostOfBatchesDateRange,

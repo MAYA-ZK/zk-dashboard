@@ -12,6 +12,9 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'ZK Dashboard',
   description: 'ZK Dashboard',
+  icons: {
+    icon: '/favicon.ico',
+  },
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -25,7 +28,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       >
         <Providers>
           <Navbar />
-          <div className="flex size-full max-w-screen-2xl flex-col px-2 pt-16 md:px-10">
+          <div className="flex size-full max-w-screen-2xl grow flex-col px-2 pt-16 md:px-10">
             {children}
           </div>
         </Providers>
