@@ -35,9 +35,13 @@ export default async function Home() {
             <h2 className="text-4xl font-semibold">Finality and Costs</h2>
           </div>
           <div className="flex items-center">
-            <PeriodToggle />
+            <Suspense>
+              <PeriodToggle />
+            </Suspense>
             <span className="px-4">-</span>
-            <CurrencyToggle />
+            <Suspense>
+              <CurrencyToggle />
+            </Suspense>
           </div>
         </div>
         <div>
