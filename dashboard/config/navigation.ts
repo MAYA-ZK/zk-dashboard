@@ -14,7 +14,7 @@ export const NAV_CONFIG = [
     path: routes.polygon,
   },
   {
-    title: 'MAYA.com',
+    title: 'MAYA-ZK.com',
     path: routes.maya,
   },
 ] as const

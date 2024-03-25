@@ -3,6 +3,7 @@ import {
   USD_DECIMALS_TO_DISPLAY,
 } from '@/app/_components/constants'
 import { StatsRow } from '@/app/_components/stats-row'
+import { routes } from '@/config/routes'
 import { formatStringNumber } from '@/lib/formatters'
 import { getPolygonZkEvmStats } from '@/services/polygon-zk-evm/stats'
 import { mapValues } from 'lodash'
@@ -14,6 +15,7 @@ export async function PolygonZkEvmStats() {
     return {
       logo: 'polygon-zk-evm-logo.svg',
       blockchain: 'Polygon zkEVM',
+      blockchainPath: routes.polygon,
       finality: { value: value.avgFinality },
       finalityNormalized: value.avgDurationBy100,
       batchSize: value.avgTxsInsideBatch,

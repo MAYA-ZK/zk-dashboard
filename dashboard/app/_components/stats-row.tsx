@@ -9,11 +9,13 @@ import { InfoTooltip } from '@/app/_components/info-tooltip'
 import { useCurrencyState, usePeriodState } from '@/app/_utils/query-state'
 import { TableCell, TableRow } from '@/components/ui/table'
 import Image from 'next/image'
+import Link from 'next/link'
 
 import type { Period } from '@zk-dashboard/common/lib/period'
 
 type RowData = {
   logo: string
+  blockchainPath: string
   blockchain: string
   finality: {
     value: string
@@ -56,7 +58,9 @@ export function StatsRow({ data }: StatsRowProps) {
             className="size-auto"
           />
         </div>
-        {dataForPeriod.blockchain}
+        <Link className="hover:underline" href={dataForPeriod.blockchainPath}>
+          {dataForPeriod.blockchain}
+        </Link>
       </TableCell>
       <TableCell>
         {dataForPeriod.finality.value}{' '}

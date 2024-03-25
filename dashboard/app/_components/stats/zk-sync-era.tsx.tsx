@@ -3,6 +3,7 @@ import {
   USD_DECIMALS_TO_DISPLAY,
 } from '@/app/_components/constants'
 import { StatsRow } from '@/app/_components/stats-row'
+import { routes } from '@/config/routes'
 import { formatStringNumber } from '@/lib/formatters'
 import { getZkSyncEraStats } from '@/services/zk-sync-era/stats'
 import { mapValues } from 'lodash'
@@ -14,6 +15,7 @@ export async function ZkSynEraStats() {
     return {
       logo: 'zk-sync-era-logo.svg',
       blockchain: 'ZK Sync Era',
+      blockchainPath: routes.zkSync,
       finality: {
         value: value.avgFinality,
         additionalInfo: [
