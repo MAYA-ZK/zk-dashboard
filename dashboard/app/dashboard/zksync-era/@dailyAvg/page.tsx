@@ -1,3 +1,4 @@
+import { SuspenseWithSkeleton } from '@/app/dashboard/_components/suspense-skeleton'
 import { DailyCreatedBatchesWithAverage } from '@/app/dashboard/zksync-era/@dailyAvg/chart'
 import { ChartHeading } from '@/components/chart/chart-heading'
 import { ChartWrapper } from '@/components/chart/wrapper'
@@ -12,7 +13,9 @@ export default async function Page() {
         Daily batches
       </ChartHeading>
       <ChartWrapper>
-        <DailyCreatedBatchesWithAverage />
+        <SuspenseWithSkeleton>
+          <DailyCreatedBatchesWithAverage />
+        </SuspenseWithSkeleton>
       </ChartWrapper>
     </div>
   )

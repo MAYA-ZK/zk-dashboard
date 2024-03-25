@@ -65,9 +65,9 @@ export default async function Home() {
         <div>
           <Table>
             <TableHeader>
-              <TableRow isHeader>
-                <TableHead className="w-2/12 text-nowrap">Blockchain</TableHead>
-                <TableHead className="w-1/12 text-nowrap">
+              <TableRow className="text-nowrap" isHeader>
+                <TableHead className="w-2/12">Blockchain</TableHead>
+                <TableHead className="w-1/12">
                   Finality
                   <InfoTooltip
                     contentClassName="text-wrap"
@@ -75,7 +75,7 @@ export default async function Home() {
                     className="ml-1.5"
                   />
                 </TableHead>
-                <TableHead className="w-3/12 text-nowrap">
+                <TableHead className="w-1/12">
                   Finality (Normalized)
                   <InfoTooltip
                     contentClassName="text-wrap"
@@ -83,7 +83,7 @@ export default async function Home() {
                     className="ml-1.5"
                   />
                 </TableHead>
-                <TableHead className="w-1/12 text-nowrap">
+                <TableHead className="w-1/12">
                   Batch size
                   <InfoTooltip
                     contentClassName="text-wrap"
@@ -91,7 +91,7 @@ export default async function Home() {
                     className="ml-1.5"
                   />
                 </TableHead>
-                <TableHead className="w-2/12 text-nowrap">
+                <TableHead className="w-2/12">
                   Batch cost
                   <InfoTooltip
                     contentClassName="text-wrap"
@@ -99,7 +99,7 @@ export default async function Home() {
                     className="ml-1.5"
                   />
                 </TableHead>
-                <TableHead className="w-3/12 text-nowrap">
+                <TableHead className="w-3/12">
                   Batch cost (Normalized)
                   <InfoTooltip
                     contentClassName="text-wrap"

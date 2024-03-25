@@ -24,7 +24,6 @@ type Batch = { batchNum: number; batchLink: string } & Record<
 >
 
 export interface BatchTableInteractiveProps<TBatch extends Batch> {
-  title: string
   page: number
   pages: number
   columns: Array<{ key: keyof TBatch; label: string }>
@@ -34,7 +33,6 @@ export interface BatchTableInteractiveProps<TBatch extends Batch> {
 }
 
 export function BatchTable<TBatch extends Batch>({
-  title,
   batches,
   page,
   pages,
@@ -50,8 +48,7 @@ export function BatchTable<TBatch extends Batch>({
   } = usePagination(page, searchParam)
 
   return (
-    <div className="flex w-full flex-col gap-4 rounded-md bg-background px-5 py-3">
-      <h2 className="p-2 text-2xl font-semibold">{title}</h2>
+    <div className="flex grow flex-col justify-between">
       <div className="relative">
         {isPending && (
           <div className="absolute z-10 flex size-full items-center justify-center bg-background/30">

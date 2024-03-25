@@ -1,5 +1,6 @@
+import { SuspenseWithSkeleton } from '@/app/dashboard/_components/suspense-skeleton'
 import { ScrollBatchTable } from '@/app/dashboard/scroll/@batchesCosts/table'
-import { getBatchesCosts, getBatchesCount } from '@/services/scroll/batches'
+import { TableWrapper } from '@/components/table/wrapper'
 
 import { TABLE_PAGE_SEARCH_PARAM } from './config'
 
@@ -13,9 +14,12 @@ export default async function Page({
   const page = searchParams[TABLE_PAGE_SEARCH_PARAM]
     ? parseInt(searchParams[TABLE_PAGE_SEARCH_PARAM])
     : 1
-  const batches = await getBatchesCosts(page, 10)
 
-  const batchesCount = await getBatchesCount()
-  const pages = Math.ceil(batchesCount / 10)
-  return <ScrollBatchTable batches={batches} page={page} pages={pages} />
+  return (
+    <TableWrapper heading="Batches created daily with the average number of transactions per batch">
+      <SuspenseWithSkeleton>
+        <ScrollBatchTable page={page} />
+      </SuspenseWithSkeleton>
+    </TableWrapper>
+  )
 }

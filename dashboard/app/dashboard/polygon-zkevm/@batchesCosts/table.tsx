@@ -1,7 +1,9 @@
-'use client'
-
 import { BatchTable } from '@/components/table/batch-table'
-import type { GetBatchesCostsReturnType } from '@/services/polygon-zk-evm/batches'
+import {
+  type GetBatchesCostsReturnType,
+  getBatchesCosts,
+  getBatchesCount,
+} from '@/services/polygon-zk-evm/batches'
 
 import { TABLE_PAGE_SEARCH_PARAM } from './config'
 
@@ -41,19 +43,18 @@ const columns = [
 
 interface PolygonBatchTableProps {
   page: number
-  pages: number
-  batches: GetBatchesCostsReturnType
 }
 
-export function PolygonBatchTable({
-  batches,
+export async function PolygonBatchTable({
   page,
-  pages,
   ...tableProps
 }: PolygonBatchTableProps) {
+  const batches = await getBatchesCosts(page, 10)
+  const batchesCount = await getBatchesCount()
+  const pages = Math.ceil(batchesCount / 10)
+
   return (
     <BatchTable
-      title="Batches created daily with the average number of transactions per batch"
       page={page}
       pages={pages}
       batches={batches}

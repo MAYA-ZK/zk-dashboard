@@ -18,7 +18,7 @@ export function InfoTooltip({
   content: ReactNode
 }) {
   return (
-    <TooltipProvider>
+    <TooltipProvider delayDuration={0}>
       <Tooltip>
         <TooltipTrigger aria-label="info" className={className}>
           <Info size={12} />

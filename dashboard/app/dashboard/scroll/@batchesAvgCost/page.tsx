@@ -1,3 +1,4 @@
+import { SuspenseWithSkeleton } from '@/app/dashboard/_components/suspense-skeleton'
 import { ChartHeading } from '@/components/chart/chart-heading'
 import { ChartWrapper } from '@/components/chart/wrapper'
 
@@ -8,7 +9,9 @@ export default async function Page() {
     <div className="flex flex-col gap-6 rounded-md bg-background p-4">
       <ChartHeading>Batch cost</ChartHeading>
       <ChartWrapper>
-        <BatchesAvgCost />
+        <SuspenseWithSkeleton>
+          <BatchesAvgCost />
+        </SuspenseWithSkeleton>
       </ChartWrapper>
     </div>
   )

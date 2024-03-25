@@ -1,8 +1,11 @@
-'use client'
-
 import { TABLE_PAGE_SEARCH_PARAM } from '@/app/dashboard/scroll/@batchesFinality/config'
 import { BatchTable } from '@/components/table/batch-table'
-import type { GetBatchesFinalityReturnType } from '@/services/scroll/batches'
+import {
+  type GetBatchesFinalityReturnType,
+  getBatchesFinality,
+  getBatchesFinalityCount,
+} from '@/services/scroll/batches'
+import { format } from 'date-fns'
 
 type Batch = {
   [K in keyof GetBatchesFinalityReturnType[number]]: GetBatchesFinalityReturnType[number][K] extends Date
@@ -42,22 +45,29 @@ const columns = [
 
 interface ScrollBatchesFinalityTableProps {
   page: number
-  pages: number
-  batches: Array<Batch>
 }
 
-export function ScrollBatchesFinalityTable({
-  batches,
+export async function ScrollBatchesFinalityTable({
   page,
-  pages,
   ...tableProps
 }: ScrollBatchesFinalityTableProps) {
+  const batches = await getBatchesFinality(page, 10)
+
+  const batchesCount = await getBatchesFinalityCount()
+  const pages = Math.ceil(batchesCount / 10)
+
   return (
     <BatchTable
-      title="Batches finality"
       page={page}
       pages={pages}
-      batches={batches}
+      batches={batches.map((batch) => {
+        return {
+          ...batch,
+          batchCommitted: format(batch.batchCommitted, 'yyyy-MM-dd HH:mm:ss'),
+          batchCreated: format(batch.batchCreated, 'yyyy-MM-dd HH:mm:ss'),
+          batchVerified: format(batch.batchVerified, 'yyyy-MM-dd HH:mm:ss'),
+        }
+      })}
       searchParam={TABLE_PAGE_SEARCH_PARAM}
       columns={columns}
       linkLabel="Scroll scan"
