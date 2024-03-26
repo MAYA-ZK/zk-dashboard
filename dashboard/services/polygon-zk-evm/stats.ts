@@ -50,6 +50,9 @@ export async function getPolygonZkEvmStats() {
     await Promise.all([
       (await avgCostOfBatchesDateRangeQuery.execute()).map((item) => ({
         ...item,
+        avgTxsInsideBatch: BigNumber(item.avgTxsInsideBatch)
+          .decimalPlaces(0)
+          .toString(),
         avgTxsCostUsd: BigNumber(item.avgTotalCostUsd)
           .dividedBy(BigNumber(item.avgTxsInsideBatch))
           .toString(),

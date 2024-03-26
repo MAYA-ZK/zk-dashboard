@@ -60,6 +60,9 @@ export async function getZkSyncEraStats() {
         avgTxsCostEth: BigNumber(item.avgTotalCostEth)
           .dividedBy(BigNumber(item.avgTxsInsideBatch))
           .toString(),
+        avgTxsInsideBatch: BigNumber(item.avgTxsInsideBatch)
+          .decimalPlaces(0)
+          .toString(),
       })),
       avgBatchDurationQuery.execute(),
       normalizationBatchedTxsQuery.execute(),

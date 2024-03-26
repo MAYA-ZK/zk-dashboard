@@ -1,37 +1,39 @@
-'use client'
-
 import { BatchTable } from '@/components/table/batch-table'
-import type { GetBatchesCostsReturnType } from '@/services/polygon-zk-evm/batches'
+import {
+  type GetBatchesCostsReturnType,
+  getBatchesCosts,
+  getBatchesCount,
+} from '@/services/polygon-zk-evm/batches'
 
 import { TABLE_PAGE_SEARCH_PARAM } from './config'
 
 const columns = [
   {
-    key: 'batch_num',
+    key: 'batchNum',
     label: 'Number',
   },
   {
-    key: 'total_tx_count',
+    key: 'totalTxCount',
     label: 'Total transactions',
   },
   {
-    key: 'est_commit_cost_usd',
+    key: 'estCommitCostUsd',
     label: 'Commit cost',
   },
   {
-    key: 'est_verification_cost_usd',
+    key: 'estVerificationCostUsd',
     label: 'Verification cost',
   },
   {
-    key: 'est_batch_total_cost_usd',
+    key: 'estBatchTotalCostUsd',
     label: 'Batch cost',
   },
   {
-    key: 'batch_status',
+    key: 'batchStatus',
     label: 'Batch status',
   },
   {
-    key: 'batch_link',
+    key: 'batchLink',
     label: 'Link',
   },
 ] satisfies Array<{
@@ -41,16 +43,16 @@ const columns = [
 
 interface PolygonBatchTableProps {
   page: number
-  pages: number
-  batches: GetBatchesCostsReturnType
 }
 
-export function PolygonBatchTable({
-  batches,
+export async function PolygonBatchTable({
   page,
-  pages,
   ...tableProps
 }: PolygonBatchTableProps) {
+  const batches = await getBatchesCosts(page, 10)
+  const batchesCount = await getBatchesCount()
+  const pages = Math.ceil(batchesCount / 10)
+
   return (
     <BatchTable
       page={page}

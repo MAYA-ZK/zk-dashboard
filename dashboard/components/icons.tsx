@@ -1,4 +1,4 @@
-import { cn } from '@nextui-org/system'
+import { cn } from '@/lib/utils'
 
 function MenuIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
   return (
@@ -42,7 +42,7 @@ function CloseIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
 
 export function MenuIconDynamic({ isMenuOpen }: { isMenuOpen: boolean }) {
   return (
-    <div className="relative">
+    <div className="flex size-6 items-center justify-center">
       <div
         className={cn(
           'absolute transition-transform duration-500 ease-in-out',

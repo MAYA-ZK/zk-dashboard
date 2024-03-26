@@ -1,4 +1,10 @@
 import type { UnionToIntersection } from '@/lib/types'
+import { type ClassValue, clsx } from 'clsx'
+import { twMerge } from 'tailwind-merge'
+
+export function cn(...inputs: Array<ClassValue>) {
+  return twMerge(clsx(inputs))
+}
 
 /**
  * Merge an array of objects into a single object using a key

@@ -2,8 +2,8 @@
 const nextConfig = {
   redirects: () => [
     {
-      source: '/',
-      destination: '/dashboard',
+      source: '/dashboard',
+      destination: '/',
       permanent: false,
     },
   ],

@@ -15,7 +15,15 @@ export type GetBatchesFinalityReturnType = Awaited<
 
 export async function getBatchesCosts(page: number = 1, pageSize: number = 10) {
   return await db
-    .select()
+    .select({
+      batchNum: polygonZkEvmBatchCostMv.batch_num,
+      totalTxCount: polygonZkEvmBatchCostMv.total_tx_count,
+      estCommitCostUsd: polygonZkEvmBatchCostMv.est_commit_cost_usd,
+      estVerificationCostUsd: polygonZkEvmBatchCostMv.est_verification_cost_usd,
+      estBatchTotalCostUsd: polygonZkEvmBatchCostMv.est_batch_total_cost_usd,
+      batchStatus: polygonZkEvmBatchCostMv.batch_status,
+      batchLink: polygonZkEvmBatchCostMv.batch_link,
+    })
     .from(polygonZkEvmBatchCostMv)
     .orderBy(desc(polygonZkEvmBatchCostMv.batch_num))
     .limit(pageSize)
@@ -37,12 +45,12 @@ export async function getBatchesFinality(
 ) {
   return await db
     .select({
-      batch_num: polygonZkEvmBatchFinalityMv.batch_num,
-      batch_created: polygonZkEvmBatchFinalityMv.batch_created,
-      batch_committed: polygonZkEvmBatchFinalityMv.batch_committed,
-      batch_verified: polygonZkEvmBatchFinalityMv.batch_verified,
-      batch_status: polygonZkEvmBatchFinalityMv.batch_status,
-      batch_link: polygonZkEvmBatchFinalityMv.batch_link,
+      batchNum: polygonZkEvmBatchFinalityMv.batch_num,
+      batchCreated: polygonZkEvmBatchFinalityMv.batch_created,
+      batchCommitted: polygonZkEvmBatchFinalityMv.batch_committed,
+      batchVerified: polygonZkEvmBatchFinalityMv.batch_verified,
+      batchStatus: polygonZkEvmBatchFinalityMv.batch_status,
+      batchLink: polygonZkEvmBatchFinalityMv.batch_link,
     })
     .from(polygonZkEvmBatchFinalityMv)
     .orderBy(desc(polygonZkEvmBatchFinalityMv.batch_num))
