@@ -1,3 +1,5 @@
+import type { Currency } from '@zk-dashboard/common/lib/currency'
+
 export const formatToUsd = Intl.NumberFormat('en-US', {
   style: 'currency',
   currency: 'USD',
@@ -20,4 +22,8 @@ export function formatStringNumber(number: string, decimals = 2) {
   }
 
   return num
+}
+
+export function getCurrencySymbol(currency: Currency) {
+  return currency === 'usd' ? '$' : 'ETH'
 }

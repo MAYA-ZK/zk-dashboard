@@ -42,6 +42,8 @@ const normalizationBatchedTxsQuery = db
   .from(scrollNormalizationBatchedTxs)
   .prepare('normalizationBatchedTxs')
 
+export type ScrollStats = Awaited<ReturnType<typeof getScrollStats>>
+
 export async function getScrollStats() {
   const [avgCostOfBatchesDateRange, avgBatchDuration, normalizationBatchedTxs] =
     await Promise.all([

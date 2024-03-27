@@ -49,6 +49,8 @@ const normalizationBatchedTxsQuery = db
   .from(zkSyncEraNormalizationBatchedTxs)
   .prepare('normalizationBatchedTxs')
 
+export type ZkSyncEraStats = Awaited<ReturnType<typeof getZkSyncEraStats>>
+
 export async function getZkSyncEraStats() {
   const [avgCostOfBatchesDateRange, avgBatchDuration, normalizationBatchedTxs] =
     await Promise.all([

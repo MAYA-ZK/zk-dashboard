@@ -45,6 +45,8 @@ const normalizationBatchedTxsQuery = db
   .from(polygonZkEvmNormalizationBatchedTxs)
   .prepare('normalizationBatchedTxs')
 
+export type PolygonZkEvmStats = Awaited<ReturnType<typeof getPolygonZkEvmStats>>
+
 export async function getPolygonZkEvmStats() {
   const [avgCostOfBatchesDateRange, avgBatchDuration, normalizationBatchedTxs] =
     await Promise.all([
