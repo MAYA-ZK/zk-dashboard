@@ -30,7 +30,6 @@ export async function StatsTable() {
   const { polygonZkEvmStats, scrollStats, zkSyncEraStats } =
     await getNormalizedStats()
 
-  console.log({ zkSyncEraStats })
   return (
     <StatsTableInteractive
       data={[polygonZkEvmStats, scrollStats, zkSyncEraStats]}
