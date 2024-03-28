@@ -15,6 +15,7 @@ export function SortButton({
   return (
     <Button
       variant="ghost"
+      aria-label="Sort by column"
       className={cn('h-4 p-2', {
         'bg-primary': ['asc', 'desc'].includes(String(sortedState)),
       })}

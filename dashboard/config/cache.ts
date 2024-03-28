@@ -1,3 +1,0 @@
-export const CACHE_KEY = {
-  BLOCKCHAIN_STATS: 'BLOCKCHAIN_STATS',
-}

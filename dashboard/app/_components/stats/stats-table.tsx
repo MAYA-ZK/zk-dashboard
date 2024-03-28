@@ -7,9 +7,8 @@ import { StatsTableInteractive } from '@/app/_components/stats/stats-table-inter
 import { getPolygonZkEvmStats } from '@/services/polygon-zk-evm/stats'
 import { getScrollStats } from '@/services/scroll/stats'
 import { getZkSyncEraStats } from '@/services/zk-sync-era/stats'
-import { Suspense } from 'react'
 
-const getCachedNormalizedStats = async () => {
+const getNormalizedStats = async () => {
   const [polygonZkEvmStats, scrollStats, zkSyncEraStats] = await Promise.all([
     getPolygonZkEvmStats(),
     getScrollStats(),
@@ -29,13 +28,12 @@ const getCachedNormalizedStats = async () => {
 }
 export async function StatsTable() {
   const { polygonZkEvmStats, scrollStats, zkSyncEraStats } =
-    await getCachedNormalizedStats()
+    await getNormalizedStats()
 
+  console.log({ zkSyncEraStats })
   return (
-    <Suspense>
-      <StatsTableInteractive
-        data={[polygonZkEvmStats, scrollStats, zkSyncEraStats]}
-      />
-    </Suspense>
+    <StatsTableInteractive
+      data={[polygonZkEvmStats, scrollStats, zkSyncEraStats]}
+    />
   )
 }
