@@ -84,6 +84,11 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
       return (
         <div className="flex items-center gap-1.5">
           Finality
+          <InfoTooltip
+            contentClassName="text-wrap"
+            content="Average time from when a batch is created on L2 to its verification on L1 within the selected period."
+            className="ml-1.5"
+          />
           <SortButton
             sortedState={column.getIsSorted()}
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
@@ -120,6 +125,11 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
       return (
         <div className="flex items-center gap-1.5">
           Finality (Normalized)
+          <InfoTooltip
+            contentClassName="text-wrap"
+            content="Average finality time, adjusted for batches containing exactly 100 transactions, over the selected period."
+            className="ml-1.5"
+          />
           <SortButton
             sortedState={column.getIsSorted()}
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
@@ -137,6 +147,11 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
       return (
         <div className="flex items-center gap-1.5">
           Batch size
+          <InfoTooltip
+            contentClassName="text-wrap"
+            content="Average number of transactions per batch on L2, calculated over the selected date range."
+            className="ml-1.5"
+          />
           <SortButton
             sortedState={column.getIsSorted()}
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
@@ -154,6 +169,11 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
       return (
         <div className="flex items-center gap-1.5">
           Finality Cost
+          <InfoTooltip
+            contentClassName="text-wrap"
+            content="Average cost incurred for confirming L2 state updates on L1, calculated over the selected date range."
+            className="ml-1.5"
+          />
           <SortButton
             sortedState={column.getIsSorted()}
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
@@ -195,6 +215,11 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
       return (
         <div className="flex items-center justify-end gap-1.5">
           Finality Cost (Normalized)
+          <InfoTooltip
+            contentClassName="text-wrap"
+            content="Average L1 confirmation cost, adjusted for batches of 100 transactions, over the selected period."
+            className="ml-1.5"
+          />
           <SortButton
             sortedState={column.getIsSorted()}
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
@@ -207,7 +232,7 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
       const currencySymbol = getCurrencySymbol(currency)
       return (
         <div className="flex justify-end">
-          <span>{currencySymbol}</span>{' '}
+          <span>{currencySymbol}</span>&nbsp;
           {context.row.original.batchCostNormalized[currency]}{' '}
           {context.row.original.batchCostNormalized.breakdown && (
             <InfoTooltip
