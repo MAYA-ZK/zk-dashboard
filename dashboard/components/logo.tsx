@@ -1,73 +1,39 @@
 import { cn } from '@/lib/utils'
-import type { ImageProps } from 'next/image'
-import Image from 'next/image'
+import MayaLogoPrimary2 from '@/public/maya-primary-logo.svg'
+import MayaLogoSecondary2 from '@/public/maya-secondary-logo.svg'
+import type { ComponentProps } from 'react'
 
 const logos = {
   mayaPrimary: {
-    light: {
-      alt: 'Maya Primary Logo',
-      width: 72,
-      height: 72,
-      src: '/maya-primary-logo-light.svg',
-    },
-    dark: {
-      alt: 'Maya Primary Logo',
-      width: 72,
-      height: 72,
-      src: '/maya-primary-logo-dark.svg',
-    },
+    size: { default: { w: 153, h: 51 }, sm: { w: 116, h: 34 } },
+    currentColor: 'text-black',
+    src: MayaLogoPrimary2,
   },
   mayaSecondary: {
-    light: {
-      alt: 'Maya Secondary Logo',
-      width: 72,
-      height: 72,
-      src: '/maya-secondary-logo-light.svg',
-    },
-    dark: {
-      alt: 'Maya Secondary Logo',
-      width: 72,
-      height: 72,
-      src: '/maya-secondary-logo-dark.svg',
-    },
+    size: { default: { w: 72, h: 72 }, sm: { w: 72, h: 72 } },
+    currentColor: 'text-muted',
+    src: MayaLogoSecondary2,
   },
-  scrollBlockchain: {
-    light: {
-      alt: 'Scroll Blockchain Logo',
-      width: 80,
-      height: 25,
-      src: 'scroll-logo-dark.svg',
-    },
-    dark: {
-      alt: 'Scroll Blockchain Logo',
-      width: 80,
-      height: 25,
-      src: 'scroll-logo-light.svg',
-    },
-  },
-} as const
+}
 
-interface LogoProps extends Omit<ImageProps, 'src' | 'alt'> {
+interface LogoProps extends ComponentProps<'svg'> {
   id: keyof typeof logos
 }
 
-export function Logo({ id, className, ...imageProps }: LogoProps) {
+export function Logo({ id, className, ...props }: LogoProps) {
   const logo = logos[id]
+  const LogoElement = logo.src
 
+  /* BREAKING CHANGES: This change remove support:
+   * - dark/light theme
+   * - media query dynamic sizes
+   * */
   return (
-    <>
-      <Image
-        className={cn('dark:hidden', className)}
-        {...logo.light}
-        alt={logo.light.alt}
-        {...imageProps}
-      />
-      <Image
-        className={cn('hidden dark:block', className)}
-        {...logo.dark}
-        alt={logo.dark.alt}
-        {...imageProps}
-      />
-    </>
+    <LogoElement
+      {...props}
+      className={cn(`${logo.currentColor}`, className)}
+      width={logo.size.default.w}
+      height={logo.size.default.h}
+    />
   )
 }
