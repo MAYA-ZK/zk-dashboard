@@ -1,6 +1,6 @@
 import { routes } from './routes'
 
-export const NAV_CONFIG = [
+export const BLOCKCHAIN_LINKS = [
   {
     title: 'Scroll',
     path: routes.scroll,
@@ -13,8 +13,11 @@ export const NAV_CONFIG = [
     title: 'Polygon zkEVM',
     path: routes.polygon,
   },
+]
+
+export const GENERAL_LINKS = [
   {
     title: 'MAYA-ZK.com',
     path: routes.maya,
   },
-] as const
+]

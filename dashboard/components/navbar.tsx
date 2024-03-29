@@ -1,18 +1,25 @@
 'use client'
 
 import { MenuIconDynamic } from '@/components/icons'
-import { Logo } from '@/components/logo'
 import { Button } from '@/components/ui/button'
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
-import { NAV_CONFIG } from '@/config/navigation'
+import {
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarTrigger,
+} from '@/components/ui/menubar'
+import { BLOCKCHAIN_LINKS, GENERAL_LINKS } from '@/config/navigation'
 import { routes } from '@/config/routes'
 import { useMatchPath } from '@/lib/hooks/match-path'
 import { useScrollLock } from '@/lib/hooks/use-scroll-lock'
 import { cn } from '@/lib/utils'
+import MayaLogo from '@/public/maya-primary-logo.svg'
 import Link from 'next/link'
 import type { ComponentProps } from 'react'
 import { useState } from 'react'
@@ -43,32 +50,32 @@ export function Navbar() {
     lockTarget: 'body',
   })
 
-  const links = NAV_CONFIG.map((item, index: number) => (
-    <NavLink
-      key={index}
-      className={cn({
-        underline: item.path === routes.maya,
-      })}
-      href={item.path}
-    >
+  const blockchainLinks = BLOCKCHAIN_LINKS.map((item, index: number) => (
+    <NavLink key={index} href={item.path}>
       {item.title}
     </NavLink>
   ))
+
+  const generalLinks = GENERAL_LINKS.map((item, index: number) => (
+    <NavLink key={index} className="underline" href={item.path}>
+      {item.title}
+    </NavLink>
+  ))
+
+  const links = [...blockchainLinks, ...generalLinks]
+
   return (
     <Collapsible>
-      <nav className="fixed left-0 top-0 z-10 flex h-16 w-full justify-center bg-muted px-6">
+      <nav className="fixed left-0 top-0 z-10 flex h-18 w-full justify-center bg-muted px-6">
         <CollapsibleContent className="CollapsibleContent absolute left-0 top-0 size-full h-screen md:hidden">
-          <div className="flex size-full flex-col gap-4 bg-primary px-8 pt-16">
+          <div className="flex size-full flex-col gap-4 bg-primary px-8 pt-24">
             {links}
           </div>
         </CollapsibleContent>
-        <div className="z-10 flex h-16 w-full max-w-screen-2xl items-center justify-between">
+        <div className="z-10 flex h-18 w-full max-w-screen-2xl items-center justify-between">
           <Link href={routes.home} className="flex items-center gap-2">
-            <Logo
-              id="mayaPrimary"
-              className="h-[34px] w-[116px] sm:h-[56px] sm:w-[150px]"
-            />
-            <p>Dashboard</p>
+            <MayaLogo className="h-full w-18 bg-black text-muted" />
+            <p className="text-2xl tracking-widest">Dashboard</p>
           </Link>
           <CollapsibleTrigger className="md:hidden" asChild>
             <Button
@@ -80,7 +87,22 @@ export function Navbar() {
               <MenuIconDynamic isMenuOpen={isMenuOpen} />
             </Button>
           </CollapsibleTrigger>
-          <div className="hidden items-center gap-4 md:flex">{links}</div>
+          <Menubar className="hidden border-0 bg-transparent md:flex">
+            <MenubarMenu>
+              <MenubarTrigger className="bg-transparent hover:cursor-pointer hover:bg-accent">
+                Select Blockchain
+              </MenubarTrigger>
+              <MenubarContent>
+                {blockchainLinks.map((link) => (
+                  <MenubarItem key={link.key}>{link}</MenubarItem>
+                ))}
+              </MenubarContent>
+            </MenubarMenu>
+
+            <div className="items-center text-sm font-medium ">
+              {generalLinks}
+            </div>
+          </Menubar>
         </div>
       </nav>
     </Collapsible>

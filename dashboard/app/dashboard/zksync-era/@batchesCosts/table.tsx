@@ -28,6 +28,7 @@ const columns = [
     key: 'estBatchTotalCostUsd',
     label: 'Batch cost',
   },
+  /*
   {
     key: 'batchStatus',
     label: 'Batch status',
@@ -36,8 +37,12 @@ const columns = [
     key: 'batchLink',
     label: 'Link',
   },
+  */
 ] satisfies Array<{
-  key: keyof GetBatchesCostsReturnType[number]
+  key: keyof Omit<
+    GetBatchesCostsReturnType[number],
+    'batchStatus' | 'batchLink'
+  >
   label: string
 }>
 
