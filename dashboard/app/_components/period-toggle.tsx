@@ -7,6 +7,10 @@ import type { Period } from '@zk-dashboard/common/lib/period'
 
 const PERIODS = [
   {
+    value: '1_day',
+    label: '1D',
+  },
+  {
     value: '7_days',
     label: '7D',
   },

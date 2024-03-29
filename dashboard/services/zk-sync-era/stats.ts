@@ -1,81 +1,46 @@
 import { mergeArrayOfObjectsBy } from '@/lib/utils'
-import { BigNumber } from 'bignumber.js'
 
 import {
-  zkSyncEraAvgCostOfBatchesDateRange,
-  zkSyncEraBatchAvgDuration,
-  zkSyncEraNormalizationBatchedTxs,
+  zkSyncEraFinalityByPeriod,
+  zkSyncEraFinalityNormalizedBy100,
 } from '@zk-dashboard/common/database/materialized-view/zk-sync-era'
 import { db } from '@zk-dashboard/common/database/utils'
 
-const avgCostOfBatchesDateRangeQuery = db
+const finalityByPeriodQuery = db
   .select({
-    period: zkSyncEraAvgCostOfBatchesDateRange.period,
-    avgTxsInsideBatch:
-      zkSyncEraAvgCostOfBatchesDateRange.avg_txs_inside_a_batch,
-    avgTotalCostEth: zkSyncEraAvgCostOfBatchesDateRange.avg_total_cost_eth,
-    avgTotalCostUsd: zkSyncEraAvgCostOfBatchesDateRange.avg_total_cost_usd,
-    avgCommitCostEth: zkSyncEraAvgCostOfBatchesDateRange.avg_commit_cost_eth,
-    avgVerifyCostEth:
-      zkSyncEraAvgCostOfBatchesDateRange.avg_verification_cost_eth,
-    avgCommitCostUsd: zkSyncEraAvgCostOfBatchesDateRange.avg_commit_cost_usd,
-    avgVerifyCostUsd:
-      zkSyncEraAvgCostOfBatchesDateRange.avg_verification_cost_usd,
-    avgExecuteCostEth: zkSyncEraAvgCostOfBatchesDateRange.avg_execute_cost_eth,
-    avgExecuteCostUsd:
-      zkSyncEraAvgCostOfBatchesDateRange.avg_est_execute_cost_usd,
+    period: zkSyncEraFinalityByPeriod.period,
+    avgFinalizationTime: zkSyncEraFinalityByPeriod.avg_proven_time,
+    avgBatchSize: zkSyncEraFinalityByPeriod.avg_batch_size,
+    avgFinalityCostEth: zkSyncEraFinalityByPeriod.avg_finality_cost_eth,
+    avgFinalityCostUsd: zkSyncEraFinalityByPeriod.avg_finality_cost_usd,
+    avgExecutionTime: zkSyncEraFinalityByPeriod.avg_execution_time,
   })
-  .from(zkSyncEraAvgCostOfBatchesDateRange)
-  .prepare('avgCostOfBatchesDateRange')
+  .from(zkSyncEraFinalityByPeriod)
+  .prepare('finalityByPeriod')
 
-const avgBatchDurationQuery = db
+const normalizedBatchSizeBy100Query = db
   .select({
-    period: zkSyncEraBatchAvgDuration.period,
-    avgFinality: zkSyncEraBatchAvgDuration.avg_finality,
-    avgExecution: zkSyncEraBatchAvgDuration.avg_execution,
+    period: zkSyncEraFinalityNormalizedBy100.period,
+    normalizedBatchSizeBy100Finality:
+      zkSyncEraFinalityNormalizedBy100.norm_batch_size_by_100_finality,
+    normalizedBatchSizeBy100CostEth:
+      zkSyncEraFinalityNormalizedBy100.norm_batch_size_by_100_cost_eth,
+    normalizedBatchSizeBy100CostUsd:
+      zkSyncEraFinalityNormalizedBy100.norm_batch_size_by_100_cost_usd,
   })
-  .from(zkSyncEraBatchAvgDuration)
-  .prepare('avgBatchDuration')
-
-const normalizationBatchedTxsQuery = db
-  .select({
-    period: zkSyncEraNormalizationBatchedTxs.period,
-    avgTotalEthCostBy100:
-      zkSyncEraNormalizationBatchedTxs.avg_total_eth_cost_by_100_with_state_diff,
-    avgTotalUsdCostBy100:
-      zkSyncEraNormalizationBatchedTxs.avg_total_usd_cost_by_100_with_state_diff,
-    avgDurationBy100: zkSyncEraNormalizationBatchedTxs.avg_duration_by_100,
-  })
-  .from(zkSyncEraNormalizationBatchedTxs)
-  .prepare('normalizationBatchedTxs')
+  .from(zkSyncEraFinalityNormalizedBy100)
+  .prepare('normalizedBatchSizeBy100')
 
 export type ZkSyncEraStats = Awaited<ReturnType<typeof getZkSyncEraStats>>
 
 export async function getZkSyncEraStats() {
-  const [avgCostOfBatchesDateRange, avgBatchDuration, normalizationBatchedTxs] =
-    await Promise.all([
-      (await avgCostOfBatchesDateRangeQuery.execute()).map((item) => ({
-        ...item,
-        avgTxsCostUsd: BigNumber(item.avgTotalCostUsd)
-          .dividedBy(BigNumber(item.avgTxsInsideBatch))
-          .toString(),
-        avgTxsCostEth: BigNumber(item.avgTotalCostEth)
-          .dividedBy(BigNumber(item.avgTxsInsideBatch))
-          .toString(),
-        avgTxsInsideBatch: BigNumber(item.avgTxsInsideBatch)
-          .decimalPlaces(0)
-          .toString(),
-      })),
-      avgBatchDurationQuery.execute(),
-      normalizationBatchedTxsQuery.execute(),
-    ])
+  const [finalityByPeriod, normalizedBatchSizeBy100] = await Promise.all([
+    finalityByPeriodQuery.execute(),
+    normalizedBatchSizeBy100Query.execute(),
+  ])
 
   return mergeArrayOfObjectsBy(
-    [
-      ...avgCostOfBatchesDateRange,
-      ...avgBatchDuration,
-      ...normalizationBatchedTxs,
-    ],
+    [...finalityByPeriod, ...normalizedBatchSizeBy100],
     'period'
   )
 }

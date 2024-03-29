@@ -23,69 +23,29 @@ import('dotenv').then(async ({ config }) => {
   }
   const { client } = await import('../utils')
 
-  const {
-    createOrReplaceScrollBatchCostMV,
-    createOrReplaceScrollBatchAvgCostMV,
-    createOrReplaceScrollBatchCreatedMv,
-    createOrReplaceScrollBatchFinalityMv,
-    createOrReplaceScrollAvgCostOfBatchesDateRange,
-    createOrReplaceScrollBatchAvgDuration,
-    createOrReplaceScrollNormalizationBatchedTxs,
-  } = await import('./scroll')
-
-  const {
-    createOrReplacePolygonZkEvmBatchAvgCostMv,
-    createOrReplacePolygonZkEvmBatchCostMv,
-    createOrReplacePolygonZkEvmBatchCreatedMv,
-    createOrReplacePolygonZkEvmBatchFinalityMv,
-    createOrReplacePolygonZkEvmBatchAvgDuration,
-    createOrReplacePolygonZkEvmAvgCostOfBatchesDateRange,
-    createOrReplacePolygonZkEvmNormalizationBatchedTxs,
-  } = await import('./polygon-zk-evm')
-
-  const {
-    createOrReplaceZkSyncEraBatchAvgCostMv,
-    createOrReplaceZkSyncEraBatchCostMv,
-    createOrReplaceZkSyncEraBatchCreatedMv,
-    createOrReplaceZkSyncEraBatchFinalityMv,
-    createOrReplaceZkSyncEraAvgCostOfBatchesDateRange,
-    createOrReplaceZkSyncEraBatchAvgDuration,
-    createOrReplaceZkSyncEraNormalizationBatchedTxs,
-  } = await import('./zk-sync-era')
+  const { createOrReplaceScrollMaterializedViews } = await import('./scroll')
+  const { createOrReplacePolygonZkEvmMaterializedViews } = await import(
+    './polygon-zk-evm'
+  )
+  const { creatOrReplaceZkSyncEraMaterializedViews } = await import(
+    './zk-sync-era'
+  )
 
   const createOrReplaceScrollMv = async () => {
     console.log('Creating materialized views for Scroll...')
-    await createOrReplaceScrollBatchCostMV()
-    await createOrReplaceScrollBatchFinalityMv()
-    await createOrReplaceScrollBatchCreatedMv()
-    await createOrReplaceScrollBatchAvgCostMV()
-    await createOrReplaceScrollBatchAvgDuration()
-    await createOrReplaceScrollAvgCostOfBatchesDateRange()
-    await createOrReplaceScrollNormalizationBatchedTxs()
+    await createOrReplaceScrollMaterializedViews()
     console.log('Materialized views for Scroll created!')
   }
 
   const createOrReplacePolygonZkEvmMv = async () => {
     console.log("Creating materialized views for Polygon's ZK-EVM...")
-    await createOrReplacePolygonZkEvmBatchCostMv()
-    await createOrReplacePolygonZkEvmBatchFinalityMv()
-    await createOrReplacePolygonZkEvmBatchCreatedMv()
-    await createOrReplacePolygonZkEvmBatchAvgCostMv()
-    await createOrReplacePolygonZkEvmBatchAvgDuration()
-    await createOrReplacePolygonZkEvmAvgCostOfBatchesDateRange()
-    await createOrReplacePolygonZkEvmNormalizationBatchedTxs()
+    await createOrReplacePolygonZkEvmMaterializedViews()
     console.log("Materialized views for Polygon's ZK-EVM created!")
   }
 
   const createOrReplaceZkSyncEraMv = async () => {
     console.log('Creating materialized views for zkSync era...')
-    await createOrReplaceZkSyncEraBatchCostMv()
-    await createOrReplaceZkSyncEraBatchFinalityMv()
-    await createOrReplaceZkSyncEraBatchCreatedMv()
-    await createOrReplaceZkSyncEraBatchAvgCostMv()
-    await createOrReplaceZkSyncEraBatchAvgDuration()
-    await createOrReplaceZkSyncEraAvgCostOfBatchesDateRange()
-    await createOrReplaceZkSyncEraNormalizationBatchedTxs()
+    await creatOrReplaceZkSyncEraMaterializedViews()
     console.log('Materialized views for zkSync era created!')
   }
 

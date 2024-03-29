@@ -34,7 +34,7 @@ function createOrReplaceMaterializedViewQuery(
   query: SQL<unknown>
 ) {
   return sql`
-    DROP MATERIALIZED VIEW IF EXISTS ${sql.raw(tableName)};
+    DROP MATERIALIZED VIEW IF EXISTS ${sql.raw(tableName)} CASCADE;
 
     CREATE MATERIALIZED VIEW ${sql.raw(tableName)} AS ${query}
   `

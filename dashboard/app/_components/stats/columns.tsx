@@ -28,12 +28,12 @@ export type StatsRowData = {
   batchCost: {
     usd: string
     eth: string
-    breakdown: BreakdownData
+    breakdown?: BreakdownData
   }
   batchCostNormalized: {
     usd: string
     eth: string
-    breakdown: BreakdownData
+    breakdown?: BreakdownData
   }
 }
 
@@ -153,7 +153,7 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
     header: ({ column }) => {
       return (
         <div className="flex items-center gap-1.5">
-          Batch cost
+          Finality Cost
           <SortButton
             sortedState={column.getIsSorted()}
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
@@ -168,15 +168,17 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
         <>
           <span>{currencySymbol}</span>{' '}
           {context.row.original.batchCost[currency]}{' '}
-          <InfoTooltip
-            contentClassName="w-auto"
-            content={
-              <Breakdown
-                currency={currency}
-                data={context.row.original.batchCost.breakdown}
-              />
-            }
-          />
+          {context.row.original.batchCost.breakdown && (
+            <InfoTooltip
+              contentClassName="w-auto"
+              content={
+                <Breakdown
+                  currency={currency}
+                  data={context.row.original.batchCost.breakdown}
+                />
+              }
+            />
+          )}
         </>
       )
     },
@@ -192,7 +194,7 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
     header: ({ column }) => {
       return (
         <div className="flex items-center justify-end gap-1.5">
-          Batch cost (Normalized)
+          Finality Cost (Normalized)
           <SortButton
             sortedState={column.getIsSorted()}
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
@@ -207,15 +209,17 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
         <div className="flex justify-end">
           <span>{currencySymbol}</span>{' '}
           {context.row.original.batchCostNormalized[currency]}{' '}
-          <InfoTooltip
-            contentClassName="w-auto"
-            content={
-              <Breakdown
-                currency={currency}
-                data={context.row.original.batchCostNormalized.breakdown}
-              />
-            }
-          />
+          {context.row.original.batchCostNormalized.breakdown && (
+            <InfoTooltip
+              contentClassName="w-auto"
+              content={
+                <Breakdown
+                  currency={currency}
+                  data={context.row.original.batchCostNormalized.breakdown}
+                />
+              }
+            />
+          )}
         </div>
       )
     },

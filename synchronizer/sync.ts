@@ -1,3 +1,6 @@
+import { refreshPolygonZkEvmMaterializedViews } from '@zk-dashboard/common/database/materialized-view/polygon-zk-evm'
+import { refreshScrollMaterializedViews } from '@zk-dashboard/common/database/materialized-view/scroll'
+import { refreshZkSyncEraMaterializedViews } from '@zk-dashboard/common/database/materialized-view/zk-sync-era'
 import { logger } from '@zk-dashboard/common/lib/logger'
 
 import { syncEthUsdPrices } from './ethereum/price'
@@ -12,8 +15,11 @@ export async function sync() {
 
   await syncEthUsdPrices()
   await syncScroll()
+  await refreshScrollMaterializedViews()
   await syncZkSyncEra()
+  await refreshZkSyncEraMaterializedViews()
   await syncPolygonZkEvm()
+  await refreshPolygonZkEvmMaterializedViews()
 
   logger.info(`DONE SYNCING SLEEPING FOR ${SLEEP_FOR / 60 / 1000} MINUTES...`)
   await new Promise((resolve) => setTimeout(resolve, SLEEP_FOR))

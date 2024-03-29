@@ -1,77 +1,45 @@
 import { mergeArrayOfObjectsBy } from '@/lib/utils'
-import { BigNumber } from 'bignumber.js'
 
 import {
-  polygonZkEvmAvgCostOfBatchesDateRange,
-  polygonZkEvmBatchAvgDuration,
-  polygonZkEvmNormalizationBatchedTxs,
+  polygonZkEvmFinalityByPeriod,
+  polygonZkEvmFinalityNormalizedBy100,
 } from '@zk-dashboard/common/database/materialized-view/polygon-zk-evm'
 import { db } from '@zk-dashboard/common/database/utils'
 
-const avgCostOfBatchesDateRangeQuery = db
+const finalityByPeriodQuery = db
   .select({
-    period: polygonZkEvmAvgCostOfBatchesDateRange.period,
-    avgTxsInsideBatch:
-      polygonZkEvmAvgCostOfBatchesDateRange.avg_txs_inside_a_batch,
-    avgTotalCostEth: polygonZkEvmAvgCostOfBatchesDateRange.avg_total_cost_eth,
-    avgTotalCostUsd: polygonZkEvmAvgCostOfBatchesDateRange.avg_total_cost_usd,
-    avgCommitCostEth: polygonZkEvmAvgCostOfBatchesDateRange.avg_commit_cost_eth,
-    avgVerifyCostEth:
-      polygonZkEvmAvgCostOfBatchesDateRange.avg_verification_cost_eth,
-    avgCommitCostUsd: polygonZkEvmAvgCostOfBatchesDateRange.avg_commit_cost_usd,
-    avgVerifyCostUsd:
-      polygonZkEvmAvgCostOfBatchesDateRange.avg_verification_cost_usd,
+    period: polygonZkEvmFinalityByPeriod.period,
+    avgFinalizationTime: polygonZkEvmFinalityByPeriod.avg_verification_time,
+    avgBatchSize: polygonZkEvmFinalityByPeriod.avg_batch_size,
+    avgFinalityCostEth: polygonZkEvmFinalityByPeriod.avg_finality_cost_eth,
+    avgFinalityCostUsd: polygonZkEvmFinalityByPeriod.avg_finality_cost_usd,
   })
-  .from(polygonZkEvmAvgCostOfBatchesDateRange)
-  .prepare('avgCostOfBatchesDateRange')
+  .from(polygonZkEvmFinalityByPeriod)
+  .prepare('finalityByPeriod')
 
-const avgBatchDurationQuery = db
+const normalizedBatchSizeBy100Query = db
   .select({
-    period: polygonZkEvmBatchAvgDuration.period,
-    avgFinality: polygonZkEvmBatchAvgDuration.avg_finality,
+    period: polygonZkEvmFinalityNormalizedBy100.period,
+    normalizedBatchSizeBy100Finality:
+      polygonZkEvmFinalityNormalizedBy100.norm_batch_size_by_100_finality,
+    normalizedBatchSizeBy100CostEth:
+      polygonZkEvmFinalityNormalizedBy100.norm_batch_size_by_100_cost_eth,
+    normalizedBatchSizeBy100CostUsd:
+      polygonZkEvmFinalityNormalizedBy100.norm_batch_size_by_100_cost_usd,
   })
-  .from(polygonZkEvmBatchAvgDuration)
-  .prepare('avgBatchDuration')
-
-const normalizationBatchedTxsQuery = db
-  .select({
-    period: polygonZkEvmNormalizationBatchedTxs.period,
-    avgTotalEthCostBy100:
-      polygonZkEvmNormalizationBatchedTxs.avg_total_eth_cost_by_100,
-    avgTotalUsdCostBy100:
-      polygonZkEvmNormalizationBatchedTxs.avg_total_usd_cost_by_100,
-    avgDurationBy100: polygonZkEvmNormalizationBatchedTxs.avg_duration_by_100,
-  })
-  .from(polygonZkEvmNormalizationBatchedTxs)
-  .prepare('normalizationBatchedTxs')
+  .from(polygonZkEvmFinalityNormalizedBy100)
+  .prepare('normalizedBatchSizeBy100')
 
 export type PolygonZkEvmStats = Awaited<ReturnType<typeof getPolygonZkEvmStats>>
 
 export async function getPolygonZkEvmStats() {
-  const [avgCostOfBatchesDateRange, avgBatchDuration, normalizationBatchedTxs] =
-    await Promise.all([
-      (await avgCostOfBatchesDateRangeQuery.execute()).map((item) => ({
-        ...item,
-        avgTxsInsideBatch: BigNumber(item.avgTxsInsideBatch)
-          .decimalPlaces(0)
-          .toString(),
-        avgTxsCostUsd: BigNumber(item.avgTotalCostUsd)
-          .dividedBy(BigNumber(item.avgTxsInsideBatch))
-          .toString(),
-        avgTxsCostEth: BigNumber(item.avgTotalCostEth)
-          .dividedBy(BigNumber(item.avgTxsInsideBatch))
-          .toString(),
-      })),
-      avgBatchDurationQuery.execute(),
-      normalizationBatchedTxsQuery.execute(),
-    ])
+  const [finalityByPeriod, normalizedBatchSizeBy100] = await Promise.all([
+    finalityByPeriodQuery.execute(),
+    normalizedBatchSizeBy100Query.execute(),
+  ])
 
   return mergeArrayOfObjectsBy(
-    [
-      ...avgCostOfBatchesDateRange,
-      ...avgBatchDuration,
-      ...normalizationBatchedTxs,
-    ],
+    [...finalityByPeriod, ...normalizedBatchSizeBy100],
     'period'
   )
 }
