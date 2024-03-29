@@ -1,8 +1,12 @@
 import type { SQL } from 'drizzle-orm'
 import { sql } from 'drizzle-orm'
-import type { PgColumnBuilderBase } from 'drizzle-orm/pg-core'
+import type {
+  PgColumnBuilderBase,
+  PgMaterializedView,
+} from 'drizzle-orm/pg-core'
 import { pgMaterializedView } from 'drizzle-orm/pg-core'
 
+import { logger } from '../../lib/logger'
 import { db } from '../utils'
 
 // Drizzle ORM or Drizzle Kit does not support materialized views migrations. This is a workaround to create or replace materialized views.
@@ -52,4 +56,37 @@ export function createPgMaterializedView<
     db.execute(createOrReplaceMaterializedViewQuery(name, query))
 
   return { materializedView, create, createOrReplace }
+}
+
+type CreateOrReplaceFunction<
+  TName extends string,
+  TColumns extends Record<string, PgColumnBuilderBase>,
+> = ReturnType<
+  typeof createPgMaterializedView<TName, TColumns>
+>['createOrReplace']
+
+export function getNameFromMaterializedView(view: PgMaterializedView) {
+  // Type definition does not specify symbol key
+  return (view as unknown as { [key: symbol]: { name?: string } })[
+    Symbol.for('drizzle:ViewBaseConfig')
+  ]?.name as string
+}
+export async function refreshMaterializedViews(
+  views: Array<PgMaterializedView>
+) {
+  for (const view of views) {
+    const viewName = getNameFromMaterializedView(view)
+    logger.info(`Refreshing materialized view ${viewName}`)
+    await db.refreshMaterializedView(view)
+    logger.info(`Done refreshing materialized view ${viewName}`)
+  }
+}
+
+export async function creatOrReplaceMaterializedViews<
+  TName extends string,
+  TColumns extends Record<string, PgColumnBuilderBase>,
+>(createOrReplaceFunctions: Array<CreateOrReplaceFunction<TName, TColumns>>) {
+  for (const createOrReplaceView of createOrReplaceFunctions) {
+    await createOrReplaceView()
+  }
 }

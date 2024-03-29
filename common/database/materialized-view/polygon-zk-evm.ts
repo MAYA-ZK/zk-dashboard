@@ -9,9 +9,12 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core'
 
-import { db } from '../utils'
 import { period } from './common'
-import { createPgMaterializedView } from './utils'
+import {
+  creatOrReplaceMaterializedViews,
+  createPgMaterializedView,
+  refreshMaterializedViews,
+} from './utils'
 
 export const {
   materializedView: polygonZkEvmBatchCostMv,
@@ -1097,10 +1100,8 @@ const polygonZkEvmMaterializedViews = [
   polygonZkEvmFinalityNormalizedBy100,
 ]
 
-export async function refreshPolygonZkEvmMaterializedViews() {
-  for (const view of polygonZkEvmMaterializedViews) {
-    await db.refreshMaterializedView(view)
-  }
+export function refreshPolygonZkEvmMaterializedViews() {
+  return refreshMaterializedViews(polygonZkEvmMaterializedViews)
 }
 
 const polygonZkEvmMaterializedViewsCreateOrReplaceFunctions = [
@@ -1116,8 +1117,8 @@ const polygonZkEvmMaterializedViewsCreateOrReplaceFunctions = [
   createOrReplacePolygonZkEvmFinalityNormalizedBy100,
 ]
 
-export async function createOrReplacePolygonZkEvmMaterializedViews() {
-  for (const createOrReplaceView of polygonZkEvmMaterializedViewsCreateOrReplaceFunctions) {
-    await createOrReplaceView()
-  }
+export function createOrReplacePolygonZkEvmMaterializedViews() {
+  return creatOrReplaceMaterializedViews(
+    polygonZkEvmMaterializedViewsCreateOrReplaceFunctions
+  )
 }

@@ -9,9 +9,12 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core'
 
-import { db } from '../utils'
 import { period } from './common'
-import { createPgMaterializedView } from './utils'
+import {
+  creatOrReplaceMaterializedViews,
+  createPgMaterializedView,
+  refreshMaterializedViews,
+} from './utils'
 
 export const {
   materializedView: zkSyncEraBatchCostMv,
@@ -1231,10 +1234,8 @@ const zkSyncEraMaterializedViews = [
   zkSyncEraFinalityNormalizedBy100,
 ]
 
-export async function refreshZkSyncEraMaterializedViews() {
-  for (const view of zkSyncEraMaterializedViews) {
-    await db.refreshMaterializedView(view)
-  }
+export function refreshZkSyncEraMaterializedViews() {
+  return refreshMaterializedViews(zkSyncEraMaterializedViews)
 }
 
 const zkSyncEraMaterializedViewsCreateOrReplaceFunctions = [
@@ -1250,8 +1251,8 @@ const zkSyncEraMaterializedViewsCreateOrReplaceFunctions = [
   createOrReplaceZkSyncEraFinalityNormalizedBy100,
 ]
 
-export async function creatOrReplaceZkSyncEraMaterializedViews() {
-  for (const createOrReplaceView of zkSyncEraMaterializedViewsCreateOrReplaceFunctions) {
-    await createOrReplaceView()
-  }
+export function creatOrReplaceZkSyncEraMaterializedViews() {
+  return creatOrReplaceMaterializedViews(
+    zkSyncEraMaterializedViewsCreateOrReplaceFunctions
+  )
 }

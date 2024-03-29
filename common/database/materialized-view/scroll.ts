@@ -9,9 +9,12 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core'
 
-import { db } from '../utils'
 import { period } from './common'
-import { createPgMaterializedView } from './utils'
+import {
+  creatOrReplaceMaterializedViews,
+  createPgMaterializedView,
+  refreshMaterializedViews,
+} from './utils'
 
 export const {
   materializedView: scrollBatchCostMV,
@@ -1022,10 +1025,8 @@ const scrollMaterializedViews = [
   scrollFinalityNormalizedBy100,
 ]
 
-export async function refreshScrollMaterializedViews() {
-  for (const view of scrollMaterializedViews) {
-    await db.refreshMaterializedView(view)
-  }
+export function refreshScrollMaterializedViews() {
+  return refreshMaterializedViews(scrollMaterializedViews)
 }
 
 const scrollMaterializedViewsCreateOrReplaceFunctions = [
@@ -1041,8 +1042,8 @@ const scrollMaterializedViewsCreateOrReplaceFunctions = [
   createOrReplaceScrollFinalityNormalizedBy100,
 ]
 
-export async function createOrReplaceScrollMaterializedViews() {
-  for (const createOrReplaceView of scrollMaterializedViewsCreateOrReplaceFunctions) {
-    await createOrReplaceView()
-  }
+export function createOrReplaceScrollMaterializedViews() {
+  return creatOrReplaceMaterializedViews(
+    scrollMaterializedViewsCreateOrReplaceFunctions
+  )
 }
