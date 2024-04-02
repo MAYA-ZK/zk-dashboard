@@ -644,6 +644,9 @@ export const {
     verification_size: bigint('verification_size', {
       mode: 'number',
     }).notNull(),
+    verification_batch_size: bigint('verification_batch_size', {
+      mode: 'number',
+    }).notNull(),
     batch_size: integer('batch_size').notNull(),
     sequence_cost_eth: numeric('sequence_cost_eth').notNull(),
     verification_cost_eth: numeric('verification_cost_eth').notNull(),
@@ -672,10 +675,10 @@ export const {
           polygon_zk_evm_batch_receipts
       )
     SELECT
-      '1101'::INTEGER as chain_id,
-      'polygon zkevm' as blockchain,
-      pb."number" as batch_num,
-      'finalized' as batch_status
+      '1101'::INTEGER AS chain_id,
+      'polygon zkevm' AS blockchain,
+      pb."number" AS batch_num,
+      'finalized' AS batch_status
       ----- timestamps
     ,
       DATE_TRUNC('second', pb."timestamp") AS created_at,
@@ -686,7 +689,11 @@ export const {
         PARTITION BY
           pb.verify_batch_tx_hash
       ) AS verification_size,
-      cardinality(pb.transactions) as batch_size
+      SUM(cardinality(pb.transactions)) OVER (
+        PARTITION BY
+          pb.verify_batch_tx_hash
+      ) AS verification_batch_size,
+      cardinality(pb.transactions) AS batch_size
       ----- eth costs
     ,
       bc.sequence_tx_fee_eth AS sequence_cost_eth,
@@ -698,7 +705,9 @@ export const {
         ),
         0
       ) AS divided_verification_cost_eth,
-      bc.sequence_tx_fee_eth + bc.verification_tx_fee_eth / NULLIF(
+      (
+        bc.sequence_tx_fee_eth + bc.verification_tx_fee_eth
+      ) / NULLIF(
         COUNT(*) OVER (
           PARTITION BY
             pb.verify_batch_tx_hash
@@ -723,7 +732,9 @@ export const {
         2
       ) AS divided_verification_cost_usd,
       ROUND(
-        (ep.price / 100.0) * bc.sequence_tx_fee_eth + (ep.price / 100.0) * bc.verification_tx_fee_eth / NULLIF(
+        (ep.price / 100.0) * (
+          bc.sequence_tx_fee_eth + bc.verification_tx_fee_eth
+        ) / NULLIF(
           COUNT(*) OVER (
             PARTITION BY
               pb.verify_batch_tx_hash
@@ -732,17 +743,17 @@ export const {
         ),
         2
       ) AS finality_cost_usd
-      ----- hashses
+      ----- hashes
     ,
       pb.send_sequences_tx_hash,
       pb.verify_batch_tx_hash
       ----- link
     ,
-      'https://zkevm.polygonscan.com/batch/' || pb."number"::text as batch_link
+      'https://zkevm.polygonscan.com/batch/' || pb."number"::text AS batch_link
     FROM
       polygon_zk_evm_batches pb
       JOIN batch_costs bc ON pb.id = bc.batch_id
-      JOIN eth_usd_price ep ON date_trunc('day', pb.verified_at) = DATE_TRUNC('day', ep."date")
+      JOIN eth_usd_price ep ON DATE_TRUNC('day', pb.verified_at) = DATE_TRUNC('day', ep."date")
     WHERE
       pb.verified_at IS NOT NULL
       AND pb.verified_at < DATE_TRUNC('day', CURRENT_DATE)
@@ -764,127 +775,123 @@ export const {
     end_date: text('end_date').notNull(),
     avg_verification_time: text('avg_verification_time').notNull(),
     avg_batch_size: numeric('avg_batch_size').notNull(),
-    avg_sequence_cost_eth: numeric('avg_sequence_cost_eth').notNull(),
-    avg_verification_cost_eth: numeric('avg_verification_cost_eth').notNull(),
     avg_finality_cost_eth: numeric('avg_finality_cost_eth').notNull(),
-    avg_sequence_cost_usd: numeric('avg_sequence_cost_usd').notNull(),
-    avg_verification_cost_usd: numeric('avg_verification_cost_usd').notNull(),
     avg_finality_cost_usd: numeric('avg_finality_cost_usd').notNull(),
   },
   sql`
     WITH
+      fin_batch_details AS (
+        SELECT
+          MIN(DATE_TRUNC('second', verified_at)) AS earliest_verified_at,
+          verify_batch_tx_hash,
+          verification_size,
+          verification_batch_size,
+          verification_cost_eth,
+          verification_cost_usd,
+          AVG(created_to_verified_duration) AS avg_created_to_verified_duration
+        FROM
+          polygon_zk_evm_batch_details_mv fin
+        GROUP BY
+          verify_batch_tx_hash,
+          verification_size,
+          verification_batch_size,
+          verification_cost_eth,
+          verification_cost_usd
+        ORDER BY
+          earliest_verified_at DESC
+      ),
       averages AS (
         SELECT
           '1_day' AS period,
-          MIN(verified_at) AS start_date,
-          MAX(verified_at) AS end_date,
+          MIN(earliest_verified_at) AS start_date,
+          MAX(earliest_verified_at) AS end_date,
           AVG(
             EXTRACT(
               EPOCH
               FROM
-                created_to_verified_duration
+                avg_created_to_verified_duration
             )
-          ) AS avg_verification_time --- created_at-verified_at
-    ,
-          AVG(batch_size) AS avg_batch_size
+          ) AS avg_verification_time,
+          AVG(verification_batch_size) AS avg_batch_size
           ------- eth costs
     ,
-          AVG(sequence_cost_eth) AS avg_sequence_cost_eth,
-          AVG(verification_cost_eth) AS avg_verification_cost_eth,
-          AVG(finality_cost_eth) AS avg_finality_cost_eth --- sequnce_cost_eth+divided_verified_cost_eth
+          AVG(verification_cost_eth) AS avg_finality_cost_eth
           ------- usd costs
     ,
-          AVG(sequence_cost_usd) AS avg_sequence_cost_usd,
-          AVG(verification_cost_usd) AS avg_verification_cost_usd,
-          AVG(finality_cost_usd) AS avg_finality_cost_usd --- sequnce_cost_usd+divided_verified_cost_usd
+          AVG(verification_cost_usd) AS avg_finality_cost_usd
         FROM
-          polygon_zk_evm_batch_details_mv
+          fin_batch_details
         WHERE
-          verified_at >= CURRENT_DATE - INTERVAL '1 days'
+          earliest_verified_at >= CURRENT_DATE - INTERVAL '1 days'
         UNION ALL
         SELECT
           '7_days' AS period,
-          MIN(verified_at) AS start_date,
-          MAX(verified_at) AS end_date,
+          MIN(earliest_verified_at) AS start_date,
+          MAX(earliest_verified_at) AS end_date,
           AVG(
             EXTRACT(
               EPOCH
               FROM
-                created_to_verified_duration
+                avg_created_to_verified_duration
             )
-          ) AS avg_verification_time --- created_at-verified_at
-    ,
-          AVG(batch_size) AS avg_batch_size
+          ) AS avg_verification_time,
+          AVG(verification_batch_size) AS avg_batch_size
           ------- eth costs
     ,
-          AVG(sequence_cost_eth) AS avg_sequence_cost_eth,
-          AVG(verification_cost_eth) AS avg_verification_cost_eth,
-          AVG(finality_cost_eth) AS avg_finality_cost_eth --- sequnce_cost_eth+divided_verified_cost_eth
+          AVG(verification_cost_eth) AS avg_finality_cost_eth
           ------- usd costs
     ,
-          AVG(sequence_cost_usd) AS avg_sequence_cost_usd,
-          AVG(verification_cost_usd) AS avg_verification_cost_usd,
-          AVG(finality_cost_usd) AS avg_finality_cost_usd --- sequnce_cost_usd+divided_verified_cost_usd
+          AVG(verification_cost_usd) AS avg_finality_cost_usd
         FROM
-          polygon_zk_evm_batch_details_mv
+          fin_batch_details
         WHERE
-          verified_at >= CURRENT_DATE - INTERVAL '7 days'
+          earliest_verified_at >= CURRENT_DATE - INTERVAL '7 days'
         UNION ALL
         SELECT
           '30_days' AS period,
-          MIN(verified_at) AS start_date,
-          MAX(verified_at) AS end_date,
+          MIN(earliest_verified_at) AS start_date,
+          MAX(earliest_verified_at) AS end_date,
           AVG(
             EXTRACT(
               EPOCH
               FROM
-                created_to_verified_duration
+                avg_created_to_verified_duration
             )
-          ) AS avg_verification_time --- created_at-verified_at
-    ,
-          AVG(batch_size) AS avg_batch_size
+          ) AS avg_verification_time,
+          AVG(verification_batch_size) AS avg_batch_size
           ------- eth costs
     ,
-          AVG(sequence_cost_eth) AS avg_sequence_cost_eth,
-          AVG(verification_cost_eth) AS avg_verification_cost_eth,
-          AVG(finality_cost_eth) AS avg_finality_cost_eth --- sequnce_cost_eth+divided_verified_cost_eth
+          AVG(verification_cost_eth) AS avg_finality_cost_eth
           ------- usd costs
     ,
-          AVG(sequence_cost_usd) AS avg_sequence_cost_usd,
-          AVG(verification_cost_usd) AS avg_verification_cost_usd,
-          AVG(finality_cost_usd) AS avg_finality_cost_usd --- sequnce_cost_usd+divided_verified_cost_usd
+          AVG(verification_cost_usd) AS avg_finality_cost_usd
         FROM
-          polygon_zk_evm_batch_details_mv
+          fin_batch_details
         WHERE
-          verified_at >= CURRENT_DATE - INTERVAL '30 days'
+          earliest_verified_at >= CURRENT_DATE - INTERVAL '30 days'
         UNION ALL
         SELECT
           '90_days' AS period,
-          MIN(verified_at) AS start_date,
-          MAX(verified_at) AS end_date,
+          MIN(earliest_verified_at) AS start_date,
+          MAX(earliest_verified_at) AS end_date,
           AVG(
             EXTRACT(
               EPOCH
               FROM
-                created_to_verified_duration
+                avg_created_to_verified_duration
             )
-          ) AS avg_verification_time --- created_at-verified_at
-    ,
-          AVG(batch_size) AS avg_batch_size
+          ) AS avg_verification_time,
+          AVG(verification_batch_size) AS avg_batch_size
           ------- eth costs
     ,
-          AVG(sequence_cost_eth) AS avg_sequence_cost_eth,
-          AVG(verification_cost_eth) AS avg_verification_cost_eth,
-          AVG(finality_cost_eth) AS avg_finality_cost_eth --- sequnce_cost_eth+divided_verified_cost_eth
+          AVG(verification_cost_eth) AS avg_finality_cost_eth
           ------- usd costs
     ,
-          AVG(sequence_cost_usd) AS avg_sequence_cost_usd,
-          AVG(verification_cost_usd) AS avg_verification_cost_usd,
-          AVG(finality_cost_usd) AS avg_finality_cost_usd --- sequnce_cost_usd+divided_verified_cost_usd
+          AVG(verification_cost_usd) AS avg_finality_cost_usd
         FROM
-          polygon_zk_evm_batch_details_mv
+          fin_batch_details
         WHERE
-          verified_at >= CURRENT_DATE - INTERVAL '90 days'
+          earliest_verified_at >= CURRENT_DATE - INTERVAL '90 days'
       )
     SELECT
       '1101'::INTEGER as chain_id,
@@ -894,11 +901,7 @@ export const {
       TO_CHAR(end_date, 'YYYY-MM-DD') AS end_date,
       TO_CHAR(TO_TIMESTAMP(avg_verification_time), 'HH24:MI:SS') AS avg_verification_time,
       ROUND(avg_batch_size) AS avg_batch_size,
-      avg_sequence_cost_eth,
-      avg_verification_cost_eth,
       avg_finality_cost_eth,
-      ROUND((avg_sequence_cost_usd), 2) AS avg_sequence_cost_usd,
-      ROUND((avg_verification_cost_usd), 2) AS avg_verification_cost_usd,
       ROUND((avg_finality_cost_usd), 2) AS avg_finality_cost_usd
     FROM
       averages
@@ -924,29 +927,49 @@ export const {
     start_date: text('start_date').notNull(),
     end_date: text('end_date').notNull(),
     avg_batch_size: numeric('avg_batch_size').notNull(),
+    norm_batch_size_by_100_finality: interval(
+      'norm_batch_size_by_100_finality'
+    ).notNull(),
     norm_batch_size_by_100_cost_eth: numeric(
       'norm_batch_size_by_100_cost_eth'
     ).notNull(),
     norm_batch_size_by_100_cost_usd: numeric(
       'norm_batch_size_by_100_cost_usd'
     ).notNull(),
-    norm_batch_size_by_100_finality: interval(
-      'norm_batch_size_by_100_finality'
-    ).notNull(),
   },
   sql`
     WITH
+      fin_batch_details AS (
+        SELECT
+          MIN(DATE_TRUNC('second', verified_at)) AS earliest_verified_at,
+          verify_batch_tx_hash,
+          verification_size,
+          verification_batch_size,
+          verification_cost_eth,
+          verification_cost_usd,
+          AVG(created_to_verified_duration) AS avg_created_to_verified_duration
+        FROM
+          polygon_zk_evm_batch_details_mv fin
+        GROUP BY
+          verify_batch_tx_hash,
+          verification_size,
+          verification_batch_size,
+          verification_cost_eth,
+          verification_cost_usd
+        ORDER BY
+          earliest_verified_at DESC
+      ),
       date_range AS (
         SELECT
           '1_day' AS period,
-          MIN(verified_at) AS start_date,
-          MAX(verified_at) AS end_date,
-          AVG(batch_size) AS avg_batch_size,
+          MIN(earliest_verified_at) AS start_date,
+          MAX(earliest_verified_at) AS end_date,
+          AVG(verification_batch_size) AS avg_batch_size,
           AVG(
             EXTRACT(
               EPOCH
               FROM
-                created_to_verified_duration
+                avg_created_to_verified_duration
             )
           ) AS avg_verification_time -- created_at-verified_at
     ,
@@ -955,30 +978,34 @@ export const {
               EXTRACT(
                 EPOCH
                 FROM
-                  created_to_verified_duration
-              ) / NULLIF(batch_size, 0)
+                  avg_created_to_verified_duration
+              ) / NULLIF(verification_batch_size, 0)
             ) * 100
           ) AS norm_batch_size_by_100_finality,
-          AVG(finality_cost_eth / NULLIF(batch_size, 0)) * 100 AS norm_batch_size_by_100_cost_eth,
+          AVG(
+            verification_cost_eth / NULLIF(verification_batch_size, 0)
+          ) * 100 AS norm_batch_size_by_100_cost_eth,
           ROUND(
-            AVG(finality_cost_usd / NULLIF(batch_size, 0)) * 100,
+            AVG(
+              verification_cost_usd / NULLIF(verification_batch_size, 0)
+            ) * 100,
             2
           ) AS norm_batch_size_by_100_cost_usd
         FROM
-          polygon_zk_evm_batch_details_mv
+          fin_batch_details
         WHERE
-          verified_at >= CURRENT_DATE - INTERVAL '1 days'
+          earliest_verified_at >= CURRENT_DATE - INTERVAL '1 days'
         UNION ALL
         SELECT
           '7_days' AS period,
-          MIN(verified_at) AS start_date,
-          MAX(verified_at) AS end_date,
-          AVG(batch_size) AS avg_batch_size,
+          MIN(earliest_verified_at) AS start_date,
+          MAX(earliest_verified_at) AS end_date,
+          AVG(verification_batch_size) AS avg_batch_size,
           AVG(
             EXTRACT(
               EPOCH
               FROM
-                created_to_verified_duration
+                avg_created_to_verified_duration
             )
           ) AS avg_verification_time -- created_at-verified_at
     ,
@@ -987,30 +1014,34 @@ export const {
               EXTRACT(
                 EPOCH
                 FROM
-                  created_to_verified_duration
-              ) / NULLIF(batch_size, 0)
+                  avg_created_to_verified_duration
+              ) / NULLIF(verification_batch_size, 0)
             ) * 100
           ) AS norm_batch_size_by_100_finality,
-          AVG(finality_cost_eth / NULLIF(batch_size, 0)) * 100 AS norm_batch_size_by_100_cost_eth,
+          AVG(
+            verification_cost_eth / NULLIF(verification_batch_size, 0)
+          ) * 100 AS norm_batch_size_by_100_cost_eth,
           ROUND(
-            AVG(finality_cost_usd / NULLIF(batch_size, 0)) * 100,
+            AVG(
+              verification_cost_usd / NULLIF(verification_batch_size, 0)
+            ) * 100,
             2
           ) AS norm_batch_size_by_100_cost_usd
         FROM
-          polygon_zk_evm_batch_details_mv
+          fin_batch_details
         WHERE
-          verified_at >= CURRENT_DATE - INTERVAL '7 days'
+          earliest_verified_at >= CURRENT_DATE - INTERVAL '7 days'
         UNION ALL
         SELECT
           '30_days' AS period,
-          MIN(verified_at) AS start_date,
-          MAX(verified_at) AS end_date,
-          AVG(batch_size) AS avg_batch_size,
+          MIN(earliest_verified_at) AS start_date,
+          MAX(earliest_verified_at) AS end_date,
+          AVG(verification_batch_size) AS avg_batch_size,
           AVG(
             EXTRACT(
               EPOCH
               FROM
-                created_to_verified_duration
+                avg_created_to_verified_duration
             )
           ) AS avg_verification_time -- created_at-verified_at
     ,
@@ -1019,30 +1050,34 @@ export const {
               EXTRACT(
                 EPOCH
                 FROM
-                  created_to_verified_duration
-              ) / NULLIF(batch_size, 0)
+                  avg_created_to_verified_duration
+              ) / NULLIF(verification_batch_size, 0)
             ) * 100
           ) AS norm_batch_size_by_100_finality,
-          AVG(finality_cost_eth / NULLIF(batch_size, 0)) * 100 AS norm_batch_size_by_100_cost_eth,
+          AVG(
+            verification_cost_eth / NULLIF(verification_batch_size, 0)
+          ) * 100 AS norm_batch_size_by_100_cost_eth,
           ROUND(
-            AVG(finality_cost_usd / NULLIF(batch_size, 0)) * 100,
+            AVG(
+              verification_cost_usd / NULLIF(verification_batch_size, 0)
+            ) * 100,
             2
           ) AS norm_batch_size_by_100_cost_usd
         FROM
-          polygon_zk_evm_batch_details_mv
+          fin_batch_details
         WHERE
-          verified_at >= CURRENT_DATE - INTERVAL '30 days'
+          earliest_verified_at >= CURRENT_DATE - INTERVAL '30 days'
         UNION ALL
         SELECT
           '90_days' AS period,
-          MIN(verified_at) AS start_date,
-          MAX(verified_at) AS end_date,
-          AVG(batch_size) AS avg_batch_size,
+          MIN(earliest_verified_at) AS start_date,
+          MAX(earliest_verified_at) AS end_date,
+          AVG(verification_batch_size) AS avg_batch_size,
           AVG(
             EXTRACT(
               EPOCH
               FROM
-                created_to_verified_duration
+                avg_created_to_verified_duration
             )
           ) AS avg_verification_time -- created_at-verified_at
     ,
@@ -1051,19 +1086,23 @@ export const {
               EXTRACT(
                 EPOCH
                 FROM
-                  created_to_verified_duration
-              ) / NULLIF(batch_size, 0)
+                  avg_created_to_verified_duration
+              ) / NULLIF(verification_batch_size, 0)
             ) * 100
           ) AS norm_batch_size_by_100_finality,
-          AVG(finality_cost_eth / NULLIF(batch_size, 0)) * 100 AS norm_batch_size_by_100_cost_eth,
+          AVG(
+            verification_cost_eth / NULLIF(verification_batch_size, 0)
+          ) * 100 AS norm_batch_size_by_100_cost_eth,
           ROUND(
-            AVG(finality_cost_usd / NULLIF(batch_size, 0)) * 100,
+            AVG(
+              verification_cost_usd / NULLIF(verification_batch_size, 0)
+            ) * 100,
             2
           ) AS norm_batch_size_by_100_cost_usd
         FROM
-          polygon_zk_evm_batch_details_mv
+          fin_batch_details
         WHERE
-          verified_at >= CURRENT_DATE - INTERVAL '90 days'
+          earliest_verified_at >= CURRENT_DATE - INTERVAL '90 days'
       )
     SELECT
       '1101'::INTEGER as chain_id,
@@ -1072,9 +1111,9 @@ export const {
       TO_CHAR(start_date, 'YYYY-MM-DD') AS start_date,
       TO_CHAR(end_date, 'YYYY-MM-DD') AS end_date,
       ROUND(avg_batch_size) AS avg_batch_size,
+      DATE_TRUNC('second', norm_batch_size_by_100_finality) AS norm_batch_size_by_100_finality,
       norm_batch_size_by_100_cost_eth,
-      norm_batch_size_by_100_cost_usd,
-      DATE_TRUNC('second', norm_batch_size_by_100_finality) AS norm_batch_size_by_100_finality
+      norm_batch_size_by_100_cost_usd
     FROM
       date_range
     ORDER BY

@@ -31,35 +31,21 @@ import('dotenv').then(async ({ config }) => {
     './zk-sync-era'
   )
 
-  const createOrReplaceScrollMv = async () => {
+  if (options.target === 'scroll') {
     console.log('Creating materialized views for Scroll...')
     await createOrReplaceScrollMaterializedViews()
     console.log('Materialized views for Scroll created!')
   }
-
-  const createOrReplacePolygonZkEvmMv = async () => {
+  if (options.target === 'polygon-zk-evm') {
     console.log("Creating materialized views for Polygon's ZK-EVM...")
     await createOrReplacePolygonZkEvmMaterializedViews()
     console.log("Materialized views for Polygon's ZK-EVM created!")
   }
-
-  const createOrReplaceZkSyncEraMv = async () => {
+  if (options.target === 'zk-sync-era') {
     console.log('Creating materialized views for zkSync era...')
     await creatOrReplaceZkSyncEraMaterializedViews()
     console.log('Materialized views for zkSync era created!')
   }
-
-  console.log('Creating materialized views...')
-  if (options.target === 'scroll') {
-    await createOrReplaceScrollMv()
-  }
-  if (options.target === 'polygon-zk-evm') {
-    await createOrReplacePolygonZkEvmMv()
-  }
-  if (options.target === 'zk-sync-era') {
-    await createOrReplaceZkSyncEraMv()
-  }
-  console.log('Materialized views created!')
 
   console.log('Closing connection...')
   await client.end()
