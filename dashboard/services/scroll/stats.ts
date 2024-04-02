@@ -1,74 +1,45 @@
 import { mergeArrayOfObjectsBy } from '@/lib/utils'
-import { BigNumber } from 'bignumber.js'
 
 import {
-  scrollAvgCostOfBatchesDateRange,
-  scrollBatchAvgDuration,
-  scrollNormalizationBatchedTxs,
+  scrollFinalityByPeriod,
+  scrollFinalityNormalizedBy100,
 } from '@zk-dashboard/common/database/materialized-view/scroll'
 import { db } from '@zk-dashboard/common/database/utils'
 
-const avgCostOfBatchesDateRangeQuery = db
+const finalityByPeriodQuery = db
   .select({
-    period: scrollAvgCostOfBatchesDateRange.period,
-    avgTxsInsideBatch: scrollAvgCostOfBatchesDateRange.avg_txs_inside_a_batch,
-    avgTotalCostEth: scrollAvgCostOfBatchesDateRange.avg_total_cost_eth,
-    avgTotalCostUsd: scrollAvgCostOfBatchesDateRange.avg_total_cost_usd,
-    avgCommitCostEth: scrollAvgCostOfBatchesDateRange.avg_commit_cost_eth,
-    avgVerifyCostEth: scrollAvgCostOfBatchesDateRange.avg_verification_cost_eth,
-    avgCommitCostUsd: scrollAvgCostOfBatchesDateRange.avg_commit_cost_usd,
-    avgVerifyCostUsd: scrollAvgCostOfBatchesDateRange.avg_verification_cost_usd,
+    period: scrollFinalityByPeriod.period,
+    avgFinalizationTime: scrollFinalityByPeriod.avg_finalization_time,
+    avgBatchSize: scrollFinalityByPeriod.avg_batch_size,
+    avgFinalityCostEth: scrollFinalityByPeriod.avg_finality_cost_eth,
+    avgFinalityCostUsd: scrollFinalityByPeriod.avg_finality_cost_usd,
   })
-  .from(scrollAvgCostOfBatchesDateRange)
-  .prepare('avgCostOfBatchesDateRange')
+  .from(scrollFinalityByPeriod)
+  .prepare('finalityByPeriod')
 
-const avgBatchDurationQuery = db
+const normalizedBatchSizeBy100Query = db
   .select({
-    period: scrollBatchAvgDuration.period,
-    avgFinality: scrollBatchAvgDuration.avg_finality,
+    period: scrollFinalityNormalizedBy100.period,
+    normalizedBatchSizeBy100Finality:
+      scrollFinalityNormalizedBy100.norm_batch_size_by_100_finality,
+    normalizedBatchSizeBy100CostEth:
+      scrollFinalityNormalizedBy100.norm_batch_size_by_100_cost_eth,
+    normalizedBatchSizeBy100CostUsd:
+      scrollFinalityNormalizedBy100.norm_batch_size_by_100_cost_usd,
   })
-  .from(scrollBatchAvgDuration)
-  .prepare('avgBatchDuration')
-
-const normalizationBatchedTxsQuery = db
-  .select({
-    period: scrollNormalizationBatchedTxs.period,
-    avgTotalEthCostBy100:
-      scrollNormalizationBatchedTxs.avg_total_eth_cost_by_100,
-    avgTotalUsdCostBy100:
-      scrollNormalizationBatchedTxs.avg_total_usd_cost_by_100,
-    avgDurationBy100: scrollNormalizationBatchedTxs.avg_duration_by_100,
-  })
-  .from(scrollNormalizationBatchedTxs)
-  .prepare('normalizationBatchedTxs')
+  .from(scrollFinalityNormalizedBy100)
+  .prepare('normalizedBatchSizeBy100')
 
 export type ScrollStats = Awaited<ReturnType<typeof getScrollStats>>
 
 export async function getScrollStats() {
-  const [avgCostOfBatchesDateRange, avgBatchDuration, normalizationBatchedTxs] =
-    await Promise.all([
-      (await avgCostOfBatchesDateRangeQuery.execute()).map((item) => ({
-        ...item,
-        avgTxsInsideBatch: BigNumber(item.avgTxsInsideBatch)
-          .decimalPlaces(0)
-          .toString(),
-        avgTxsCostUsd: BigNumber(item.avgTotalCostUsd)
-          .dividedBy(BigNumber(item.avgTxsInsideBatch))
-          .toString(),
-        avgTxsCostEth: BigNumber(item.avgTotalCostEth)
-          .dividedBy(BigNumber(item.avgTxsInsideBatch))
-          .toString(),
-      })),
-      avgBatchDurationQuery.execute(),
-      normalizationBatchedTxsQuery.execute(),
-    ])
+  const [finalityByPeriod, normalizedBatchSizeBy100] = await Promise.all([
+    finalityByPeriodQuery.execute(),
+    normalizedBatchSizeBy100Query.execute(),
+  ])
 
   return mergeArrayOfObjectsBy(
-    [
-      ...avgCostOfBatchesDateRange,
-      ...avgBatchDuration,
-      ...normalizationBatchedTxs,
-    ],
+    [...finalityByPeriod, ...normalizedBatchSizeBy100],
     'period'
   )
 }

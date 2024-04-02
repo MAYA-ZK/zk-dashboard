@@ -6,9 +6,12 @@ import type { Period } from '@zk-dashboard/common/lib/period'
 export const usePeriodState = () => {
   return useQueryState(
     'period',
-    parseAsStringEnum<Period>(['7_days', '30_days', '90_days']).withDefault(
-      '7_days'
-    )
+    parseAsStringEnum<Period>([
+      '1_day',
+      '7_days',
+      '30_days',
+      '90_days',
+    ]).withDefault('7_days')
   )
 }
 
