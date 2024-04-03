@@ -1,5 +1,7 @@
 'use client'
 
+import { AdditionalInfo } from '@/app/_components/additional-info'
+import { InfoTooltip } from '@/app/_components/info-tooltip'
 import { Button } from '@/components/ui/button'
 import {
   Table,
@@ -11,12 +13,7 @@ import {
 } from '@/components/ui/table'
 import { usePagination } from '@/lib/hooks/pagination'
 import { cn } from '@/lib/utils'
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  ExternalLink,
-  LoaderCircle,
-} from 'lucide-react'
+import { ChevronLeftIcon, ChevronRightIcon, LoaderCircle } from 'lucide-react'
 
 type Batch = { batchNum: number; batchLink: string } & Record<
   string | number,
@@ -62,14 +59,9 @@ export function BatchTable<TBatch extends Batch>({
         >
           <TableHeader>
             <TableRow isHeader>
-              {columns.map((column, index) => {
+              {columns.map((column) => {
                 return (
-                  <TableHead
-                    key={column.key.toString()}
-                    className={cn({
-                      'text-end w-1': index === columns.length - 1,
-                    })}
-                  >
+                  <TableHead key={column.key.toString()}>
                     {column.label}
                   </TableHead>
                 )
@@ -81,17 +73,32 @@ export function BatchTable<TBatch extends Batch>({
               return (
                 <TableRow key={batch.batchNum}>
                   {columns.map((column) => {
-                    if (column.key === 'batchLink') {
+                    if (column.key === 'batchNum') {
                       return (
                         <TableCell key={column.key.toString()}>
-                          <a
-                            target="_blank"
-                            className="flex items-center justify-end gap-2 whitespace-nowrap"
-                            href={batch.batchLink}
-                          >
-                            {linkLabel}
-                            <ExternalLink size={16} />
-                          </a>
+                          <div className="flex items-center gap-x-2">
+                            <InfoTooltip
+                              contentClassName="w-auto"
+                              iconVariant="checkCircle"
+                              content={
+                                <AdditionalInfo
+                                  data={[
+                                    {
+                                      label: 'Batch status',
+                                      value: batch.batchStatus as string,
+                                    },
+                                  ]}
+                                />
+                              }
+                            />
+                            <a
+                              target="_blank"
+                              className="flex items-center justify-end gap-2 whitespace-nowrap underline"
+                              href={batch.batchLink}
+                            >
+                              {batch.batchNum}
+                            </a>
+                          </div>
                         </TableCell>
                       )
                     }

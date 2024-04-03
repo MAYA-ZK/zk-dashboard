@@ -30,6 +30,7 @@ const columns = [
     key: 'batchVerified',
     label: 'Verified',
   },
+  /*
   {
     key: 'batchStatus',
     label: 'Status',
@@ -38,8 +39,9 @@ const columns = [
     key: 'batchLink',
     label: 'Link',
   },
+  */
 ] satisfies Array<{
-  key: keyof Batch
+  key: keyof Omit<Batch, 'batchStatus' | 'batchLink'>
   label: string
 }>
 

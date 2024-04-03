@@ -1,6 +1,7 @@
 import { CurrencyToggle } from '@/app/_components/currency-toggle'
 import { PeriodToggle } from '@/app/_components/period-toggle'
 import { StatsTable } from '@/app/_components/stats/stats-table'
+import { Hero } from '@/components/hero'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Suspense } from 'react'
 
@@ -11,6 +12,10 @@ export const revalidate = 3600 // 1 hour in seconds
 export default async function Page() {
   return (
     <main className="flex size-full grow flex-col items-center justify-center">
+      <div className="flex w-full py-20">
+        <Hero />
+      </div>
+
       <div className="flex w-full flex-col gap-10 rounded-md bg-background px-9 py-7">
         <div className="flex flex-col justify-between gap-8 lg:flex-row">
           <div className="flex flex-col gap-1">
