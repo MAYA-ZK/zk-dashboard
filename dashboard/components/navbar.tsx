@@ -27,21 +27,17 @@ function NavLink({ href, className, ...props }: ComponentProps<typeof Link>) {
   )
 }
 
-function BackToDashboardLink({
-  href,
-  ...props
-}: ComponentProps<typeof NavLink>) {
-  const shouldDisplay = !useMatchPath(href.toString())
+function BackToDashboardLink() {
+  const shouldDisplay = !useMatchPath(routes.home)
 
   if (!shouldDisplay) {
-    return <></>
+    return null
   }
 
   return (
     <NavLink
-      href={href}
+      href={routes.home}
       className="flex items-center gap-x-2 hover:underline"
-      {...props}
     >
       <ChevronLeft width={18} height={18} />
       Back to main page
@@ -57,7 +53,7 @@ export function Navbar() {
           <MayaLogo className="h-full w-18 bg-black text-muted" />
           <p className="text-2xl tracking-widest">Dashboard</p>
         </Link>
-        <BackToDashboardLink href="/" />
+        <BackToDashboardLink />
       </div>
     </nav>
   )
