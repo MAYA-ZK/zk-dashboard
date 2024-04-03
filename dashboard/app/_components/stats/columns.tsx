@@ -52,23 +52,23 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
     header: 'Blockchain',
     cell: (cell) => {
       return (
-        <div className="flex gap-2">
-          <div className="flex size-5 items-center">
-            <Image
-              src={cell.row.original.logo}
-              alt={`${cell.row.original.blockchain}-logo`}
-              width={10}
-              height={10}
-              className="size-auto"
-            />
-          </div>
-          <Link
-            className="hover:underline"
-            href={cell.row.original.blockchainPath}
-          >
+        <Link
+          className="hover:underline"
+          href={cell.row.original.blockchainPath}
+        >
+          <div className="flex gap-2">
+            <div className="flex size-5 items-center">
+              <Image
+                src={cell.row.original.logo}
+                alt={`${cell.row.original.blockchain}-logo`}
+                width={10}
+                height={10}
+                className="size-auto"
+              />
+            </div>
             {cell.row.getValue('blockchain')}
-          </Link>
-        </div>
+          </div>
+        </Link>
       )
     },
   },
