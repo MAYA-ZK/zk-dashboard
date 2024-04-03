@@ -1,4 +1,4 @@
-import { DailyFinalizedBatchesChart } from '@/app/dashboard/_components/charts/daily-finalized-barches/chart'
+import { DailyFinalizedBatchesChart } from '@/app/dashboard/_components/charts/daily-finalized-batches/chart'
 import { SuspenseWithSkeleton } from '@/app/dashboard/_components/suspense-skeleton'
 import { ChartHeading } from '@/components/chart/chart-heading'
 import { ChartWrapper } from '@/components/chart/wrapper'
