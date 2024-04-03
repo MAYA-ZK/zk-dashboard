@@ -1,1 +1,1 @@
-export const currencyQueryKey = 'daily-cost-currency'
+export const CURRENCY_QUERY_KEY = 'daily-cost-currency'

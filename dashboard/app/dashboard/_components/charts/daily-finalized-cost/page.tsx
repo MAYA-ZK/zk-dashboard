@@ -1,6 +1,6 @@
 import { CurrencyToggle } from '@/app/_components/currency-toggle'
 import { DailyFinalizedCostChart } from '@/app/dashboard/_components/charts/daily-finalized-cost/cahrt'
-import { currencyQueryKey } from '@/app/dashboard/_components/charts/daily-finalized-cost/constants'
+import { CURRENCY_QUERY_KEY } from '@/app/dashboard/_components/charts/daily-finalized-cost/constants'
 import { SuspenseWithSkeleton } from '@/app/dashboard/_components/suspense-skeleton'
 import { ChartHeading } from '@/components/chart/chart-heading'
 import { ChartWrapper } from '@/components/chart/wrapper'
@@ -17,7 +17,7 @@ export async function DailyFinalizedCostPage({
       <div className="flex items-center justify-between">
         <ChartHeading>Daily cost to finalize batches</ChartHeading>
         <Suspense>
-          <CurrencyToggle queryKey={currencyQueryKey} />
+          <CurrencyToggle queryKey={CURRENCY_QUERY_KEY} />
         </Suspense>
       </div>
       <ChartWrapper>

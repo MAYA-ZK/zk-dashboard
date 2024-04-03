@@ -1,7 +1,7 @@
 'use client'
 
 import { useCurrencyState } from '@/app/_utils/query-state'
-import { currencyQueryKey } from '@/app/dashboard/_components/charts/daily-finalized-cost/constants'
+import { CURRENCY_QUERY_KEY } from '@/app/dashboard/_components/charts/daily-finalized-cost/constants'
 import { BarChart } from '@/components/chart/bar-chart'
 import { commonOptions } from '@/components/chart/config'
 import { COLORS } from '@/config/colors'
@@ -13,7 +13,7 @@ export function DailyFinalizedCostChartInteractive({
   data: ChartData<'totalDailyFinalityCostUsd' | 'totalDailyFinalityCostEth'>
 }) {
   const { labels, datasets } = data
-  const [currency] = useCurrencyState(currencyQueryKey)
+  const [currency] = useCurrencyState(CURRENCY_QUERY_KEY)
 
   return (
     <BarChart
