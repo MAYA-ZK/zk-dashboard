@@ -6,7 +6,6 @@ import { cn } from '@/lib/utils'
 import MayaLogo from '@/public/maya-primary-logo.svg'
 import { ChevronLeft } from 'lucide-react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import type { ComponentProps } from 'react'
 
 function NavLink({ href, className, ...props }: ComponentProps<typeof Link>) {
@@ -29,14 +28,12 @@ function NavLink({ href, className, ...props }: ComponentProps<typeof Link>) {
 }
 
 export function Navbar() {
-  const path = usePathname()
+  const shouldDisplay = !useMatchPath('/')
 
   const BackToDashboardLink = (
-    <NavLink href="/">
-      <div className="flex items-center gap-x-2 hover:underline">
-        <ChevronLeft width={18} height={18} />
-        Back to main page
-      </div>
+    <NavLink href="/" className="flex items-center gap-x-2 hover:underline">
+      <ChevronLeft width={18} height={18} />
+      Back to main page
     </NavLink>
   )
 
@@ -47,7 +44,7 @@ export function Navbar() {
           <MayaLogo className="h-full w-18 bg-black text-muted" />
           <p className="text-2xl tracking-widest">Dashboard</p>
         </Link>
-        {path !== '/' && BackToDashboardLink}
+        {shouldDisplay && BackToDashboardLink}
       </div>
     </nav>
   )
