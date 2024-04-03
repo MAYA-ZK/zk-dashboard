@@ -83,7 +83,7 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
     header: ({ column }) => {
       return (
         <div className="flex items-center gap-1.5">
-          Finality
+          Finality Time
           <InfoTooltip
             contentClassName="text-wrap"
             content="Average time from when a batch is created on L2 to its verification on L1 within the selected period."
@@ -124,7 +124,7 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
     header: ({ column }) => {
       return (
         <div className="flex items-center gap-1.5">
-          Finality (Normalized)
+          Finality Time (Normalized)
           <InfoTooltip
             contentClassName="text-wrap"
             content="Average finality time, adjusted for batches containing exactly 100 transactions, over the selected period."
@@ -146,7 +146,7 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
     header: ({ column }) => {
       return (
         <div className="flex items-center gap-1.5">
-          Batch size
+          Txs per Proof
           <InfoTooltip
             contentClassName="text-wrap"
             content="Average number of transactions per batch on L2, calculated over the selected date range."

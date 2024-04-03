@@ -15,7 +15,7 @@ const INSIGHTS = {
       copy: 'The start date for each of the four selectable date ranges is defined as the day preceding the current calendar date. This approach ensures the inclusion of the most recent complete set of data for analysis.',
     },
     {
-      title: 'Transactions per Proof',
+      title: 'Transactions (txs) per Proof',
       copy: 'This metric covers the aggregate number of transactions within batches that are sent for verification on the Ethereum blockchain.',
     },
     {
