@@ -1,28 +1,30 @@
 'use client'
 
-import { MenuIconDynamic } from '@/components/icons'
-import { Button } from '@/components/ui/button'
+//import { MenuIconDynamic } from '@/components/icons'
+//import { Button } from '@/components/ui/button'
 import {
   Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
+  CollapsibleContent, //CollapsibleTrigger,
 } from '@/components/ui/collapsible'
-import {
-  Menubar,
-  MenubarContent,
-  MenubarItem,
-  MenubarMenu,
-  MenubarTrigger,
-} from '@/components/ui/menubar'
-import { BLOCKCHAIN_LINKS, GENERAL_LINKS } from '@/config/navigation'
+//import {
+//  Menubar,
+//  MenubarContent,
+//  MenubarItem,
+//  MenubarMenu,
+//  MenubarTrigger,
+//} from '@/components/ui/menubar'
+//import { BLOCKCHAIN_LINKS, GENERAL_LINKS } from '@/config/navigation'
 import { routes } from '@/config/routes'
 import { useMatchPath } from '@/lib/hooks/match-path'
-import { useScrollLock } from '@/lib/hooks/use-scroll-lock'
+//import { useScrollLock } from '@/lib/hooks/use-scroll-lock'
 import { cn } from '@/lib/utils'
 import MayaLogo from '@/public/maya-primary-logo.svg'
+import { ChevronLeft } from 'lucide-react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import type { ComponentProps } from 'react'
-import { useState } from 'react'
+
+//import { useState } from 'react'
 
 function NavLink({ href, className, ...props }: ComponentProps<typeof Link>) {
   const path = typeof href === 'string' ? href : href.pathname
@@ -44,6 +46,20 @@ function NavLink({ href, className, ...props }: ComponentProps<typeof Link>) {
 }
 
 export function Navbar() {
+  const path = usePathname()
+
+  const BackToDashboardLink = (
+    <NavLink href="/">
+      <div className="flex items-center gap-x-2 hover:underline">
+        <ChevronLeft width={18} height={18} />
+        Back to main page
+      </div>
+    </NavLink>
+  )
+
+  /* 
+   * TODO:: Regretfully disable this for this pseudo-release
+   *
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false)
   useScrollLock({
     autoLock: isMenuOpen,
@@ -63,20 +79,23 @@ export function Navbar() {
   ))
 
   const links = [...blockchainLinks, ...generalLinks]
+  */
 
   return (
     <Collapsible>
       <nav className="fixed left-0 top-0 z-10 flex h-18 w-full justify-center bg-muted px-6">
         <CollapsibleContent className="CollapsibleContent absolute left-0 top-0 size-full h-screen md:hidden">
           <div className="flex size-full flex-col gap-4 bg-primary px-8 pt-24">
-            {links}
+            {/* links */}
           </div>
         </CollapsibleContent>
         <div className="z-10 flex h-18 w-full max-w-screen-2xl items-center justify-between">
-          <Link href={routes.home} className="flex items-center gap-2">
+          <Link href={routes.maya} className="flex items-center gap-2">
             <MayaLogo className="h-full w-18 bg-black text-muted" />
             <p className="text-2xl tracking-widest">Dashboard</p>
           </Link>
+          {path !== '/' && BackToDashboardLink}
+          {/* 
           <CollapsibleTrigger className="md:hidden" asChild>
             <Button
               variant="ghost"
@@ -103,6 +122,7 @@ export function Navbar() {
               {generalLinks}
             </div>
           </Menubar>
+          */}
         </div>
       </nav>
     </Collapsible>
