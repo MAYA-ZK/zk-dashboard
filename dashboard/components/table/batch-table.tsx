@@ -82,7 +82,6 @@ export function BatchTable<TBatch extends Batch>({
                               iconVariant="checkCircle"
                               content={
                                 <AdditionalInfo
-                                  label=""
                                   data={[
                                     {
                                       label: 'Batch status',
