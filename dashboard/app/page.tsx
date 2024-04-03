@@ -46,12 +46,6 @@ const INSIGHTS = {
 export default async function Page() {
   return (
     <main className="flex size-full grow flex-col items-center justify-center">
-      {/*
-        <div className="flex w-full py-20">
-          <Hero />
-        </div>
-      */}
-
       <div className="my-14 flex w-full flex-col gap-10 rounded-md bg-background px-9 py-7 pt-12">
         <div className="flex flex-col justify-between gap-8 lg:flex-row">
           <div className="flex flex-col gap-1">
