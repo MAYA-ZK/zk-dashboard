@@ -27,3 +27,14 @@ export function formatStringNumber(number: string, decimals = 2) {
 export function getCurrencySymbol(currency: Currency) {
   return currency === 'usd' ? '$' : 'ETH'
 }
+
+export function formatCurrency(
+  currency: Currency,
+  value: number,
+  decimals = 2
+) {
+  if (currency === 'usd') {
+    return formatToUsd(value)
+  }
+  return `${getCurrencySymbol(currency)}${formatStringNumber(value.toString(), decimals)}`
+}

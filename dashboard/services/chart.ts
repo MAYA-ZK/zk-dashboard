@@ -1,6 +1,6 @@
 import { mapValues } from 'lodash'
 
-type ChartData<T extends string> = {
+export type ChartData<T extends string> = {
   labels: Array<Date>
   datasets: Record<T, Array<number>>
 }

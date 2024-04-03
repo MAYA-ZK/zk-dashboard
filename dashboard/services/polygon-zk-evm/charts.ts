@@ -1,35 +1,49 @@
 import { normalizeChartData } from '@/services/chart'
+import { toDate } from 'date-fns'
 
-import {
-  polygonZkEvmBatchAvgCostMv,
-  polygonZkEvmBatchCreatedMv,
-} from '@zk-dashboard/common/database/materialized-view/polygon-zk-evm'
+import { polygonZkEvmDailyFinalizedBatchStats } from '@zk-dashboard/common/database/materialized-view/polygon-zk-evm'
 import { db } from '@zk-dashboard/common/database/utils'
 
-/**
- *  Batches that are created daily with the average number of transactions per batch
- */
-export async function getDailyCreatedBatchesWithAverage() {
-  const result = await db.select().from(polygonZkEvmBatchCreatedMv)
+export async function getDailyFinalizedStats() {
+  const result = await db
+    .select({
+      finDate: polygonZkEvmDailyFinalizedBatchStats.fin_date,
+      totalDailyFinalizedBatchCount:
+        polygonZkEvmDailyFinalizedBatchStats.total_daily_finalized_batch_count,
+      totalDailyFinalizedTransactions:
+        polygonZkEvmDailyFinalizedBatchStats.total_daily_finalized_transactions,
+    })
+    .from(polygonZkEvmDailyFinalizedBatchStats)
 
   return normalizeChartData(result, {
-    getLabel: (value) => value.tx_date,
+    getLabel: (value) => toDate(value.finDate),
     datasets: {
-      avgTxsPerBatch: (value) => value.avg_txs_per_batch,
-      batchCount: (value) => value.batch_count,
+      totalDailyFinalizedBatchCount: (value) =>
+        value.totalDailyFinalizedBatchCount,
+      totalDailyFinalizedTransactions: (value) =>
+        value.totalDailyFinalizedTransactions,
     },
   })
 }
 
-export async function getBatchesAvgCosts() {
-  const result = await db.select().from(polygonZkEvmBatchAvgCostMv)
+export async function getDailyFinalizedCost() {
+  const result = await db
+    .select({
+      finDate: polygonZkEvmDailyFinalizedBatchStats.fin_date,
+      totalDailyFinalityCostUsd:
+        polygonZkEvmDailyFinalizedBatchStats.total_daily_finality_cost_usd,
+      totalDailyFinalityCostEth:
+        polygonZkEvmDailyFinalizedBatchStats.total_daily_finality_cost_eth,
+    })
+    .from(polygonZkEvmDailyFinalizedBatchStats)
 
   return normalizeChartData(result, {
-    getLabel: (value) => value.tx_date,
+    getLabel: (value) => toDate(value.finDate),
     datasets: {
-      avgCommitCostUsd: (value) => Number(value.avg_commit_cost_usd),
-      avgVerificationConstUsd: (value) =>
-        Number(value.avg_verification_cost_usd),
+      totalDailyFinalityCostUsd: (value) =>
+        Number(value.totalDailyFinalityCostUsd),
+      totalDailyFinalityCostEth: (value) =>
+        Number(value.totalDailyFinalityCostEth),
     },
   })
 }

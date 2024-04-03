@@ -209,416 +209,6 @@ export const {
 )
 
 export const {
-  materializedView: scrollBatchCreatedMv,
-  createOrReplace: createOrReplaceScrollBatchCreatedMv,
-} = createPgMaterializedView(
-  'scroll_batch_created_mv',
-  {
-    chain_id: integer('chain_id').notNull(),
-    blockchain: text('blockchain').notNull(),
-    tx_date: timestamp('tx_date').notNull(),
-    batch_count: bigint('batch_count', { mode: 'number' }).notNull(),
-    batch_count_committed: bigint('batch_count_committed', {
-      mode: 'number',
-    }).notNull(),
-    batch_count_verified: bigint('batch_count_verified', {
-      mode: 'number',
-    }).notNull(),
-    avg_blocks_per_batch: bigint('avg_blocks_per_batch', {
-      mode: 'number',
-    }).notNull(),
-    avg_txs_per_batch: bigint('avg_txs_per_batch', {
-      mode: 'number',
-    }).notNull(),
-  },
-  sql`
-    WITH
-      batches as (
-        SELECT
-          date_trunc('day', finalized_at) as tx_date,
-          count(hash) as batch_count,
-          count(
-            DISTINCT CASE
-              WHEN commit_tx_hash IS NOT NULL THEN hash
-            END
-          ) as batch_count_committed,
-          count(
-            DISTINCT CASE
-              WHEN finalized_at IS NOT NULL THEN hash
-            END
-          ) as batch_count_verified
-        FROM
-          scroll_batches
-        WHERE
-          finalized_at < date_trunc('day', CURRENT_DATE)
-        GROUP BY
-          1
-      ),
-      batched_blocks as (
-        SELECT
-          date_trunc('day', "timestamp") as tx_date,
-          count(*) as block_count,
-          sum(cardinality(transactions)) as txs_total
-        FROM
-          scroll_blocks
-        WHERE
-          "timestamp" < date_trunc('day', CURRENT_DATE)
-        GROUP BY
-          1
-      ),
-      averages AS (
-        SELECT
-          b.tx_date,
-          b.batch_count,
-          b.batch_count_committed,
-          b.batch_count_verified,
-          bb.block_count / NULLIF(b.batch_count, 0) as avg_blocks_per_batch,
-          bb.txs_total / NULLIF(b.batch_count, 0) as avg_txs_per_batch
-        FROM
-          batches b
-          LEFT JOIN batched_blocks bb ON b.tx_date = bb.tx_date
-      )
-    SELECT
-      '534352'::INTEGER as chain_id,
-      'scroll' as blockchain,
-      tx_date,
-      batch_count,
-      batch_count_committed,
-      batch_count_verified,
-      avg_blocks_per_batch,
-      avg_txs_per_batch
-    FROM
-      averages
-    ORDER BY
-      tx_date DESC;
-  `
-)
-
-export const {
-  materializedView: scrollBatchAvgCostMV,
-  createOrReplace: createOrReplaceScrollBatchAvgCostMV,
-} = createPgMaterializedView(
-  'scroll_batch_avg_cost_mv',
-  {
-    tx_date: timestamp('tx_date').notNull(),
-    avg_commit_cost_usd: numeric('avg_commit_cost_usd').notNull(),
-    avg_verification_cost_usd: numeric('avg_verification_cost_usd').notNull(),
-  },
-  sql`
-    SELECT
-      DATE_TRUNC('day', batch_verification) AS tx_date,
-      AVG(est_commit_cost_usd) AS avg_commit_cost_usd,
-      AVG(est_verification_cost_usd) AS avg_verification_cost_usd
-    FROM
-      scroll_batch_cost_mv
-    GROUP BY
-      DATE_TRUNC('day', batch_verification)
-    ORDER BY
-      tx_date DESC;
-  `
-)
-
-// TODO: Check if this will be used in the future or can be removed
-export const {
-  materializedView: scrollAvgCostOfBatchesDateRange,
-  createOrReplace: createOrReplaceScrollAvgCostOfBatchesDateRange,
-} = createPgMaterializedView(
-  'scroll_avg_cost_of_batches_date_range',
-  {
-    chain_id: integer('chain_id').notNull(),
-    blockchain: text('blockchain').notNull(),
-    period: period('period').notNull(),
-    start_date: text('start_date').notNull(),
-    end_date: text('end_date').notNull(),
-    avg_txs_inside_a_batch: numeric('avg_txs_inside_a_batch').notNull(),
-    avg_commit_cost_eth: numeric('avg_commit_cost_eth').notNull(),
-    avg_verification_cost_eth: numeric('avg_verification_cost_eth').notNull(),
-    avg_total_cost_eth: numeric('avg_total_cost_eth').notNull(),
-    avg_commit_cost_usd: numeric('avg_commit_cost_usd').notNull(),
-    avg_verification_cost_usd: numeric('avg_verification_cost_usd').notNull(),
-    avg_total_cost_usd: numeric('avg_total_cost_usd').notNull(),
-  },
-  sql`
-    WITH
-      date_range AS (
-        SELECT
-          '7_days' AS period,
-          MIN(batch_verification) AS start_date,
-          MAX(batch_verification) AS end_date,
-          AVG(total_tx_count) AS avg_txs_inside_a_batch,
-          AVG(commit_cost_eth) AS avg_commit_cost_eth,
-          AVG(verification_cost_eth) AS avg_verification_cost_eth,
-          AVG(batch_total_cost_eth) AS avg_total_cost_eth,
-          AVG(est_commit_cost_usd) AS avg_commit_cost_usd,
-          AVG(est_verification_cost_usd) AS avg_verification_cost_usd,
-          AVG(est_batch_total_cost_usd) AS avg_total_cost_usd
-        FROM
-          scroll_batch_cost_mv
-        WHERE
-          batch_verification >= CURRENT_DATE - INTERVAL '7 days'
-        UNION ALL
-        SELECT
-          '30_days' AS period,
-          MIN(batch_verification) AS start_date,
-          MAX(batch_verification) AS end_date,
-          AVG(total_tx_count) AS avg_txs_inside_a_batch,
-          AVG(commit_cost_eth) AS avg_commit_cost_eth,
-          AVG(verification_cost_eth) AS avg_verification_cost_eth,
-          AVG(batch_total_cost_eth) AS avg_total_cost_eth,
-          AVG(est_commit_cost_usd) AS avg_commit_cost_usd,
-          AVG(est_verification_cost_usd) AS avg_verification_cost_usd,
-          AVG(est_batch_total_cost_usd) AS avg_total_cost_usd
-        FROM
-          scroll_batch_cost_mv
-        WHERE
-          batch_verification >= CURRENT_DATE - INTERVAL '30 days'
-        UNION ALL
-        SELECT
-          '90_days' AS period,
-          MIN(batch_verification) AS start_date,
-          MAX(batch_verification) AS end_date,
-          AVG(total_tx_count) AS avg_txs_inside_a_batch,
-          AVG(commit_cost_eth) AS avg_commit_cost_eth,
-          AVG(verification_cost_eth) AS avg_verification_cost_eth,
-          AVG(batch_total_cost_eth) AS avg_total_cost_eth,
-          AVG(est_commit_cost_usd) AS avg_commit_cost_usd,
-          AVG(est_verification_cost_usd) AS avg_verification_cost_usd,
-          AVG(est_batch_total_cost_usd) AS avg_total_cost_usd
-        FROM
-          scroll_batch_cost_mv
-        WHERE
-          batch_verification >= CURRENT_DATE - INTERVAL '90 days'
-      )
-    SELECT
-      '534352'::INTEGER as chain_id,
-      'scroll' as blockchain,
-      period,
-      TO_CHAR(start_date, 'YYYY-MM-DD') AS start_date,
-      TO_CHAR(end_date, 'YYYY-MM-DD') AS end_date,
-      avg_txs_inside_a_batch,
-      avg_commit_cost_eth,
-      avg_verification_cost_eth,
-      avg_total_cost_eth,
-      avg_commit_cost_usd,
-      avg_verification_cost_usd,
-      avg_total_cost_usd
-    FROM
-      date_range
-    ORDER BY
-      CASE
-        WHEN period = '7_days' THEN 1
-        WHEN period = '30_days' THEN 2
-        WHEN period = '90_days' THEN 3
-      END;
-  `
-)
-
-// TODO: Check if this will be used in the future or can be removed
-export const {
-  materializedView: scrollBatchAvgDuration,
-  createOrReplace: createOrReplaceScrollBatchAvgDuration,
-} = createPgMaterializedView(
-  'scroll_batch_avg_duration',
-  {
-    chain_id: integer('chain_id').notNull(),
-    blockchain: text('blockchain').notNull(),
-    period: period('period').notNull(),
-    start_date: text('start_date').notNull(),
-    end_date: text('end_date').notNull(),
-    avg_finality: text('avg_finality').notNull(),
-  },
-  sql`
-    WITH
-      averages AS (
-        SELECT
-          '7_days' AS period,
-          MIN(batch_verified) AS start_date,
-          MAX(batch_verified) AS end_date,
-          AVG(
-            EXTRACT(
-              EPOCH
-              FROM
-                batch_time_duration
-            )
-          ) AS avg_finality_seconds
-        FROM
-          scroll_batch_finality_mv
-        WHERE
-          batch_created >= CURRENT_DATE - INTERVAL '7 days'
-        UNION ALL
-        SELECT
-          '30_days' AS period,
-          MIN(batch_verified) AS start_date,
-          MAX(batch_verified) AS end_date,
-          AVG(
-            EXTRACT(
-              EPOCH
-              FROM
-                batch_time_duration
-            )
-          ) AS avg_finality_seconds
-        FROM
-          scroll_batch_finality_mv
-        WHERE
-          batch_created >= CURRENT_DATE - INTERVAL '30 days'
-        UNION ALL
-        SELECT
-          '90_days' AS period,
-          MIN(batch_verified) AS start_date,
-          MAX(batch_verified) AS end_date,
-          AVG(
-            EXTRACT(
-              EPOCH
-              FROM
-                batch_time_duration
-            )
-          ) AS avg_finality_seconds
-        FROM
-          scroll_batch_finality_mv
-        WHERE
-          batch_created >= CURRENT_DATE - INTERVAL '90 days'
-      )
-    SELECT
-      '534352'::INTEGER as chain_id,
-      'scroll' as blockchain,
-      period,
-      TO_CHAR(start_date, 'YYYY-MM-DD') AS start_date,
-      TO_CHAR(end_date, 'YYYY-MM-DD') AS end_date,
-      TO_CHAR(TO_TIMESTAMP(avg_finality_seconds), 'HH24:MI:SS') AS avg_finality
-    FROM
-      averages
-    ORDER BY
-      CASE
-        WHEN period = '7_days' THEN 1
-        WHEN period = '30_days' THEN 2
-        WHEN period = '90_days' THEN 3
-      END;
-  `
-)
-
-// TODO: Check if this will be used in the future or can be removed
-export const {
-  materializedView: scrollNormalizationBatchedTxs,
-  createOrReplace: createOrReplaceScrollNormalizationBatchedTxs,
-} = createPgMaterializedView(
-  'scroll_normalization_batched_txs',
-  {
-    chain_id: integer('chain_id').notNull(),
-    blockchain: text('blockchain').notNull(),
-    period: period('period').notNull(),
-    start_date: text('start_date').notNull(),
-    end_date: text('end_date').notNull(),
-    avg_total_tx_num: numeric('avg_total_tx_num').notNull(),
-    avg_total_eth_cost_by_100: numeric('avg_total_eth_cost_by_100').notNull(),
-    avg_total_usd_cost_by_100: numeric('avg_total_usd_cost_by_100').notNull(),
-    avg_duration_by_100: text('avg_duration_by_100').notNull(),
-  },
-  sql`
-    WITH
-      date_range AS (
-        SELECT
-          '7_days' AS period,
-          MIN(sb.batch_verified) AS start_date,
-          MAX(sb.batch_verified) AS end_date,
-          AVG(txs.total_tx_count) AS avg_total_tx_num,
-          AVG((txs.batch_total_cost_eth) / txs.total_tx_count) * 100 AS avg_total_eth_cost_by_100,
-          AVG(
-            (txs.est_batch_total_cost_usd) / txs.total_tx_count
-          ) * 100 AS avg_total_usd_cost_by_100,
-          AVG(
-            EXTRACT(
-              EPOCH
-              FROM
-                (sb.batch_verified - sb.batch_created)
-            ) / txs.total_tx_count
-          ) * 100 AS avg_duration_seconds
-        FROM
-          scroll_batch_finality_mv sb
-          JOIN scroll_batch_cost_mv txs ON sb.batch_num = txs.batch_num
-        WHERE
-          sb.batch_verified IS NOT NULL
-          AND sb.batch_created IS NOT NULL
-          AND sb.batch_verified >= DATE_TRUNC('day', CURRENT_DATE) - INTERVAL '7 days'
-          AND sb.batch_verified < DATE_TRUNC('day', CURRENT_DATE)
-        GROUP BY
-          period
-        UNION ALL
-        SELECT
-          '30_days' AS period,
-          MIN(sb.batch_verified) AS start_date,
-          MAX(sb.batch_verified) AS end_date,
-          AVG(txs.total_tx_count) AS avg_total_tx_num,
-          AVG((txs.batch_total_cost_eth) / txs.total_tx_count) * 100 AS avg_total_eth_cost_by_100,
-          AVG(
-            (txs.est_batch_total_cost_usd) / txs.total_tx_count
-          ) * 100 AS avg_total_usd_cost_by_100,
-          AVG(
-            EXTRACT(
-              EPOCH
-              FROM
-                (sb.batch_verified - sb.batch_created)
-            ) / txs.total_tx_count
-          ) * 100 AS avg_duration_seconds
-        FROM
-          scroll_batch_finality_mv sb
-          JOIN scroll_batch_cost_mv txs ON sb.batch_num = txs.batch_num
-        WHERE
-          sb.batch_verified IS NOT NULL
-          AND sb.batch_created IS NOT NULL
-          AND sb.batch_verified >= DATE_TRUNC('day', CURRENT_DATE) - INTERVAL '30 days'
-          AND sb.batch_verified < DATE_TRUNC('day', CURRENT_DATE)
-        GROUP BY
-          period
-        UNION ALL
-        SELECT
-          '90_days' AS period,
-          MIN(sb.batch_verified) AS start_date,
-          MAX(sb.batch_verified) AS end_date,
-          AVG(txs.total_tx_count) AS avg_total_tx_num,
-          AVG((txs.batch_total_cost_eth) / txs.total_tx_count) * 100 AS avg_total_eth_cost_by_100,
-          AVG(
-            (txs.est_batch_total_cost_usd) / txs.total_tx_count
-          ) * 100 AS avg_total_usd_cost_by_100,
-          AVG(
-            EXTRACT(
-              EPOCH
-              FROM
-                (sb.batch_verified - sb.batch_created)
-            ) / txs.total_tx_count
-          ) * 100 AS avg_duration_seconds
-        FROM
-          scroll_batch_finality_mv sb
-          JOIN scroll_batch_cost_mv txs ON sb.batch_num = txs.batch_num
-        WHERE
-          sb.batch_verified IS NOT NULL
-          AND sb.batch_created IS NOT NULL
-          AND sb.batch_verified >= DATE_TRUNC('day', CURRENT_DATE) - INTERVAL '90 days'
-          AND sb.batch_verified < DATE_TRUNC('day', CURRENT_DATE)
-        GROUP BY
-          period
-      )
-    SELECT
-      '534352'::INTEGER as chain_id,
-      'scroll' as blockchain,
-      period,
-      TO_CHAR(start_date, 'YYYY-MM-DD') AS start_date,
-      TO_CHAR(end_date, 'YYYY-MM-DD') AS end_date,
-      avg_total_tx_num,
-      avg_total_eth_cost_by_100,
-      avg_total_usd_cost_by_100,
-      TO_CHAR(TO_TIMESTAMP(avg_duration_seconds), 'HH24:MI:SS') AS avg_duration_by_100
-    FROM
-      date_range
-    ORDER BY
-      CASE
-        WHEN period = '7_days' THEN 1
-        WHEN period = '30_days' THEN 2
-        ELSE 3
-      END;
-  `
-)
-
-export const {
   materializedView: scrollBatchDetails,
   createOrReplace: createOrReplaceScrollBatchDetails,
 } = createPgMaterializedView(
@@ -1012,17 +602,75 @@ export const {
   `
 )
 
+export const {
+  materializedView: scrollDailyFinalizedBatchStats,
+  createOrReplace: createOrReplaceScrollDailyFinalizedBatchStats,
+} = createPgMaterializedView(
+  'scroll_daily_finalized_batch_stats',
+  {
+    fin_date: text('fin_date').notNull(),
+    total_daily_finalized_batch_count: bigint(
+      'total_daily_finalized_batch_count',
+      { mode: 'number' }
+    ).notNull(),
+    total_daily_finalized_transactions: bigint(
+      'total_daily_finalized_transactions',
+      { mode: 'number' }
+    ).notNull(),
+    total_daily_commit_cost_eth: numeric(
+      'total_daily_commit_cost_eth'
+    ).notNull(),
+    total_daily_finalized_cost_eth: numeric(
+      'total_daily_finalized_cost_eth'
+    ).notNull(),
+    total_daily_finality_cost_eth: numeric(
+      'total_daily_finality_cost_eth'
+    ).notNull(),
+    total_daily_commit_cost_usd: numeric(
+      'total_daily_commit_cost_usd'
+    ).notNull(),
+    total_daily_finalized_cost_usd: numeric(
+      'total_daily_finalized_cost_usd'
+    ).notNull(),
+    total_daily_finality_cost_usd: numeric(
+      'total_daily_finality_cost_usd'
+    ).notNull(),
+  },
+  sql`
+    SELECT
+      TO_CHAR(DATE_TRUNC('day', finalized_at), 'YYYY-MM-DD') AS fin_date -- The date of finalization on L1
+    ,
+      COUNT(batch_num) AS total_daily_finalized_batch_count -- Total number of batches finalized on L1 each day
+    ,
+      SUM(batch_size) AS total_daily_finalized_transactions -- Total number of L2 transactions finalized on L1 each day
+      ----- eth costs
+    ,
+      SUM(commit_cost_eth) AS total_daily_commit_cost_eth,
+      SUM(finalized_cost_eth) AS total_daily_finalized_cost_eth,
+      SUM(finality_cost_eth) AS total_daily_finality_cost_eth
+      ----- usd costs
+    ,
+      SUM(commit_cost_usd) AS total_daily_commit_cost_usd,
+      SUM(finalized_cost_usd) AS total_daily_finalized_cost_usd,
+      SUM(finality_cost_usd) AS total_daily_finality_cost_usd
+    FROM
+      scroll_batch_details_mv
+    WHERE
+      finalized_at < DATE_TRUNC('day', CURRENT_DATE)
+    GROUP BY
+      DATE_TRUNC('day', finalized_at)
+    ORDER BY
+      fin_date DESC;
+  `
+)
+
 const scrollMaterializedViews = [
   scrollBatchCostMV,
   scrollBatchFinalityMv,
-  scrollBatchCreatedMv,
-  scrollBatchAvgCostMV,
-  // scrollAvgCostOfBatchesDateRange,
-  // scrollBatchAvgDuration,
-  // scrollNormalizationBatchedTxs,
   scrollBatchDetails,
   scrollFinalityByPeriod,
   scrollFinalityNormalizedBy100,
+  scrollDailyFinalizedBatchStats,
 ]
 
 export function refreshScrollMaterializedViews() {
@@ -1032,14 +680,10 @@ export function refreshScrollMaterializedViews() {
 const scrollMaterializedViewsCreateOrReplaceFunctions = [
   createOrReplaceScrollBatchCostMV,
   createOrReplaceScrollBatchFinalityMv,
-  createOrReplaceScrollBatchCreatedMv,
-  createOrReplaceScrollBatchAvgCostMV,
-  // createOrReplaceScrollAvgCostOfBatchesDateRange,
-  // createOrReplaceScrollBatchAvgDuration,
-  // createOrReplaceScrollNormalizationBatchedTxs,
   createOrReplaceScrollBatchDetails,
   createOrReplaceScrollFinalityByPeriod,
   createOrReplaceScrollFinalityNormalizedBy100,
+  createOrReplaceScrollDailyFinalizedBatchStats,
 ]
 
 export function createOrReplaceScrollMaterializedViews() {

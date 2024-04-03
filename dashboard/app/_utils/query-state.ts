@@ -15,9 +15,11 @@ export const usePeriodState = () => {
   )
 }
 
-export const useCurrencyState = () => {
+export const useCurrencyState = (queryKey: string = 'currency') => {
   return useQueryState(
-    'currency',
-    parseAsStringEnum<Currency>(['usd', 'eth']).withDefault('usd')
+    queryKey,
+    parseAsStringEnum<Currency>(['usd', 'eth']).withDefault('usd').withOptions({
+      shallow: true,
+    })
   )
 }

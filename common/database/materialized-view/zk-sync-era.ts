@@ -227,490 +227,6 @@ export const {
       zb."number" DESC;
   `
 )
-export const {
-  materializedView: zkSyncEraBatchCreatedMv,
-  createOrReplace: createOrReplaceZkSyncEraBatchCreatedMv,
-} = createPgMaterializedView(
-  'zk_sync_era_batch_created_mv',
-  {
-    chain_id: integer('chain_id').notNull(),
-    blockchain: text('blockchain').notNull(),
-    tx_date: timestamp('tx_date').notNull(),
-    batch_count: bigint('batch_count', { mode: 'number' }).notNull(),
-    batch_count_committed: bigint('batch_count_committed', {
-      mode: 'number',
-    }).notNull(),
-    batch_count_verified: bigint('batch_count_verified', {
-      mode: 'number',
-    }).notNull(),
-    avg_blocks_per_batch: bigint('avg_blocks_per_batch', {
-      mode: 'number',
-    }).notNull(),
-    avg_txs_per_batch: bigint('avg_txs_per_batch', {
-      mode: 'number',
-    }).notNull(),
-  },
-  sql`
-    WITH
-      batches as (
-        SELECT
-          date_trunc('day', executed_at) as tx_date,
-          count("number") as batch_count,
-          count(
-            CASE
-              WHEN commit_tx_hash IS NOT NULL THEN "number"
-            END
-          ) as batch_count_committed,
-          count(
-            CASE
-              WHEN executed_at IS NOT NULL THEN "number"
-            END
-          ) as batch_count_verified
-        FROM
-          zk_sync_era_batches
-        WHERE
-          executed_at < date_trunc('day', CURRENT_DATE)
-        GROUP BY
-          1
-      ),
-      batched_blocks as (
-        SELECT
-          date_trunc('day', "timestamp") as tx_date,
-          count(*) as block_count,
-          sum(cardinality(transactions)) as txs_total
-        FROM
-          zk_sync_era_blocks
-        WHERE
-          "timestamp" < date_trunc('day', CURRENT_DATE)
-        GROUP BY
-          1
-      ),
-      averages AS (
-        SELECT
-          b.tx_date,
-          b.batch_count,
-          b.batch_count_committed,
-          b.batch_count_verified,
-          bb.block_count / NULLIF(b.batch_count, 0) as avg_blocks_per_batch,
-          bb.txs_total / NULLIF(b.batch_count, 0) as avg_txs_per_batch
-        FROM
-          batches b
-          LEFT JOIN batched_blocks bb ON b.tx_date = bb.tx_date
-      )
-    SELECT
-      '324'::INTEGER as chain_id,
-      'zksync era' as blockchain,
-      tx_date,
-      batch_count,
-      batch_count_committed,
-      batch_count_verified,
-      avg_blocks_per_batch,
-      avg_txs_per_batch
-    FROM
-      averages
-    ORDER BY
-      tx_date DESC;
-  `
-)
-
-export const {
-  materializedView: zkSyncEraBatchAvgCostMv,
-  createOrReplace: createOrReplaceZkSyncEraBatchAvgCostMv,
-} = createPgMaterializedView(
-  'zk_sync_era_batch_avg_cost_mv',
-  {
-    tx_date: timestamp('tx_date').notNull(),
-    avg_commit_cost_usd: numeric('avg_commit_cost_usd').notNull(),
-    avg_verification_cost_usd: numeric('avg_verification_cost_usd').notNull(),
-  },
-  sql`
-    SELECT
-      DATE_TRUNC('day', batch_verification) AS tx_date,
-      AVG(est_commit_cost_usd) AS avg_commit_cost_usd,
-      AVG(est_verification_cost_usd) AS avg_verification_cost_usd
-    FROM
-      zk_sync_era_batch_cost_mv
-    GROUP BY
-      DATE_TRUNC('day', batch_verification)
-    ORDER BY
-      tx_date DESC;
-  `
-)
-
-// TODO: Check if this will be used in the future or can be removed
-export const {
-  materializedView: zkSyncEraAvgCostOfBatchesDateRange,
-  createOrReplace: createOrReplaceZkSyncEraAvgCostOfBatchesDateRange,
-} = createPgMaterializedView(
-  'zk_sync_era_avg_cost_of_batches_date_range',
-  {
-    chain_id: integer('chain_id').notNull(),
-    blockchain: text('blockchain').notNull(),
-    period: period('period').notNull(),
-    start_date: text('start_date').notNull(),
-    end_date: text('end_date').notNull(),
-    avg_txs_inside_a_batch: numeric('avg_txs_inside_a_batch').notNull(),
-    avg_commit_cost_eth: numeric('avg_commit_cost_eth').notNull(),
-    avg_verification_cost_eth: numeric('avg_verification_cost_eth').notNull(),
-    avg_total_proof_cost_eth: numeric('avg_total_proof_cost_eth').notNull(),
-    avg_execute_cost_eth: numeric('avg_execute_cost_eth').notNull(),
-    avg_total_cost_eth: numeric('avg_total_cost_eth').notNull(),
-    avg_commit_cost_usd: numeric('avg_commit_cost_usd').notNull(),
-    avg_verification_cost_usd: numeric('avg_verification_cost_usd').notNull(),
-    avg_est_execute_cost_usd: numeric('avg_est_execute_cost_usd').notNull(),
-    avg_total_proof_cost_usd: numeric('avg_total_proof_cost_usd').notNull(),
-    avg_total_cost_usd: numeric('avg_total_cost_usd').notNull(),
-  },
-  sql`
-    WITH
-      date_range AS (
-        SELECT
-          '7_days' AS period,
-          MIN(batch_verification) AS start_date,
-          MAX(batch_verification) AS end_date,
-          AVG(total_tx_count) AS avg_txs_inside_a_batch,
-          AVG(commit_cost_eth) AS avg_commit_cost_eth,
-          AVG(verification_cost_eth) AS avg_verification_cost_eth,
-          AVG(execute_cost_eth) AS avg_execute_cost_eth,
-          AVG(commit_cost_eth + verification_cost_eth) AS avg_total_proof_cost_eth,
-          AVG(batch_total_cost_eth) AS avg_total_cost_eth,
-          AVG(est_commit_cost_usd) AS avg_commit_cost_usd,
-          AVG(est_verification_cost_usd) AS avg_verification_cost_usd,
-          AVG(est_execute_cost_usd) AS avg_est_execute_cost_usd,
-          AVG(est_commit_cost_usd + est_verification_cost_usd) AS avg_total_proof_cost_usd,
-          AVG(est_batch_total_cost_usd) AS avg_total_cost_usd
-        FROM
-          zk_sync_era_batch_cost_mv
-        WHERE
-          batch_verification >= CURRENT_DATE - INTERVAL '7 days'
-        UNION ALL
-        SELECT
-          '30_days' AS period,
-          MIN(batch_verification) AS start_date,
-          MAX(batch_verification) AS end_date,
-          AVG(total_tx_count) AS avg_txs_inside_a_batch,
-          AVG(commit_cost_eth) AS avg_commit_cost_eth,
-          AVG(verification_cost_eth) AS avg_verification_cost_eth,
-          AVG(execute_cost_eth) AS avg_execute_cost_eth,
-          AVG(commit_cost_eth + verification_cost_eth) AS avg_total_proof_cost_eth,
-          AVG(batch_total_cost_eth) AS avg_total_cost_eth,
-          AVG(est_commit_cost_usd) AS avg_commit_cost_usd,
-          AVG(est_verification_cost_usd) AS avg_verification_cost_usd,
-          AVG(est_execute_cost_usd) AS avg_est_execute_cost_usd,
-          AVG(est_commit_cost_usd + est_verification_cost_usd) AS avg_total_proof_cost_usd,
-          AVG(est_batch_total_cost_usd) AS avg_total_cost_usd
-        FROM
-          zk_sync_era_batch_cost_mv
-        WHERE
-          batch_verification >= CURRENT_DATE - INTERVAL '30 days'
-        UNION ALL
-        SELECT
-          '90_days' AS period,
-          MIN(batch_verification) AS start_date,
-          MAX(batch_verification) AS end_date,
-          AVG(total_tx_count) AS avg_txs_inside_a_batch,
-          AVG(commit_cost_eth) AS avg_commit_cost_eth,
-          AVG(verification_cost_eth) AS avg_verification_cost_eth,
-          AVG(execute_cost_eth) AS avg_execute_cost_eth,
-          AVG(commit_cost_eth + verification_cost_eth) AS avg_total_proof_cost_eth,
-          AVG(batch_total_cost_eth) AS avg_total_cost_eth,
-          AVG(est_commit_cost_usd) AS avg_commit_cost_usd,
-          AVG(est_verification_cost_usd) AS avg_verification_cost_usd,
-          AVG(est_execute_cost_usd) AS avg_est_execute_cost_usd,
-          AVG(est_commit_cost_usd + est_verification_cost_usd) AS avg_total_proof_cost_usd,
-          AVG(est_batch_total_cost_usd) AS avg_total_cost_usd
-        FROM
-          zk_sync_era_batch_cost_mv
-        WHERE
-          batch_verification >= CURRENT_DATE - INTERVAL '90 days'
-      )
-    SELECT
-      '324'::INTEGER as chain_id,
-      'zksync era' as blockchain,
-      period,
-      TO_CHAR(start_date, 'YYYY-MM-DD') AS start_date,
-      TO_CHAR(end_date, 'YYYY-MM-DD') AS end_date,
-      avg_txs_inside_a_batch,
-      avg_commit_cost_eth,
-      avg_verification_cost_eth,
-      avg_total_proof_cost_eth,
-      avg_execute_cost_eth,
-      avg_total_cost_eth,
-      avg_commit_cost_usd,
-      avg_verification_cost_usd,
-      avg_est_execute_cost_usd,
-      avg_total_proof_cost_usd,
-      avg_total_cost_usd
-    FROM
-      date_range
-    ORDER BY
-      CASE
-        WHEN period = '7_days' THEN 1
-        WHEN period = '30_days' THEN 2
-        WHEN period = '90_days' THEN 3
-      END;
-  `
-)
-
-// TODO: Check if this will be used in the future or can be removed
-export const {
-  materializedView: zkSyncEraBatchAvgDuration,
-  createOrReplace: createOrReplaceZkSyncEraBatchAvgDuration,
-} = createPgMaterializedView(
-  'zk_sync_era_batch_avg_duration',
-  {
-    chain_id: integer('chain_id').notNull(),
-    blockchain: text('blockchain').notNull(),
-    period: period('period').notNull(),
-    start_date: text('start_date').notNull(),
-    end_date: text('end_date').notNull(),
-    avg_finality: text('avg_finality').notNull(),
-    avg_execution: text('avg_execution').notNull(),
-  },
-  sql`
-    WITH
-      averages AS (
-        SELECT
-          '7_days' AS period,
-          MIN(batch_verified) AS start_date,
-          MAX(batch_verified) AS end_date,
-          AVG(
-            EXTRACT(
-              EPOCH
-              FROM
-                (batch_verified - batch_created)
-            )
-          ) AS avg_finality_seconds,
-          AVG(
-            EXTRACT(
-              EPOCH
-              FROM
-                batch_time_duration
-            )
-          ) AS avg_execution_seconds
-        FROM
-          zk_sync_era_batch_finality_mv
-        WHERE
-          batch_created >= CURRENT_DATE - INTERVAL '7 days'
-        UNION ALL
-        SELECT
-          '30_days' AS period,
-          MIN(batch_verified) AS start_date,
-          MAX(batch_verified) AS end_date,
-          AVG(
-            EXTRACT(
-              EPOCH
-              FROM
-                (batch_verified - batch_created)
-            )
-          ) AS avg_finality_seconds,
-          AVG(
-            EXTRACT(
-              EPOCH
-              FROM
-                batch_time_duration
-            )
-          ) AS avg_execution_seconds
-        FROM
-          zk_sync_era_batch_finality_mv
-        WHERE
-          batch_created >= CURRENT_DATE - INTERVAL '30 days'
-        UNION ALL
-        SELECT
-          '90_days' AS period,
-          MIN(batch_verified) AS start_date,
-          MAX(batch_verified) AS end_date,
-          AVG(
-            EXTRACT(
-              EPOCH
-              FROM
-                (batch_verified - batch_created)
-            )
-          ) AS avg_finality_seconds,
-          AVG(
-            EXTRACT(
-              EPOCH
-              FROM
-                batch_time_duration
-            )
-          ) AS avg_execution_seconds
-        FROM
-          zk_sync_era_batch_finality_mv
-        WHERE
-          batch_created >= CURRENT_DATE - INTERVAL '90 days'
-      )
-    SELECT
-      '324'::INTEGER as chain_id,
-      'zksync era' as blockchain,
-      period,
-      TO_CHAR(start_date, 'YYYY-MM-DD') AS start_date,
-      TO_CHAR(end_date, 'YYYY-MM-DD') AS end_date,
-      TO_CHAR(TO_TIMESTAMP(avg_finality_seconds), 'HH24:MI:SS') AS avg_finality,
-      TO_CHAR(TO_TIMESTAMP(avg_execution_seconds), 'HH24:MI:SS') AS avg_execution
-    FROM
-      averages
-    ORDER BY
-      CASE
-        WHEN period = '7_days' THEN 1
-        WHEN period = '30_days' THEN 2
-        WHEN period = '90_days' THEN 3
-      END;
-  `
-)
-
-// TODO: Check if this will be used in the future or can be removed
-export const {
-  materializedView: zkSyncEraNormalizationBatchedTxs,
-  createOrReplace: createOrReplaceZkSyncEraNormalizationBatchedTxs,
-} = createPgMaterializedView(
-  'zk_sync_era_normalization_batched_txs',
-  {
-    chain_id: integer('chain_id').notNull(),
-    blockchain: text('blockchain').notNull(),
-    period: period('period').notNull(),
-    start_date: text('start_date').notNull(),
-    end_date: text('end_date').notNull(),
-    avg_total_tx_num: numeric('avg_total_tx_num').notNull(),
-    avg_total_eth_cost_by_100_with_state_diff: numeric(
-      'avg_total_eth_cost_by_100_with_state_diff'
-    ).notNull(),
-    avg_total_usd_cost_by_100_with_state_diff: numeric(
-      'avg_total_usd_cost_by_100_with_state_diff'
-    ).notNull(),
-    avg_duration_by_100: text('avg_duration_by_100').notNull(),
-    avg_duration_by_100_state_diff: text(
-      'avg_duration_by_100_state_diff'
-    ).notNull(),
-  },
-  sql`
-    WITH
-      date_range AS (
-        SELECT
-          '7_days' AS period,
-          MIN(zb.batch_verified) AS start_date,
-          MAX(zb.batch_verified) AS end_date,
-          AVG(txs.total_tx_count) AS avg_total_tx_num,
-          AVG((txs.batch_total_cost_eth) / txs.total_tx_count) * 100 AS avg_total_eth_cost_by_100_with_state_diff,
-          AVG(
-            (txs.est_batch_total_cost_usd) / txs.total_tx_count
-          ) * 100 AS avg_total_usd_cost_by_100_with_state_diff,
-          AVG(
-            EXTRACT(
-              EPOCH
-              FROM
-                (zb.batch_verified - zb.batch_created)
-            ) / txs.total_tx_count
-          ) * 100 AS avg_duration_seconds,
-          AVG(
-            EXTRACT(
-              EPOCH
-              FROM
-                (zb.executed_proven - zb.batch_created)
-            ) / txs.total_tx_count
-          ) * 100 AS avg_duration_seconds_with_state_diff
-        FROM
-          zk_sync_era_batch_finality_mv zb
-          JOIN zk_sync_era_batch_cost_mv txs ON zb.batch_num = txs.batch_num
-        WHERE
-          zb.batch_verified IS NOT NULL
-          AND zb.batch_created IS NOT NULL
-          AND zb.batch_verified >= DATE_TRUNC('day', CURRENT_DATE) - INTERVAL '7 days'
-          AND zb.batch_verified < DATE_TRUNC('day', CURRENT_DATE)
-        GROUP BY
-          period
-        UNION ALL
-        SELECT
-          '30_days' AS period,
-          MIN(zb.batch_verified) AS start_date,
-          MAX(zb.batch_verified) AS end_date,
-          AVG(txs.total_tx_count) AS avg_total_tx_num,
-          AVG((txs.batch_total_cost_eth) / txs.total_tx_count) * 100 AS avg_total_eth_cost_by_100_with_state_diff,
-          AVG(
-            (txs.est_batch_total_cost_usd) / txs.total_tx_count
-          ) * 100 AS avg_total_usd_cost_by_100_with_state_diff,
-          AVG(
-            EXTRACT(
-              EPOCH
-              FROM
-                (zb.batch_verified - zb.batch_created)
-            ) / txs.total_tx_count
-          ) * 100 AS avg_duration_seconds,
-          AVG(
-            EXTRACT(
-              EPOCH
-              FROM
-                (zb.executed_proven - zb.batch_created)
-            ) / txs.total_tx_count
-          ) * 100 AS avg_duration_seconds_with_state_diff
-        FROM
-          zk_sync_era_batch_finality_mv zb
-          JOIN zk_sync_era_batch_cost_mv txs ON zb.batch_num = txs.batch_num
-        WHERE
-          zb.batch_verified IS NOT NULL
-          AND zb.batch_created IS NOT NULL
-          AND zb.batch_verified >= DATE_TRUNC('day', CURRENT_DATE) - INTERVAL '30 days'
-          AND zb.batch_verified < DATE_TRUNC('day', CURRENT_DATE)
-        GROUP BY
-          period
-        UNION ALL
-        SELECT
-          '90_days' AS period,
-          MIN(zb.batch_verified) AS start_date,
-          MAX(zb.batch_verified) AS end_date,
-          AVG(txs.total_tx_count) AS avg_total_tx_num,
-          AVG((txs.batch_total_cost_eth) / txs.total_tx_count) * 100 AS avg_total_eth_cost_by_100_with_state_diff,
-          AVG(
-            (txs.est_batch_total_cost_usd) / txs.total_tx_count
-          ) * 100 AS avg_total_usd_cost_by_100_with_state_diff,
-          AVG(
-            EXTRACT(
-              EPOCH
-              FROM
-                (zb.batch_verified - zb.batch_created)
-            ) / txs.total_tx_count
-          ) * 100 AS avg_duration_seconds,
-          AVG(
-            EXTRACT(
-              EPOCH
-              FROM
-                (zb.executed_proven - zb.batch_created)
-            ) / txs.total_tx_count
-          ) * 100 AS avg_duration_seconds_with_state_diff
-        FROM
-          zk_sync_era_batch_finality_mv zb
-          JOIN zk_sync_era_batch_cost_mv txs ON zb.batch_num = txs.batch_num
-        WHERE
-          zb.batch_verified IS NOT NULL
-          AND zb.batch_created IS NOT NULL
-          AND zb.batch_verified >= DATE_TRUNC('day', CURRENT_DATE) - INTERVAL '90 days'
-          AND zb.batch_verified < DATE_TRUNC('day', CURRENT_DATE)
-        GROUP BY
-          period
-      )
-    SELECT
-      '324'::INTEGER as chain_id,
-      'zksync era' as blockchain,
-      period,
-      TO_CHAR(start_date, 'YYYY-MM-DD') AS start_date,
-      TO_CHAR(end_date, 'YYYY-MM-DD') AS end_date,
-      avg_total_tx_num,
-      avg_total_eth_cost_by_100_with_state_diff,
-      avg_total_usd_cost_by_100_with_state_diff,
-      TO_CHAR(TO_TIMESTAMP(avg_duration_seconds), 'HH24:MI:SS') AS avg_duration_by_100,
-      TO_CHAR(
-        TO_TIMESTAMP(avg_duration_seconds_with_state_diff),
-        'HH24:MI:SS'
-      ) AS avg_duration_by_100_state_diff
-    FROM
-      date_range
-    ORDER BY
-      CASE
-        WHEN period = '7_days' THEN 1
-        WHEN period = '30_days' THEN 2
-        ELSE 3
-      END;
-  `
-)
 
 export const {
   materializedView: zkSyncEraBatchDetailsMv,
@@ -1221,17 +737,75 @@ export const {
   `
 )
 
+export const {
+  materializedView: zkSyncEraDailyFinalizedBatchStats,
+  createOrReplace: createOrReplaceZkSyncEraDailyFinalizedBatchStats,
+} = createPgMaterializedView(
+  'zk_sync_era_daily_finalized_batch_stats',
+  {
+    fin_date: text('fin_date').notNull(),
+    total_daily_finalized_batch_count: bigint(
+      'total_daily_finalized_batch_count',
+      { mode: 'number' }
+    ).notNull(),
+    total_daily_finalized_transactions: bigint(
+      'total_daily_finalized_transactions',
+      { mode: 'number' }
+    ).notNull(),
+    total_daily_commit_cost_eth: numeric(
+      'total_daily_commit_cost_eth'
+    ).notNull(),
+    total_daily_finalized_cost_eth: numeric(
+      'total_daily_finalized_cost_eth'
+    ).notNull(),
+    total_daily_finality_cost_eth: numeric(
+      'total_daily_finality_cost_eth'
+    ).notNull(),
+    total_daily_commit_cost_usd: numeric(
+      'total_daily_commit_cost_usd'
+    ).notNull(),
+    total_daily_finalized_cost_usd: numeric(
+      'total_daily_finalized_cost_usd'
+    ).notNull(),
+    total_daily_finality_cost_usd: numeric(
+      'total_daily_finality_cost_usd'
+    ).notNull(),
+  },
+  sql`
+    SELECT
+      TO_CHAR(DATE_TRUNC('day', executed_at), 'YYYY-MM-DD') AS fin_date -- The date of finalization on L1
+    ,
+      COUNT(batch_num) AS total_daily_finalized_batch_count -- Total number of batches finalized on L1 each day
+    ,
+      SUM(batch_size) AS total_daily_finalized_transactions -- Total number of L2 transactions finalized on L1 each day
+      ----- eth costs
+    ,
+      SUM(commit_cost_eth) AS total_daily_commit_cost_eth,
+      SUM(prove_cost_eth) AS total_daily_prove_cost_eth,
+      SUM(finality_cost_eth) AS total_daily_finality_cost_eth
+      ----- usd costs
+    ,
+      SUM(commit_cost_usd) AS total_daily_commit_cost_usd,
+      SUM(prove_cost_usd) AS total_daily_prove_cost_usd,
+      SUM(finality_cost_usd) AS total_daily_finality_cost_usd
+    FROM
+      zk_sync_batch_details_mv
+    WHERE
+      executed_at < DATE_TRUNC('day', CURRENT_DATE)
+    GROUP BY
+      DATE_TRUNC('day', executed_at)
+    ORDER BY
+      fin_date DESC;
+  `
+)
+
 const zkSyncEraMaterializedViews = [
   zkSyncEraBatchCostMv,
   zkSyncEraBatchFinalityMv,
-  zkSyncEraBatchCreatedMv,
-  zkSyncEraBatchAvgCostMv,
-  // zkSyncEraAvgCostOfBatchesDateRange,
-  // zkSyncEraBatchAvgDuration,
-  // zkSyncEraNormalizationBatchedTxs,
   zkSyncEraBatchDetailsMv,
   zkSyncEraFinalityByPeriod,
   zkSyncEraFinalityNormalizedBy100,
+  zkSyncEraDailyFinalizedBatchStats,
 ]
 
 export function refreshZkSyncEraMaterializedViews() {
@@ -1241,14 +815,10 @@ export function refreshZkSyncEraMaterializedViews() {
 const zkSyncEraMaterializedViewsCreateOrReplaceFunctions = [
   createOrReplaceZkSyncEraBatchCostMv,
   createOrReplaceZkSyncEraBatchFinalityMv,
-  createOrReplaceZkSyncEraBatchCreatedMv,
-  createOrReplaceZkSyncEraBatchAvgCostMv,
-  // createOrReplaceZkSyncEraAvgCostOfBatchesDateRange,
-  // createOrReplaceZkSyncEraBatchAvgDuration,
-  // createOrReplaceZkSyncEraNormalizationBatchedTxs,
   createOrReplaceZkSyncEraBatchDetailsMv,
   createOrReplaceZkSyncEraFinalityByPeriod,
   createOrReplaceZkSyncEraFinalityNormalizedBy100,
+  createOrReplaceZkSyncEraDailyFinalizedBatchStats,
 ]
 
 export function creatOrReplaceZkSyncEraMaterializedViews() {
