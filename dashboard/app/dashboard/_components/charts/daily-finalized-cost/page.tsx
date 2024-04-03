@@ -15,7 +15,9 @@ export async function DailyFinalizedCostPage({
   return (
     <div className="flex flex-col gap-6 rounded-md bg-background p-4">
       <div className="flex items-center justify-between">
-        <ChartHeading>Daily cost to finalize batches</ChartHeading>
+        <ChartHeading subheading="The total breakdown of cost spent on proving the state of the rollup (L2) on (L1).">
+          Daily cost to finalize batches
+        </ChartHeading>
         <Suspense>
           <CurrencyToggle queryKey={CURRENCY_QUERY_KEY} />
         </Suspense>

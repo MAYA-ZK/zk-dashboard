@@ -26,7 +26,9 @@ export function CurrencyToggle({
     <ToggleGroup
       value={currency}
       onValueChange={(value: Currency) => {
-        setCurrency(value)
+        if (value) {
+          setCurrency(value)
+        }
       }}
       variant="outline"
       type="single"

@@ -1,48 +1,21 @@
+import { TABLE_PAGE_SEARCH_PARAM } from '@/app/dashboard/zksync-era/@batchesCosts/config'
 import { BatchTable } from '@/components/table/batch-table'
+import type { GetBatchesCostsBreakdownReturnType } from '@/services/zk-sync-era/batches'
 import {
-  type GetBatchesCostsReturnType,
-  getBatchesCosts,
-  getBatchesCount,
+  getBatchesCostsBreakdown,
+  getBatchesCostsBreakdownCount,
 } from '@/services/zk-sync-era/batches'
 
-import { TABLE_PAGE_SEARCH_PARAM } from './config'
-
 const columns = [
-  {
-    key: 'batchNum',
-    label: 'Number',
-  },
-  {
-    key: 'totalTxCount',
-    label: 'Total transactions',
-  },
-  {
-    key: 'estCommitCostUsd',
-    label: 'Commit cost',
-  },
-  {
-    key: 'estVerificationCostUsd',
-    label: 'Verification cost',
-  },
-  {
-    key: 'estBatchTotalCostUsd',
-    label: 'Batch cost',
-  },
-  /*
-  {
-    key: 'batchStatus',
-    label: 'Batch status',
-  },
-  {
-    key: 'batchLink',
-    label: 'Link',
-  },
-  */
+  { key: 'blockchain', label: 'Blockchain' },
+  { key: 'batchNum', label: 'Number' },
+  { key: 'batchSize', label: 'Size' },
+  { key: 'commitCost', label: 'Commit Cost' },
+  { key: 'proveCost', label: 'Prove Cost' },
+  { key: 'executeCost', label: 'Execute Cost' },
+  { key: 'finalityCost', label: 'Finality Cost' },
 ] satisfies Array<{
-  key: keyof Omit<
-    GetBatchesCostsReturnType[number],
-    'batchStatus' | 'batchLink'
-  >
+  key: keyof GetBatchesCostsBreakdownReturnType[number]
   label: string
 }>
 
@@ -55,8 +28,8 @@ export async function ZkSyncBatchTable({
 
   ...tableProps
 }: ZkSyncBatchTableProps) {
-  const batches = await getBatchesCosts(page, 10)
-  const batchesCount = await getBatchesCount()
+  const batches = await getBatchesCostsBreakdown(page, 10)
+  const batchesCount = await getBatchesCostsBreakdownCount()
   const pages = Math.ceil(batchesCount / 10)
 
   return (
