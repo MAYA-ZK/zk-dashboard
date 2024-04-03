@@ -26,16 +26,15 @@ function NavLink({ href, className, ...props }: ComponentProps<typeof Link>) {
     />
   )
 }
+const BackToDashboardLink = (
+  <NavLink href="/" className="flex items-center gap-x-2 hover:underline">
+    <ChevronLeft width={18} height={18} />
+    Back to main page
+  </NavLink>
+)
 
 export function Navbar() {
   const shouldDisplay = !useMatchPath('/')
-
-  const BackToDashboardLink = (
-    <NavLink href="/" className="flex items-center gap-x-2 hover:underline">
-      <ChevronLeft width={18} height={18} />
-      Back to main page
-    </NavLink>
-  )
 
   return (
     <nav className="fixed left-0 top-0 z-10 flex h-18 w-full justify-center bg-muted px-6">
