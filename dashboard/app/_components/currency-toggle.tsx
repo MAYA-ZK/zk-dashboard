@@ -16,8 +16,12 @@ const CURRENCIES = [
   },
 ] as const satisfies Array<{ value: 'usd' | 'eth'; label: string }>
 
-export function CurrencyToggle() {
-  const [currency, setCurrency] = useCurrencyState()
+export function CurrencyToggle({
+  queryKey = 'currency',
+}: {
+  queryKey?: string
+}) {
+  const [currency, setCurrency] = useCurrencyState(queryKey)
   return (
     <ToggleGroup
       value={currency}

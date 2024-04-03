@@ -2,15 +2,15 @@ import { type ReactNode } from 'react'
 
 export default async function Layout({
   children,
-  dailyAvg,
+  dailyBatches,
   batchesCosts,
-  batchesAvgCost,
+  dailyCost,
   batchesFinality,
 }: {
   children: ReactNode
-  dailyAvg: ReactNode
+  dailyBatches: ReactNode
   batchesCosts: ReactNode
-  batchesAvgCost: ReactNode
+  dailyCost: ReactNode
   batchesFinality: ReactNode
 }) {
   return (
@@ -23,8 +23,8 @@ export default async function Layout({
         </p>
       </div>
       {children}
-      {dailyAvg}
-      {batchesAvgCost}
+      {dailyBatches}
+      {dailyCost}
       {batchesCosts}
       {batchesFinality}
     </main>

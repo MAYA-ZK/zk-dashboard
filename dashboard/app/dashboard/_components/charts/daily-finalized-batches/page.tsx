@@ -1,20 +1,20 @@
+import { DailyFinalizedBatchesChart } from '@/app/dashboard/_components/charts/daily-finalized-batches/chart'
 import { SuspenseWithSkeleton } from '@/app/dashboard/_components/suspense-skeleton'
-import { DailyCreatedBatchesWithAverage } from '@/app/dashboard/zksync-era/@dailyAvg/chart'
 import { ChartHeading } from '@/components/chart/chart-heading'
 import { ChartWrapper } from '@/components/chart/wrapper'
+import type { Blockchain } from '@/config/blockchain'
 
-export default async function Page() {
+export async function DailyFinalizedBatchesPage({
+  blockchain,
+}: {
+  blockchain: Blockchain
+}) {
   return (
     <div className="flex flex-col gap-6 rounded-md bg-background p-4">
-      <ChartHeading
-        subheading="Batches created daily with the average number of transactions
-        per batch"
-      >
-        Daily batches
-      </ChartHeading>
+      <ChartHeading>Daily batches finalized</ChartHeading>
       <ChartWrapper>
         <SuspenseWithSkeleton>
-          <DailyCreatedBatchesWithAverage />
+          <DailyFinalizedBatchesChart blockchain={blockchain} />
         </SuspenseWithSkeleton>
       </ChartWrapper>
     </div>

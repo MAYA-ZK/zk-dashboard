@@ -1,6 +1,6 @@
 'use client'
 
-import { formatToUsd } from '@/lib/formatters'
+import { formatCurrency } from '@/lib/formatters'
 import {
   BarElement,
   CategoryScale,
@@ -18,6 +18,8 @@ import { format } from 'date-fns'
 import type { ComponentProps } from 'react'
 import { Bar } from 'react-chartjs-2'
 
+import type { Currency } from '@zk-dashboard/common/lib/currency'
+
 ChartJS.register(
   CategoryScale,
   TimeScale,
@@ -31,9 +33,7 @@ ChartJS.register(
 )
 
 interface BarChartProps extends ComponentProps<typeof Bar> {
-  currency?: {
-    usd?: boolean
-  }
+  currency?: Currency
   unit?: 'day' | 'hour'
 }
 
@@ -50,7 +50,11 @@ export function BarChart({ unit, currency, options, ...props }: BarChartProps) {
               ...options?.scales?.y?.ticks,
               callback: currency
                 ? (tickValue) => {
-                    return formatToUsd(Number(tickValue))
+                    return formatCurrency(
+                      currency,
+                      Number(tickValue),
+                      currency === 'eth' ? 8 : 2
+                    )
                   }
                 : undefined,
             },
@@ -67,8 +71,10 @@ export function BarChart({ unit, currency, options, ...props }: BarChartProps) {
             callbacks: {
               label: currency
                 ? (context) => {
-                    return `${context.dataset.label}: ${formatToUsd(
-                      context.parsed.y
+                    return `${context.dataset.label}: ${formatCurrency(
+                      currency,
+                      Number(context.parsed.y),
+                      currency === 'eth' ? 8 : 2
                     )}`
                   }
                 : undefined,
