@@ -10,6 +10,8 @@ import type { ZkSyncEraStats } from '@/services/zk-sync-era/stats'
 import { mapValues } from 'lodash'
 import 'server-only'
 
+const USD_DECIMALS_SINGLE_TX = 4
+
 export function normalizePolygonZkEvmStats(stats: PolygonZkEvmStats) {
   return mapValues(stats, (value) => {
     return {
@@ -30,14 +32,8 @@ export function normalizePolygonZkEvmStats(stats: PolygonZkEvmStats) {
         ),
       },
       batchCostNormalized: {
-        usd: formatStringNumber(
-          value.normalizedBatchSizeBy100CostUsd,
-          USD_DECIMALS_TO_DISPLAY
-        ),
-        eth: formatStringNumber(
-          value.normalizedBatchSizeBy100CostEth,
-          ETH_DECIMALS_TO_DISPLAY
-        ),
+        usd: formatStringNumber(value.oneTxCostUsd, USD_DECIMALS_SINGLE_TX),
+        eth: formatStringNumber(value.oneTxCostEth, ETH_DECIMALS_TO_DISPLAY),
       },
     }
   })
@@ -63,14 +59,8 @@ export function normalizeScrollStats(stats: ScrollStats) {
         ),
       },
       batchCostNormalized: {
-        usd: formatStringNumber(
-          value.normalizedBatchSizeBy100CostUsd,
-          USD_DECIMALS_TO_DISPLAY
-        ),
-        eth: formatStringNumber(
-          value.normalizedBatchSizeBy100CostEth,
-          ETH_DECIMALS_TO_DISPLAY
-        ),
+        usd: formatStringNumber(value.oneTxCostUsd, USD_DECIMALS_SINGLE_TX),
+        eth: formatStringNumber(value.oneTxCostEth, ETH_DECIMALS_TO_DISPLAY),
       },
     }
   })
@@ -101,14 +91,8 @@ export function normalizeZkSyncEraStats(stats: ZkSyncEraStats) {
         ),
       },
       batchCostNormalized: {
-        usd: formatStringNumber(
-          value.normalizedBatchSizeBy100CostUsd,
-          USD_DECIMALS_TO_DISPLAY
-        ),
-        eth: formatStringNumber(
-          value.normalizedBatchSizeBy100CostEth,
-          ETH_DECIMALS_TO_DISPLAY
-        ),
+        usd: formatStringNumber(value.oneTxCostUsd, USD_DECIMALS_SINGLE_TX),
+        eth: formatStringNumber(value.oneTxCostEth, ETH_DECIMALS_TO_DISPLAY),
       },
     }
   })

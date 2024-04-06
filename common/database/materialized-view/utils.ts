@@ -9,6 +9,8 @@ import { pgMaterializedView } from 'drizzle-orm/pg-core'
 import { logger } from '../../lib/logger'
 import { db } from '../utils'
 
+type PgMaterializedViewName = `${string}_mv`
+
 // Drizzle ORM or Drizzle Kit does not support materialized views migrations. This is a workaround to create or replace materialized views.
 
 function createIfNotExistsMaterializedView(
@@ -34,32 +36,36 @@ function createIfNotExistsMaterializedView(
 }
 
 function createOrReplaceMaterializedViewQuery(
-  tableName: string,
+  viewName: string,
   query: SQL<unknown>
 ) {
   return sql`
-    DROP MATERIALIZED VIEW IF EXISTS ${sql.raw(tableName)} CASCADE;
+    DROP MATERIALIZED VIEW IF EXISTS ${sql.raw(viewName)} CASCADE;
 
-    CREATE MATERIALIZED VIEW ${sql.raw(tableName)} AS ${query}
+    CREATE MATERIALIZED VIEW ${sql.raw(viewName)} AS ${query}
   `
 }
 
 export function createPgMaterializedView<
-  TName extends string,
+  TName extends PgMaterializedViewName,
   TColumns extends Record<string, PgColumnBuilderBase>,
 >(name: TName, columns: TColumns, query: SQL<unknown>) {
   const materializedView = pgMaterializedView(name, columns).as(query)
 
-  const create = () =>
-    db.execute(createIfNotExistsMaterializedView(name, query))
-  const createOrReplace = () =>
-    db.execute(createOrReplaceMaterializedViewQuery(name, query))
+  const create = () => {
+    logger.info(`Creating materialized view ${name}`)
+    return db.execute(createIfNotExistsMaterializedView(name, query))
+  }
+  const createOrReplace = () => {
+    logger.info(`Creating or replacing materialized view ${name}`)
+    return db.execute(createOrReplaceMaterializedViewQuery(name, query))
+  }
 
   return { materializedView, create, createOrReplace }
 }
 
 type CreateOrReplaceFunction<
-  TName extends string,
+  TName extends PgMaterializedViewName,
   TColumns extends Record<string, PgColumnBuilderBase>,
 > = ReturnType<
   typeof createPgMaterializedView<TName, TColumns>
@@ -83,7 +89,7 @@ export async function refreshMaterializedViews(
 }
 
 export async function creatOrReplaceMaterializedViews<
-  TName extends string,
+  TName extends PgMaterializedViewName,
   TColumns extends Record<string, PgColumnBuilderBase>,
 >(createOrReplaceFunctions: Array<CreateOrReplaceFunction<TName, TColumns>>) {
   for (const createOrReplaceView of createOrReplaceFunctions) {

@@ -17,8 +17,8 @@ import {
 } from './utils'
 
 export const {
-  materializedView: polygonZkEvmBatchDetailsMv,
-  createOrReplace: createOrReplacePolygonZkEvmBatchDetailsMv,
+  materializedView: polygonZkEvmBatchDetails,
+  createOrReplace: createOrReplacePolygonZkEvmBatchDetails,
 } = createPgMaterializedView(
   'polygon_zk_evm_batch_details_mv',
   {
@@ -157,7 +157,7 @@ export const {
   materializedView: polygonZkEvmFinalityByPeriod,
   createOrReplace: createOrReplacePolygonZkEvmFinalityByPeriod,
 } = createPgMaterializedView(
-  'polygon_zk_evm_finality_by_period',
+  'polygon_zk_evm_finality_by_period_mv',
   {
     chain_id: integer('chain_id').notNull(),
     blockchain: text('blockchain').notNull(),
@@ -310,7 +310,7 @@ export const {
   materializedView: polygonZkEvmFinalityNormalizedBy100,
   createOrReplace: createOrReplacePolygonZkEvmFinalityNormalizedBy100,
 } = createPgMaterializedView(
-  'polygon_zk_evm_finality_normalized_by_100',
+  'polygon_zk_evm_finality_normalized_by_100_mv',
   {
     chain_id: integer('chain_id').notNull(),
     blockchain: text('blockchain').notNull(),
@@ -318,15 +318,19 @@ export const {
     start_date: text('start_date').notNull(),
     end_date: text('end_date').notNull(),
     avg_batch_size: numeric('avg_batch_size').notNull(),
-    norm_batch_size_by_100_finality: interval(
-      'norm_batch_size_by_100_finality'
-    ).notNull(),
     norm_batch_size_by_100_cost_eth: numeric(
       'norm_batch_size_by_100_cost_eth'
     ).notNull(),
     norm_batch_size_by_100_cost_usd: numeric(
       'norm_batch_size_by_100_cost_usd'
     ).notNull(),
+    norm_batch_size_by_100_finality: interval(
+      'norm_batch_size_by_100_finality'
+    ).notNull(),
+    avg_finality_cost_eth: numeric('avg_finality_cost_eth').notNull(),
+    avg_finality_cost_usd: numeric('avg_finality_cost_usd').notNull(),
+    one_tx_cost_eth: numeric('one_tx_cost_eth').notNull(),
+    one_tx_cost_usd: numeric('one_tx_cost_usd').notNull(),
   },
   sql`
     WITH
@@ -355,15 +359,22 @@ export const {
           '1_day' AS period,
           MIN(earliest_verified_at) AS start_date,
           MAX(earliest_verified_at) AS end_date,
+          AVG(verification_cost_usd) AS avg_finality_cost_usd,
+          AVG(verification_cost_eth) AS avg_finality_cost_eth,
           AVG(verification_batch_size) AS avg_batch_size,
+          AVG(
+            verification_cost_eth / NULLIF(verification_batch_size, 0)
+          ) AS one_tx_cost_eth,
+          AVG(
+            verification_cost_usd / NULLIF(verification_batch_size, 0)
+          ) AS one_tx_cost_usd,
           AVG(
             EXTRACT(
               EPOCH
               FROM
                 avg_created_to_verified_duration
             )
-          ) AS avg_verification_time -- created_at-verified_at
-    ,
+          ) AS avg_verification_time,
           MAKE_INTERVAL(
             secs => AVG(
               EXTRACT(
@@ -376,12 +387,9 @@ export const {
           AVG(
             verification_cost_eth / NULLIF(verification_batch_size, 0)
           ) * 100 AS norm_batch_size_by_100_cost_eth,
-          ROUND(
-            AVG(
-              verification_cost_usd / NULLIF(verification_batch_size, 0)
-            ) * 100,
-            2
-          ) AS norm_batch_size_by_100_cost_usd
+          AVG(
+            verification_cost_usd / NULLIF(verification_batch_size, 0)
+          ) * 100 AS norm_batch_size_by_100_cost_usd
         FROM
           fin_batch_details
         WHERE
@@ -391,15 +399,22 @@ export const {
           '7_days' AS period,
           MIN(earliest_verified_at) AS start_date,
           MAX(earliest_verified_at) AS end_date,
+          AVG(verification_cost_usd) AS avg_finality_cost_usd,
+          AVG(verification_cost_eth) AS avg_finality_cost_eth,
           AVG(verification_batch_size) AS avg_batch_size,
+          AVG(
+            verification_cost_eth / NULLIF(verification_batch_size, 0)
+          ) AS one_tx_cost_eth,
+          AVG(
+            verification_cost_usd / NULLIF(verification_batch_size, 0)
+          ) AS one_tx_cost_usd,
           AVG(
             EXTRACT(
               EPOCH
               FROM
                 avg_created_to_verified_duration
             )
-          ) AS avg_verification_time -- created_at-verified_at
-    ,
+          ) AS avg_verification_time,
           MAKE_INTERVAL(
             secs => AVG(
               EXTRACT(
@@ -412,12 +427,9 @@ export const {
           AVG(
             verification_cost_eth / NULLIF(verification_batch_size, 0)
           ) * 100 AS norm_batch_size_by_100_cost_eth,
-          ROUND(
-            AVG(
-              verification_cost_usd / NULLIF(verification_batch_size, 0)
-            ) * 100,
-            2
-          ) AS norm_batch_size_by_100_cost_usd
+          AVG(
+            verification_cost_usd / NULLIF(verification_batch_size, 0)
+          ) * 100 AS norm_batch_size_by_100_cost_usd
         FROM
           fin_batch_details
         WHERE
@@ -427,15 +439,22 @@ export const {
           '30_days' AS period,
           MIN(earliest_verified_at) AS start_date,
           MAX(earliest_verified_at) AS end_date,
+          AVG(verification_cost_usd) AS avg_finality_cost_usd,
+          AVG(verification_cost_eth) AS avg_finality_cost_eth,
           AVG(verification_batch_size) AS avg_batch_size,
+          AVG(
+            verification_cost_eth / NULLIF(verification_batch_size, 0)
+          ) AS one_tx_cost_eth,
+          AVG(
+            verification_cost_usd / NULLIF(verification_batch_size, 0)
+          ) AS one_tx_cost_usd,
           AVG(
             EXTRACT(
               EPOCH
               FROM
                 avg_created_to_verified_duration
             )
-          ) AS avg_verification_time -- created_at-verified_at
-    ,
+          ) AS avg_verification_time,
           MAKE_INTERVAL(
             secs => AVG(
               EXTRACT(
@@ -448,12 +467,9 @@ export const {
           AVG(
             verification_cost_eth / NULLIF(verification_batch_size, 0)
           ) * 100 AS norm_batch_size_by_100_cost_eth,
-          ROUND(
-            AVG(
-              verification_cost_usd / NULLIF(verification_batch_size, 0)
-            ) * 100,
-            2
-          ) AS norm_batch_size_by_100_cost_usd
+          AVG(
+            verification_cost_usd / NULLIF(verification_batch_size, 0)
+          ) * 100 AS norm_batch_size_by_100_cost_usd
         FROM
           fin_batch_details
         WHERE
@@ -463,15 +479,22 @@ export const {
           '90_days' AS period,
           MIN(earliest_verified_at) AS start_date,
           MAX(earliest_verified_at) AS end_date,
+          AVG(verification_cost_usd) AS avg_finality_cost_usd,
+          AVG(verification_cost_eth) AS avg_finality_cost_eth,
           AVG(verification_batch_size) AS avg_batch_size,
+          AVG(
+            verification_cost_eth / NULLIF(verification_batch_size, 0)
+          ) AS one_tx_cost_eth,
+          AVG(
+            verification_cost_usd / NULLIF(verification_batch_size, 0)
+          ) AS one_tx_cost_usd,
           AVG(
             EXTRACT(
               EPOCH
               FROM
                 avg_created_to_verified_duration
             )
-          ) AS avg_verification_time -- created_at-verified_at
-    ,
+          ) AS avg_verification_time,
           MAKE_INTERVAL(
             secs => AVG(
               EXTRACT(
@@ -484,12 +507,9 @@ export const {
           AVG(
             verification_cost_eth / NULLIF(verification_batch_size, 0)
           ) * 100 AS norm_batch_size_by_100_cost_eth,
-          ROUND(
-            AVG(
-              verification_cost_usd / NULLIF(verification_batch_size, 0)
-            ) * 100,
-            2
-          ) AS norm_batch_size_by_100_cost_usd
+          AVG(
+            verification_cost_usd / NULLIF(verification_batch_size, 0)
+          ) * 100 AS norm_batch_size_by_100_cost_usd
         FROM
           fin_batch_details
         WHERE
@@ -502,9 +522,13 @@ export const {
       TO_CHAR(start_date, 'YYYY-MM-DD') AS start_date,
       TO_CHAR(end_date, 'YYYY-MM-DD') AS end_date,
       ROUND(avg_batch_size) AS avg_batch_size,
-      DATE_TRUNC('second', norm_batch_size_by_100_finality) AS norm_batch_size_by_100_finality,
+      avg_finality_cost_eth,
+      avg_finality_cost_usd,
+      one_tx_cost_eth,
+      one_tx_cost_usd,
       norm_batch_size_by_100_cost_eth,
-      norm_batch_size_by_100_cost_usd
+      norm_batch_size_by_100_cost_usd,
+      DATE_TRUNC('second', norm_batch_size_by_100_finality) AS norm_batch_size_by_100_finality
     FROM
       date_range
     ORDER BY
@@ -521,7 +545,7 @@ export const {
   materializedView: polygonZkEvmDailyFinalizedBatchStats,
   createOrReplace: createOrReplacePolygonZkEvmDailyFinalizedBatchStats,
 } = createPgMaterializedView(
-  'polygon_zk_evm_daily_finalized_batch_stats',
+  'polygon_zk_evm_daily_finalized_batch_stats_mv',
   {
     fin_date: text('fin_date').notNull(),
     total_daily_finalized_batch_count: bigint(
@@ -580,7 +604,7 @@ export const {
 )
 
 const polygonZkEvmMaterializedViews = [
-  polygonZkEvmBatchDetailsMv,
+  polygonZkEvmBatchDetails,
   polygonZkEvmFinalityByPeriod,
   polygonZkEvmFinalityNormalizedBy100,
   polygonZkEvmDailyFinalizedBatchStats,
@@ -591,7 +615,7 @@ export function refreshPolygonZkEvmMaterializedViews() {
 }
 
 const polygonZkEvmMaterializedViewsCreateOrReplaceFunctions = [
-  createOrReplacePolygonZkEvmBatchDetailsMv,
+  createOrReplacePolygonZkEvmBatchDetails,
   createOrReplacePolygonZkEvmFinalityByPeriod,
   createOrReplacePolygonZkEvmFinalityNormalizedBy100,
   createOrReplacePolygonZkEvmDailyFinalizedBatchStats,

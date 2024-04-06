@@ -17,8 +17,8 @@ import {
 } from './utils'
 
 export const {
-  materializedView: zkSyncEraBatchDetailsMv,
-  createOrReplace: createOrReplaceZkSyncEraBatchDetailsMv,
+  materializedView: zkSyncEraBatchDetails,
+  createOrReplace: createOrReplaceZkSyncEraBatchDetails,
 } = createPgMaterializedView(
   'zk_sync_batch_details_mv',
   {
@@ -163,7 +163,7 @@ export const {
   materializedView: zkSyncEraFinalityByPeriod,
   createOrReplace: createOrReplaceZkSyncEraFinalityByPeriod,
 } = createPgMaterializedView(
-  `zk_sync_era_finality_by_period`,
+  `zk_sync_era_finality_by_period_mv`,
   {
     chain_id: integer('chain_id').notNull(),
     blockchain: text('blockchain').notNull(),
@@ -370,7 +370,7 @@ export const {
   materializedView: zkSyncEraFinalityNormalizedBy100,
   createOrReplace: createOrReplaceZkSyncEraFinalityNormalizedBy100,
 } = createPgMaterializedView(
-  'zk_sync_era_finality_normalized_by_100',
+  'zk_sync_era_finality_normalized_by_100_mv',
   {
     chain_id: integer('chain_id').notNull(),
     blockchain: text('blockchain').notNull(),
@@ -387,6 +387,10 @@ export const {
     norm_batch_size_by_100_finality: interval(
       'norm_batch_size_by_100_finality'
     ).notNull(),
+    avg_finality_cost_eth: numeric('avg_finality_cost_eth').notNull(),
+    avg_finality_cost_usd: numeric('avg_finality_cost_usd').notNull(),
+    one_tx_cost_eth: numeric('one_tx_cost_eth').notNull(),
+    one_tx_cost_usd: numeric('one_tx_cost_usd').notNull(),
   },
   sql`
     WITH
@@ -395,7 +399,11 @@ export const {
           '1_day' AS period,
           MIN(executed_at) AS start_date,
           MAX(executed_at) AS end_date,
+          AVG(finality_cost_usd) AS avg_finality_cost_usd,
+          AVG(finality_cost_eth) AS avg_finality_cost_eth,
           AVG(batch_size) AS avg_batch_size,
+          AVG(finality_cost_eth / batch_size) AS one_tx_cost_eth,
+          AVG(finality_cost_usd / batch_size) AS one_tx_cost_usd,
           AVG(
             EXTRACT(
               EPOCH
@@ -413,7 +421,7 @@ export const {
             ) * 100
           ) AS norm_batch_size_by_100_finality,
           AVG(finality_cost_eth / batch_size) * 100 AS norm_batch_size_by_100_cost_eth,
-          ROUND(AVG(finality_cost_usd / batch_size) * 100, 2) AS norm_batch_size_by_100_cost_usd
+          AVG(finality_cost_usd / batch_size) * 100 AS norm_batch_size_by_100_cost_usd
         FROM
           zk_sync_batch_details_mv
         WHERE
@@ -423,7 +431,11 @@ export const {
           '7_days' AS period,
           MIN(executed_at) AS start_date,
           MAX(executed_at) AS end_date,
+          AVG(finality_cost_usd) AS avg_finality_cost_usd,
+          AVG(finality_cost_eth) AS avg_finality_cost_eth,
           AVG(batch_size) AS avg_batch_size,
+          AVG(finality_cost_eth / batch_size) AS one_tx_cost_eth,
+          AVG(finality_cost_usd / batch_size) AS one_tx_cost_usd,
           AVG(
             EXTRACT(
               EPOCH
@@ -441,7 +453,7 @@ export const {
             ) * 100
           ) AS norm_batch_size_by_100_finality,
           AVG(finality_cost_eth / batch_size) * 100 AS norm_batch_size_by_100_cost_eth,
-          ROUND(AVG(finality_cost_usd / batch_size) * 100, 2) AS norm_batch_size_by_100_cost_usd
+          AVG(finality_cost_usd / batch_size) * 100 AS norm_batch_size_by_100_cost_usd
         FROM
           zk_sync_batch_details_mv
         WHERE
@@ -451,7 +463,11 @@ export const {
           '30_days' AS period,
           MIN(executed_at) AS start_date,
           MAX(executed_at) AS end_date,
+          AVG(finality_cost_usd) AS avg_finality_cost_usd,
+          AVG(finality_cost_eth) AS avg_finality_cost_eth,
           AVG(batch_size) AS avg_batch_size,
+          AVG(finality_cost_eth / batch_size) AS one_tx_cost_eth,
+          AVG(finality_cost_usd / batch_size) AS one_tx_cost_usd,
           AVG(
             EXTRACT(
               EPOCH
@@ -469,7 +485,7 @@ export const {
             ) * 100
           ) AS norm_batch_size_by_100_finality,
           AVG(finality_cost_eth / batch_size) * 100 AS norm_batch_size_by_100_cost_eth,
-          ROUND(AVG(finality_cost_usd / batch_size) * 100, 2) AS norm_batch_size_by_100_cost_usd
+          AVG(finality_cost_usd / batch_size) * 100 AS norm_batch_size_by_100_cost_usd
         FROM
           zk_sync_batch_details_mv
         WHERE
@@ -479,7 +495,11 @@ export const {
           '90_days' AS period,
           MIN(executed_at) AS start_date,
           MAX(executed_at) AS end_date,
+          AVG(finality_cost_usd) AS avg_finality_cost_usd,
+          AVG(finality_cost_eth) AS avg_finality_cost_eth,
           AVG(batch_size) AS avg_batch_size,
+          AVG(finality_cost_eth / batch_size) AS one_tx_cost_eth,
+          AVG(finality_cost_usd / batch_size) AS one_tx_cost_usd,
           AVG(
             EXTRACT(
               EPOCH
@@ -497,7 +517,7 @@ export const {
             ) * 100
           ) AS norm_batch_size_by_100_finality,
           AVG(finality_cost_eth / batch_size) * 100 AS norm_batch_size_by_100_cost_eth,
-          ROUND(AVG(finality_cost_usd / batch_size) * 100, 2) AS norm_batch_size_by_100_cost_usd
+          AVG(finality_cost_usd / batch_size) * 100 AS norm_batch_size_by_100_cost_usd
         FROM
           zk_sync_batch_details_mv
         WHERE
@@ -510,6 +530,10 @@ export const {
       TO_CHAR(start_date, 'YYYY-MM-DD') AS start_date,
       TO_CHAR(end_date, 'YYYY-MM-DD') AS end_date,
       ROUND(avg_batch_size) AS avg_batch_size,
+      avg_finality_cost_usd,
+      avg_finality_cost_eth,
+      one_tx_cost_eth,
+      one_tx_cost_usd,
       norm_batch_size_by_100_cost_eth,
       norm_batch_size_by_100_cost_usd,
       DATE_TRUNC('second', norm_batch_size_by_100_finality) AS norm_batch_size_by_100_finality
@@ -529,7 +553,7 @@ export const {
   materializedView: zkSyncEraDailyFinalizedBatchStats,
   createOrReplace: createOrReplaceZkSyncEraDailyFinalizedBatchStats,
 } = createPgMaterializedView(
-  'zk_sync_era_daily_finalized_batch_stats',
+  'zk_sync_era_daily_finalized_batch_stats_mv',
   {
     fin_date: text('fin_date').notNull(),
     total_daily_finalized_batch_count: bigint(
@@ -588,7 +612,7 @@ export const {
 )
 
 const zkSyncEraMaterializedViews = [
-  zkSyncEraBatchDetailsMv,
+  zkSyncEraBatchDetails,
   zkSyncEraFinalityByPeriod,
   zkSyncEraFinalityNormalizedBy100,
   zkSyncEraDailyFinalizedBatchStats,
@@ -599,7 +623,7 @@ export function refreshZkSyncEraMaterializedViews() {
 }
 
 const zkSyncEraMaterializedViewsCreateOrReplaceFunctions = [
-  createOrReplaceZkSyncEraBatchDetailsMv,
+  createOrReplaceZkSyncEraBatchDetails,
   createOrReplaceZkSyncEraFinalityByPeriod,
   createOrReplaceZkSyncEraFinalityNormalizedBy100,
   createOrReplaceZkSyncEraDailyFinalizedBatchStats,
