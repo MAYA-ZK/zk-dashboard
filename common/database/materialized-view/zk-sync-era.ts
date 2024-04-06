@@ -20,7 +20,7 @@ export const {
   materializedView: zkSyncEraBatchDetails,
   createOrReplace: createOrReplaceZkSyncEraBatchDetails,
 } = createPgMaterializedView(
-  'zk_sync_batch_details_mv',
+  'zk_sync_era_batch_details_mv',
   {
     chain_id: integer('chain_id').notNull(),
     blockchain: text('blockchain').notNull(),
@@ -219,7 +219,7 @@ export const {
           AVG(execute_cost_usd) AS avg_execute_cost_usd,
           AVG(finality_cost_usd) AS avg_finality_cost_usd --- prove_cost_usd+divided_execute_cost_usd
         FROM
-          zk_sync_batch_details_mv
+          zk_sync_era_batch_details_mv
         WHERE
           executed_at >= CURRENT_DATE - INTERVAL '1 days'
         UNION ALL
@@ -257,7 +257,7 @@ export const {
           AVG(execute_cost_usd) AS avg_execute_cost_usd,
           AVG(finality_cost_usd) AS avg_finality_cost_usd --- prove_cost_usd+divided_execute_cost_usd
         FROM
-          zk_sync_batch_details_mv
+          zk_sync_era_batch_details_mv
         WHERE
           executed_at >= CURRENT_DATE - INTERVAL '7 days'
         UNION ALL
@@ -295,7 +295,7 @@ export const {
           AVG(execute_cost_usd) AS avg_execute_cost_usd,
           AVG(finality_cost_usd) AS avg_finality_cost_usd --- prove_cost_usd+divided_execute_cost_usd
         FROM
-          zk_sync_batch_details_mv
+          zk_sync_era_batch_details_mv
         WHERE
           executed_at >= CURRENT_DATE - INTERVAL '30 days'
         UNION ALL
@@ -333,7 +333,7 @@ export const {
           AVG(execute_cost_usd) AS avg_execute_cost_usd,
           AVG(finality_cost_usd) AS avg_finality_cost_usd --- prove_cost_usd+divided_execute_cost_usd
         FROM
-          zk_sync_batch_details_mv
+          zk_sync_era_batch_details_mv
         WHERE
           executed_at >= CURRENT_DATE - INTERVAL '90 days'
       )
@@ -423,7 +423,7 @@ export const {
           AVG(finality_cost_eth / batch_size) * 100 AS norm_batch_size_by_100_cost_eth,
           AVG(finality_cost_usd / batch_size) * 100 AS norm_batch_size_by_100_cost_usd
         FROM
-          zk_sync_batch_details_mv
+          zk_sync_era_batch_details_mv
         WHERE
           executed_at >= CURRENT_DATE - INTERVAL '1 days'
         UNION ALL
@@ -455,7 +455,7 @@ export const {
           AVG(finality_cost_eth / batch_size) * 100 AS norm_batch_size_by_100_cost_eth,
           AVG(finality_cost_usd / batch_size) * 100 AS norm_batch_size_by_100_cost_usd
         FROM
-          zk_sync_batch_details_mv
+          zk_sync_era_batch_details_mv
         WHERE
           executed_at >= CURRENT_DATE - INTERVAL '7 days'
         UNION ALL
@@ -487,7 +487,7 @@ export const {
           AVG(finality_cost_eth / batch_size) * 100 AS norm_batch_size_by_100_cost_eth,
           AVG(finality_cost_usd / batch_size) * 100 AS norm_batch_size_by_100_cost_usd
         FROM
-          zk_sync_batch_details_mv
+          zk_sync_era_batch_details_mv
         WHERE
           executed_at >= CURRENT_DATE - INTERVAL '30 days'
         UNION ALL
@@ -519,7 +519,7 @@ export const {
           AVG(finality_cost_eth / batch_size) * 100 AS norm_batch_size_by_100_cost_eth,
           AVG(finality_cost_usd / batch_size) * 100 AS norm_batch_size_by_100_cost_usd
         FROM
-          zk_sync_batch_details_mv
+          zk_sync_era_batch_details_mv
         WHERE
           executed_at >= CURRENT_DATE - INTERVAL '90 days'
       )
@@ -601,7 +601,7 @@ export const {
       SUM(prove_cost_usd) AS total_daily_prove_cost_usd,
       SUM(finality_cost_usd) AS total_daily_finality_cost_usd
     FROM
-      zk_sync_batch_details_mv
+      zk_sync_era_batch_details_mv
     WHERE
       executed_at < DATE_TRUNC('day', CURRENT_DATE)
     GROUP BY
