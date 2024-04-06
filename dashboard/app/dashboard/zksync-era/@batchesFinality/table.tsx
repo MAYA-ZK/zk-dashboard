@@ -1,47 +1,24 @@
+import { BLOCKCHAIN_TIMESTAMP_FORMAT } from '@/app/dashboard/_utils/constants'
 import { TABLE_PAGE_SEARCH_PARAM } from '@/app/dashboard/zksync-era/@batchesFinality/config'
 import { BatchTable } from '@/components/table/batch-table'
-import type { GetBatchesFinalityReturnType } from '@/services/scroll/batches'
 import {
-  getBatchesFinality,
-  getBatchesFinalityCount,
+  type GetFinalityTimeReturnType,
+  getFinalityTime,
+  getFinalityTimeCount,
 } from '@/services/zk-sync-era/batches'
 import { format } from 'date-fns'
 
-type Batch = {
-  [K in keyof GetBatchesFinalityReturnType[number]]: GetBatchesFinalityReturnType[number][K] extends Date
-    ? string
-    : GetBatchesFinalityReturnType[number][K]
-}
-
 const columns = [
-  {
-    key: 'batchNum',
-    label: 'Number',
-  },
-  {
-    key: 'batchCreated',
-    label: 'Created',
-  },
-  {
-    key: 'batchCommitted',
-    label: 'Committed',
-  },
-  {
-    key: 'batchVerified',
-    label: 'Verified',
-  },
-  /*
-  {
-    key: 'batchStatus',
-    label: 'Status',
-  },
-  {
-    key: 'batchLink',
-    label: 'Link',
-  },
-  */
+  { key: 'blockchain', label: 'Blockchain' },
+  { key: 'batchNum', label: 'Number' },
+  { key: 'createdAt', label: 'Created At' },
+  { key: 'committedAt', label: 'Committed At' },
+  { key: 'provenAt', label: 'Proven At' },
+  { key: 'executedAt', label: 'Executed At' },
+  { key: 'createdToExecutedDuration', label: 'Created to Executed Duration' },
+  { key: 'createdToProvenDuration', label: 'Created to Proven Duration' },
 ] satisfies Array<{
-  key: keyof Omit<Batch, 'batchStatus' | 'batchLink'>
+  key: keyof GetFinalityTimeReturnType[number]
   label: string
 }>
 
@@ -53,8 +30,8 @@ export async function ZkSyncBatchesFinalityTable({
   page,
   ...tableProps
 }: ZkSyncBatchesFinalityTableProps) {
-  const batches = await getBatchesFinality(page, 10)
-  const batchesCount = await getBatchesFinalityCount()
+  const batches = await getFinalityTime(page, 10)
+  const batchesCount = await getFinalityTimeCount()
   const pages = Math.ceil(batchesCount / 10)
 
   return (
@@ -64,9 +41,10 @@ export async function ZkSyncBatchesFinalityTable({
       batches={batches.map((batch) => {
         return {
           ...batch,
-          batchCommitted: format(batch.batchCommitted, 'yyyy-MM-dd HH:mm:ss'),
-          batchCreated: format(batch.batchCreated, 'yyyy-MM-dd HH:mm:ss'),
-          batchVerified: format(batch.batchVerified, 'yyyy-MM-dd HH:mm:ss'),
+          createdAt: format(batch.createdAt, BLOCKCHAIN_TIMESTAMP_FORMAT),
+          committedAt: format(batch.committedAt, BLOCKCHAIN_TIMESTAMP_FORMAT),
+          provenAt: format(batch.provenAt, BLOCKCHAIN_TIMESTAMP_FORMAT),
+          executedAt: format(batch.executedAt, BLOCKCHAIN_TIMESTAMP_FORMAT),
         }
       })}
       searchParam={TABLE_PAGE_SEARCH_PARAM}

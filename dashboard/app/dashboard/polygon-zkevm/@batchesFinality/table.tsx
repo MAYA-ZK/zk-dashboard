@@ -1,48 +1,23 @@
+import { BLOCKCHAIN_TIMESTAMP_FORMAT } from '@/app/dashboard/_utils/constants'
 import { BatchTable } from '@/components/table/batch-table'
+import type { GetFinalityTimeReturnType } from '@/services/polygon-zk-evm/batches'
 import {
-  type GetBatchesFinalityReturnType,
-  getBatchesFinality,
-  getBatchesFinalityCount,
+  getFinalityTime,
+  getFinalityTimeCount,
 } from '@/services/polygon-zk-evm/batches'
 import { format } from 'date-fns'
 
 import { TABLE_PAGE_SEARCH_PARAM } from './config'
 
-type Batch = {
-  [K in keyof GetBatchesFinalityReturnType[number]]: GetBatchesFinalityReturnType[number][K] extends Date
-    ? string
-    : GetBatchesFinalityReturnType[number][K]
-}
-
 const columns = [
-  {
-    key: 'batchNum',
-    label: 'Number',
-  },
-  {
-    key: 'batchCreated',
-    label: 'Created',
-  },
-  {
-    key: 'batchCommitted',
-    label: 'Committed',
-  },
-  {
-    key: 'batchVerified',
-    label: 'Verified',
-  },
-  /*
-  {
-    key: 'batchStatus',
-    label: 'Status',
-  },
-  {
-    key: 'batchLink',
-    label: 'Link',
-  },
-  */
+  { key: 'blockchain', label: 'Blockchain' },
+  { key: 'batchNum', label: 'Number' },
+  { key: 'createdAt', label: 'Created At' },
+  { key: 'sequencedAt', label: 'Sequenced At' },
+  { key: 'verifiedAt', label: 'Verified At' },
+  { key: 'createdToVerifiedDuration', label: 'Created to Verified Duration' },
 ] satisfies Array<{
-  key: keyof Omit<Batch, 'batchLink' | 'batchStatus'>
+  key: keyof GetFinalityTimeReturnType[number]
   label: string
 }>
 
@@ -54,9 +29,8 @@ export async function PolygonBatchesFinalityTable({
   page,
   ...tableProps
 }: PolygonBatchesFinalityTableProps) {
-  const batches = await getBatchesFinality(page, 10)
-
-  const batchesCount = await getBatchesFinalityCount()
+  const batches = await getFinalityTime(page, 10)
+  const batchesCount = await getFinalityTimeCount()
   const pages = Math.ceil(batchesCount / 10)
 
   return (
@@ -66,9 +40,18 @@ export async function PolygonBatchesFinalityTable({
       batches={batches.map((batch) => {
         return {
           ...batch,
-          batchCommitted: format(batch.batchCommitted, 'yyyy-MM-dd HH:mm:ss'),
-          batchCreated: format(batch.batchCreated, 'yyyy-MM-dd HH:mm:ss'),
-          batchVerified: format(batch.batchVerified, 'yyyy-MM-dd HH:mm:ss'),
+          createdAt: format(
+            new Date(batch.createdAt),
+            BLOCKCHAIN_TIMESTAMP_FORMAT
+          ),
+          sequencedAt: format(
+            new Date(batch.sequencedAt),
+            BLOCKCHAIN_TIMESTAMP_FORMAT
+          ),
+          verifiedAt: format(
+            new Date(batch.verifiedAt),
+            BLOCKCHAIN_TIMESTAMP_FORMAT
+          ),
         }
       })}
       searchParam={TABLE_PAGE_SEARCH_PARAM}

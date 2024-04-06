@@ -1,49 +1,26 @@
 import { BatchTable } from '@/components/table/batch-table'
+import type { GetBatchesCostsBreakdownReturnType } from '@/services/polygon-zk-evm/batches'
 import {
-  type GetBatchesCostsReturnType,
-  getBatchesCosts,
-  getBatchesCount,
+  getBatchesCostsBreakdown,
+  getBatchesCostsBreakdownCount,
 } from '@/services/polygon-zk-evm/batches'
+
+import type { Currency } from '@zk-dashboard/common/lib/currency'
 
 import { TABLE_PAGE_SEARCH_PARAM } from './config'
 
 const columns = [
-  {
-    key: 'batchNum',
-    label: 'Number',
-  },
-  {
-    key: 'totalTxCount',
-    label: 'Total transactions',
-  },
-  {
-    key: 'estCommitCostUsd',
-    label: 'Commit cost',
-  },
-  {
-    key: 'estVerificationCostUsd',
-    label: 'Verification cost',
-  },
-  {
-    key: 'estBatchTotalCostUsd',
-    label: 'Batch cost',
-  },
-  /*
-  {
-    key: 'batchStatus',
-    label: 'Batch status',
-  },
-  {
-    key: 'batchLink',
-    label: 'Link',
-  },
-  */
+  { key: 'blockchain', label: 'Blockchain' },
+  { key: 'batchNum', label: 'Number' },
+  { key: 'batchSize', label: 'Size' },
+  { key: 'sequenceCost', label: 'Sequence Cost' },
+  { key: 'verificationCost', label: 'Verification Cost' },
+  { key: 'finalityCost', label: 'Finality Cost' },
+  { key: 'dividedVerificationCost', label: 'Divided Verification Cost' },
 ] satisfies Array<{
-  key: keyof Omit<
-    GetBatchesCostsReturnType[number],
-    'batchLink' | 'batchStatus'
-  >
+  key: keyof GetBatchesCostsBreakdownReturnType[number]
   label: string
+  currency?: Currency
 }>
 
 interface PolygonBatchTableProps {
@@ -54,8 +31,8 @@ export async function PolygonBatchTable({
   page,
   ...tableProps
 }: PolygonBatchTableProps) {
-  const batches = await getBatchesCosts(page, 10)
-  const batchesCount = await getBatchesCount()
+  const batches = await getBatchesCostsBreakdown(page, 10)
+  const batchesCount = await getBatchesCostsBreakdownCount()
   const pages = Math.ceil(batchesCount / 10)
 
   return (

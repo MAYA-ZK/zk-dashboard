@@ -1,67 +1,75 @@
-import { count, desc } from 'drizzle-orm'
+import { count, desc, sql } from 'drizzle-orm'
 
-import {
-  scrollBatchCostMV,
-  scrollBatchFinalityMv,
-} from '@zk-dashboard/common/database/materialized-view/scroll'
+import { scrollBatchDetails } from '@zk-dashboard/common/database/materialized-view/scroll'
 import { db } from '@zk-dashboard/common/database/utils'
 
-export type GetBatchesCostsReturnType = Awaited<
-  ReturnType<typeof getBatchesCosts>
+export type GetBatchesCostsBreakdownReturnType = Awaited<
+  ReturnType<typeof getBatchesCostsBreakdown>
 >
-export type GetBatchesFinalityReturnType = Awaited<
-  ReturnType<typeof getBatchesFinality>
+export type GetFinalityTimeReturnType = Awaited<
+  ReturnType<typeof getFinalityTime>
 >
 
-export async function getBatchesCosts(page: number = 1, pageSize: number = 10) {
-  return await db
-    .select({
-      batchNum: scrollBatchCostMV.batch_num,
-      totalTxCount: scrollBatchCostMV.total_tx_count,
-      estCommitCostUsd: scrollBatchCostMV.est_commit_cost_usd,
-      estVerificationCostUsd: scrollBatchCostMV.est_verification_cost_usd,
-      estBatchTotalCostUsd: scrollBatchCostMV.est_batch_total_cost_usd,
-      batchStatus: scrollBatchCostMV.batch_status,
-      batchLink: scrollBatchCostMV.batch_link,
-    })
-    .from(scrollBatchCostMV)
-    .orderBy(desc(scrollBatchCostMV.batch_num))
-    .limit(pageSize)
-    .offset((page - 1) * pageSize)
-}
+const blockchain = sql<string>`'Scroll'`
 
-export async function getBatchesCount() {
-  const results = await db
-    .select({ count: count() })
-    .from(scrollBatchCostMV)
-    .execute()
-
-  return results[0].count
-}
-
-export async function getBatchesFinality(
+export async function getBatchesCostsBreakdown(
   page: number = 1,
   pageSize: number = 10
 ) {
   return await db
     .select({
-      batchNum: scrollBatchFinalityMv.batch_num,
-      batchCreated: scrollBatchFinalityMv.batch_created,
-      batchCommitted: scrollBatchFinalityMv.batch_committed,
-      batchVerified: scrollBatchFinalityMv.batch_verified,
-      batchStatus: scrollBatchFinalityMv.batch_status,
-      batchLink: scrollBatchFinalityMv.batch_link,
+      blockchain,
+      batchNum: scrollBatchDetails.batch_num,
+      batchStatus: scrollBatchDetails.batch_status,
+      batchLink: scrollBatchDetails.batch_link,
+      batchSize: scrollBatchDetails.batch_size,
+      commitCost: {
+        usd: scrollBatchDetails.commit_cost_usd,
+        eth: scrollBatchDetails.commit_cost_eth,
+      },
+      finalityCost: {
+        usd: scrollBatchDetails.finality_cost_usd,
+        eth: scrollBatchDetails.finality_cost_eth,
+      },
     })
-    .from(scrollBatchFinalityMv)
-    .orderBy(desc(scrollBatchFinalityMv.batch_num))
+    .from(scrollBatchDetails)
+    .orderBy(desc(scrollBatchDetails.batch_num))
     .limit(pageSize)
     .offset((page - 1) * pageSize)
 }
 
-export async function getBatchesFinalityCount() {
+export async function getBatchesCostsBreakdownCount() {
   const results = await db
     .select({ count: count() })
-    .from(scrollBatchFinalityMv)
+    .from(scrollBatchDetails)
+    .execute()
+
+  return results[0].count
+}
+
+export async function getFinalityTime(page: number = 1, pageSize: number = 10) {
+  return await db
+    .select({
+      blockchain,
+      batchNum: scrollBatchDetails.batch_num,
+      batchStatus: scrollBatchDetails.batch_status,
+      batchLink: scrollBatchDetails.batch_link,
+      createdAt: scrollBatchDetails.created_at,
+      committedAt: scrollBatchDetails.committed_at,
+      finalizedAt: scrollBatchDetails.finalized_at,
+      createdToFinalizedDuration:
+        scrollBatchDetails.created_to_finalized_duration,
+    })
+    .from(scrollBatchDetails)
+    .orderBy(desc(scrollBatchDetails.batch_num))
+    .limit(pageSize)
+    .offset((page - 1) * pageSize)
+}
+
+export async function getFinalityTimeCount() {
+  const results = await db
+    .select({ count: count() })
+    .from(scrollBatchDetails)
     .execute()
 
   return results[0].count

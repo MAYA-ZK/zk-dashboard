@@ -2,6 +2,7 @@
 
 import { AdditionalInfo } from '@/app/_components/additional-info'
 import { InfoTooltip } from '@/app/_components/info-tooltip'
+import { useCurrencyState } from '@/app/_utils/query-state'
 import { Button } from '@/components/ui/button'
 import {
   Table,
@@ -11,22 +12,43 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { formatCurrency } from '@/lib/formatters'
 import { usePagination } from '@/lib/hooks/pagination'
 import { cn } from '@/lib/utils'
 import { ChevronLeftIcon, ChevronRightIcon, LoaderCircle } from 'lucide-react'
 
-type Batch = { batchNum: number; batchLink: string } & Record<
-  string | number,
-  string | number
->
+import type { Currency } from '@zk-dashboard/common/lib/currency'
+
+type Batch = {
+  batchNum: number
+  batchLink: string
+  batchStatus: string
+} & Record<string, string | number | Record<string, string | number>>
 
 export interface BatchTableInteractiveProps<TBatch extends Batch> {
   page: number
   pages: number
-  columns: Array<{ key: keyof TBatch; label: string }>
+  columns: Array<{ key: keyof TBatch; label: string; currency?: Currency }>
   searchParam: string
   linkLabel: string
   batches: Array<TBatch>
+}
+
+function getColumnValue<TBatch extends Batch>(
+  batch: TBatch,
+  key: keyof TBatch,
+  currency: Currency
+) {
+  const value = batch[key]
+  if (typeof value === 'string' || typeof value === 'number') {
+    return value
+  }
+
+  if (typeof value === 'object' && value[currency]) {
+    return formatCurrency(currency, value[currency], currency === 'usd' ? 2 : 8)
+  }
+
+  return null
 }
 
 export function BatchTable<TBatch extends Batch>({
@@ -38,6 +60,7 @@ export function BatchTable<TBatch extends Batch>({
   linkLabel,
   ...tableProps
 }: BatchTableInteractiveProps<TBatch>) {
+  const [currency] = useCurrencyState()
   const {
     isPending,
     page: optimisticPage,
@@ -71,7 +94,7 @@ export function BatchTable<TBatch extends Batch>({
           <TableBody>
             {batches.map((batch) => {
               return (
-                <TableRow key={batch.batchNum}>
+                <TableRow className="whitespace-nowrap" key={batch.batchNum}>
                   {columns.map((column) => {
                     if (column.key === 'batchNum') {
                       return (
@@ -102,11 +125,18 @@ export function BatchTable<TBatch extends Batch>({
                         </TableCell>
                       )
                     }
-                    return (
-                      <TableCell key={column.key.toString()}>
-                        {batch[column.key]}
-                      </TableCell>
-                    )
+
+                    const value = getColumnValue(batch, column.key, currency)
+
+                    if (value) {
+                      return (
+                        <TableCell key={column.key.toString()}>
+                          {value}
+                        </TableCell>
+                      )
+                    }
+
+                    return null
                   })}
                 </TableRow>
               )

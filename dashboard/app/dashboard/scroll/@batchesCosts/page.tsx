@@ -16,7 +16,10 @@ export default async function Page({
     : 1
 
   return (
-    <TableWrapper heading="Batches created daily with the average number of transactions per batch">
+    <TableWrapper
+      heading="Batch cost breakdown"
+      subheading="Total breakdown of all costs from committing to finalizing a batch. The verification/execute cost is presented as the divided total cost and number of batches executed or verified in the same state transactions."
+    >
       <SuspenseWithSkeleton>
         <ScrollBatchTable page={page} />
       </SuspenseWithSkeleton>

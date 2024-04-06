@@ -1,47 +1,22 @@
+import { BLOCKCHAIN_TIMESTAMP_FORMAT } from '@/app/dashboard/_utils/constants'
 import { TABLE_PAGE_SEARCH_PARAM } from '@/app/dashboard/scroll/@batchesFinality/config'
 import { BatchTable } from '@/components/table/batch-table'
+import type { GetFinalityTimeReturnType } from '@/services/scroll/batches'
 import {
-  type GetBatchesFinalityReturnType,
-  getBatchesFinality,
-  getBatchesFinalityCount,
+  getFinalityTime,
+  getFinalityTimeCount,
 } from '@/services/scroll/batches'
 import { format } from 'date-fns'
 
-type Batch = {
-  [K in keyof GetBatchesFinalityReturnType[number]]: GetBatchesFinalityReturnType[number][K] extends Date
-    ? string
-    : GetBatchesFinalityReturnType[number][K]
-}
-
 const columns = [
-  {
-    key: 'batchNum',
-    label: 'Number',
-  },
-  {
-    key: 'batchCreated',
-    label: 'Created',
-  },
-  {
-    key: 'batchCommitted',
-    label: 'Committed',
-  },
-  {
-    key: 'batchVerified',
-    label: 'Verified',
-  },
-  /*
-  {
-    key: 'batchStatus',
-    label: 'Status',
-  },
-  {
-    key: 'batchLink',
-    label: 'Link',
-  },
-  */
+  { key: 'blockchain', label: 'Blockchain' },
+  { key: 'batchNum', label: 'Number' },
+  { key: 'createdAt', label: 'Created At' },
+  { key: 'committedAt', label: 'Committed At' },
+  { key: 'finalizedAt', label: 'Finalized At' },
+  { key: 'createdToFinalizedDuration', label: 'Created to Finalized Duration' },
 ] satisfies Array<{
-  key: keyof Omit<Batch, 'batchStatus' | 'batchLink'>
+  key: keyof GetFinalityTimeReturnType[number]
   label: string
 }>
 
@@ -53,9 +28,8 @@ export async function ScrollBatchesFinalityTable({
   page,
   ...tableProps
 }: ScrollBatchesFinalityTableProps) {
-  const batches = await getBatchesFinality(page, 10)
-
-  const batchesCount = await getBatchesFinalityCount()
+  const batches = await getFinalityTime(page, 10)
+  const batchesCount = await getFinalityTimeCount()
   const pages = Math.ceil(batchesCount / 10)
 
   return (
@@ -65,9 +39,9 @@ export async function ScrollBatchesFinalityTable({
       batches={batches.map((batch) => {
         return {
           ...batch,
-          batchCommitted: format(batch.batchCommitted, 'yyyy-MM-dd HH:mm:ss'),
-          batchCreated: format(batch.batchCreated, 'yyyy-MM-dd HH:mm:ss'),
-          batchVerified: format(batch.batchVerified, 'yyyy-MM-dd HH:mm:ss'),
+          createdAt: format(batch.createdAt, BLOCKCHAIN_TIMESTAMP_FORMAT),
+          committedAt: format(batch.committedAt, BLOCKCHAIN_TIMESTAMP_FORMAT),
+          finalizedAt: format(batch.finalizedAt, BLOCKCHAIN_TIMESTAMP_FORMAT),
         }
       })}
       searchParam={TABLE_PAGE_SEARCH_PARAM}

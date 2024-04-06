@@ -30,11 +30,11 @@ export function getCurrencySymbol(currency: Currency) {
 
 export function formatCurrency(
   currency: Currency,
-  value: number,
+  value: number | string,
   decimals = 2
 ) {
   if (currency === 'usd') {
-    return formatToUsd(value)
+    return formatToUsd(Number(value))
   }
-  return `${getCurrencySymbol(currency)}${formatStringNumber(value.toString(), decimals)}`
+  return `${getCurrencySymbol(currency)} ${formatStringNumber(value.toString(), decimals)}`
 }

@@ -15,7 +15,10 @@ export default async function Page({
     : 1
 
   return (
-    <TableWrapper heading="Batches finality">
+    <TableWrapper
+      subheading="The timeline from a batch is created to it being finalized."
+      heading="Finality Time"
+    >
       <SuspenseWithSkeleton>
         <ZkSyncBatchesFinalityTable page={page} />
       </SuspenseWithSkeleton>
