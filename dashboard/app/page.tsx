@@ -29,16 +29,16 @@ const INSIGHTS = {
   ],
   column2: [
     {
-      title: 'Cost Calculation',
+      title: 'On-Chain Finality Cost',
       copy: 'The cost associated with processing batches is influenced by the proof state, covering the average fees incurred for state updates on the rollup. Specifically, for zkSync Era and Polygon zkEVM, the verification and execution costs per batch are determined by the total number of batches included in the final state update.',
     },
     {
-      title: 'Normalized On-Chain Finality Cost',
-      copy: 'This metric follows the batch cost calculation by normalizing against the transaction volume. The batch cost per proof is divided by the number of transactions included in the transactions per proof, and the quotient is then multiplied by 100. This gives the average cost to verify 100 transactions, offering a standardized metric for efficient rollup comparison.',
+      title: 'On-Chain Finality Cost (Per Tx)',
+      copy: 'This metric presents the average cost incurred on the rollup to achieve finality for each transaction within a given batch. It is determined by dividing the on-chain cost associated with finalizing the batch by the number of transactions recorded within that batch.',
     },
     {
       title: 'Commit Cost Exclusion',
-      copy: 'The cost for the commit stage is excluded from this table. The decision is based on that commit transaction costs are not pivotal for achieving finality, particularly in the context of validium-type rollups.',
+      copy: 'The cost for the commit stage is excluded from this table. The decision is based on that commit transaction costs are for the data availability and will be pending until they have been verified for finality, particularly in the context of validium-type rollups.',
     },
   ],
 }
