@@ -25,7 +25,7 @@ export async function getBatchesCostsBreakdown(
       batchSize: zkSyncEraBatchDetails.batch_size,
       commitCost: {
         usd: zkSyncEraBatchDetails.commit_cost_usd,
-        eth: zkSyncEraBatchDetails.commit_cost_usd,
+        eth: zkSyncEraBatchDetails.commit_cost_eth,
       },
       proveCost: {
         usd: zkSyncEraBatchDetails.prove_cost_usd,

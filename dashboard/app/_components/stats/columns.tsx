@@ -7,7 +7,7 @@ import {
 import { Breakdown, type BreakdownData } from '@/app/_components/breakdown'
 import { InfoTooltip } from '@/app/_components/info-tooltip'
 import { SortButton } from '@/app/_components/stats/sort-button'
-import { getCurrencySymbol } from '@/lib/formatters'
+import { CurrencyLogo } from '@/components/currency-logo'
 import { compareTimeRanges } from '@/lib/time'
 import type { ColumnDef, TableMeta } from '@tanstack/react-table'
 import Image from 'next/image'
@@ -183,10 +183,9 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
     },
     cell: (context) => {
       const currency = getCurrencyFromMeta(context.table.options.meta)
-      const currencySymbol = getCurrencySymbol(currency)
       return (
-        <>
-          <span>{currencySymbol}</span>{' '}
+        <div className="flex gap-x-1">
+          <CurrencyLogo currency={currency} />
           {context.row.original.batchCost[currency]}{' '}
           {context.row.original.batchCost.breakdown && (
             <InfoTooltip
@@ -199,7 +198,7 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
               }
             />
           )}
-        </>
+        </div>
       )
     },
   },
@@ -229,10 +228,9 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
     },
     cell: (context) => {
       const currency = getCurrencyFromMeta(context.table.options.meta)
-      const currencySymbol = getCurrencySymbol(currency)
       return (
-        <div className="flex justify-end">
-          <span>{currencySymbol}</span>&nbsp;
+        <div className="flex justify-end gap-x-1">
+          <CurrencyLogo currency={currency} />
           {context.row.original.batchCostNormalized[currency]}{' '}
           {context.row.original.batchCostNormalized.breakdown && (
             <InfoTooltip
