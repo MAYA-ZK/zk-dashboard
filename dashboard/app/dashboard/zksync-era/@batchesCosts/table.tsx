@@ -7,7 +7,7 @@ import {
 } from '@/services/zk-sync-era/batches'
 
 const columns = [
-  { key: 'blockchain', label: 'Blockchain' },
+  { key: 'blockchain', label: 'Rollup' },
   { key: 'batchNum', label: 'Number' },
   { key: 'batchSize', label: 'Size' },
   { key: 'commitCost', label: 'Commit Cost' },

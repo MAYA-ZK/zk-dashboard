@@ -10,7 +10,7 @@ import type { Currency } from '@zk-dashboard/common/lib/currency'
 import { TABLE_PAGE_SEARCH_PARAM } from './config'
 
 const columns = [
-  { key: 'blockchain', label: 'Blockchain' },
+  { key: 'blockchain', label: 'Rollup' },
   { key: 'batchNum', label: 'Number' },
   { key: 'batchSize', label: 'Size' },
   { key: 'sequenceCost', label: 'Sequence Cost' },

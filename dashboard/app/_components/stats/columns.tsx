@@ -49,7 +49,7 @@ const getCurrencyFromMeta = (
 export const columns: Array<ColumnDef<StatsRowData>> = [
   {
     accessorKey: 'blockchain',
-    header: 'Blockchain',
+    header: 'Rollup',
     cell: (cell) => {
       return (
         <Link
@@ -83,7 +83,7 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
     header: ({ column }) => {
       return (
         <div className="flex items-center gap-1.5">
-          Finality Time
+          Proving / Finality Time
           <InfoTooltip
             contentClassName="text-wrap"
             content="Average time from when a batch is created on L2 to its verification on L1 within the selected period."
@@ -124,7 +124,7 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
     header: ({ column }) => {
       return (
         <div className="flex items-center gap-1.5">
-          Finality Time (Normalized)
+          Proving / Finality Time (Normalized)
           <InfoTooltip
             contentClassName="text-wrap"
             content="Average finality time, adjusted for batches containing exactly 100 transactions, over the selected period."
@@ -168,7 +168,7 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
     header: ({ column }) => {
       return (
         <div className="flex items-center gap-1.5">
-          Finality Cost
+          On-Chain Finality Cost
           <InfoTooltip
             contentClassName="text-wrap"
             content="Average cost incurred for confirming L2 state updates on L1, calculated over the selected date range."
@@ -213,7 +213,7 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
     header: ({ column }) => {
       return (
         <div className="flex items-center justify-end gap-1.5">
-          Finality Cost (Normalized)
+          On-Chain Finality Cost (per TX)
           <InfoTooltip
             contentClassName="text-wrap"
             content="Average L1 confirmation cost, adjusted for batches of 100 transactions, over the selected period."
