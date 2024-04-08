@@ -216,7 +216,7 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
           On-Chain Finality Cost (per TX)
           <InfoTooltip
             contentClassName="text-wrap"
-            content="Average L1 confirmation cost, adjusted for batches of 100 transactions, over the selected period."
+            content="Average L1 confirmation cost, adjusted for 1 transaction, over the selected period."
             className="ml-1.5"
           />
           <SortButton
