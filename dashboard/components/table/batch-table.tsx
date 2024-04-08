@@ -12,12 +12,15 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { formatCurrency } from '@/lib/formatters'
+import { formatStringNumber } from '@/lib/formatters'
 import { usePagination } from '@/lib/hooks/pagination'
 import { cn } from '@/lib/utils'
 import { ChevronLeftIcon, ChevronRightIcon, LoaderCircle } from 'lucide-react'
 
 import type { Currency } from '@zk-dashboard/common/lib/currency'
+import { CurrencyLogo } from '@zk-dashboard/dashboard/components/currency-logo'
+
+import { BREAKDOWN_QUERY_KEY } from './constants'
 
 type Batch = {
   batchNum: number
@@ -45,7 +48,15 @@ function getColumnValue<TBatch extends Batch>(
   }
 
   if (typeof value === 'object' && value[currency]) {
-    return formatCurrency(currency, value[currency], currency === 'usd' ? 2 : 8)
+    return (
+      <div className="flex gap-x-1">
+        <CurrencyLogo currency={currency} />
+        {formatStringNumber(
+          value[currency].toString(),
+          currency === 'usd' ? 2 : 8
+        )}
+      </div>
+    )
   }
 
   return null
@@ -60,7 +71,7 @@ export function BatchTable<TBatch extends Batch>({
   linkLabel,
   ...tableProps
 }: BatchTableInteractiveProps<TBatch>) {
-  const [currency] = useCurrencyState()
+  const [currency] = useCurrencyState(BREAKDOWN_QUERY_KEY)
   const {
     isPending,
     page: optimisticPage,

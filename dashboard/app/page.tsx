@@ -15,15 +15,15 @@ const INSIGHTS = {
       copy: 'The start date for each of the four selectable date ranges is defined as the day preceding the current calendar date. This approach ensures the inclusion of the most recent complete set of data for analysis.',
     },
     {
-      title: 'Transactions per Proof',
+      title: 'Transactions (txs) per Proof',
       copy: 'This metric covers the aggregate number of transactions within batches that are sent for verification on the Ethereum blockchain.',
     },
     {
-      title: 'Finality Time',
-      copy: 'Finality time is calculated as the mean period from the instantiation of a transaction batch to its verification on Ethereum Layer-1 (L1). For specific rollups, such as within the zkSync Era, an additional parameter representing the execution time for the final state update is included to present the final state update.',
+      title: 'Proving / Finality Time',
+      copy: 'Is calculated as the mean period from the instantiation of a transaction batch to its verification on Ethereum Layer-1 (L1). For specific rollups, such as within the zkSync Era, an additional parameter representing the execution time for the final state update is included to present the final state update.',
     },
     {
-      title: 'Normalized Finality Time',
+      title: 'Normalized Proving / Finality Time',
       copy: 'This metric follows the methodology of finality time calculation, with an adjustment for transaction volume. It is computed by dividing the average finality time by the number of transactions per proof and scaled by a factor of 100. This normalization process facilitates a standardized comparison of finality times.',
     },
   ],
@@ -33,7 +33,7 @@ const INSIGHTS = {
       copy: 'The cost associated with processing batches is influenced by the proof state, covering the average fees incurred for state updates on the rollup. Specifically, for zkSync Era and Polygon zkEVM, the verification and execution costs per batch are determined by the total number of batches included in the final state update.',
     },
     {
-      title: 'Normalized Batch Cost',
+      title: 'Normalized On-Chain Finality Cost',
       copy: 'This metric follows the batch cost calculation by normalizing against the transaction volume. The batch cost per proof is divided by the number of transactions included in the transactions per proof, and the quotient is then multiplied by 100. This gives the average cost to verify 100 transactions, offering a standardized metric for efficient rollup comparison.',
     },
     {
@@ -50,12 +50,12 @@ export default async function Page() {
         <div className="flex flex-col justify-between gap-8 lg:flex-row">
           <div className="flex flex-col gap-1">
             <h3 className="text-xs font-semibold uppercase">ZK-Rollups</h3>
-            <h2 className="text-4xl font-semibold">Finality and Costs</h2>
+            <h2 className="text-4xl font-semibold">Finality</h2>
             <p className="max-w-2xl text-sm font-light">
               This table presents key metrics on the efficiency and cost of
               batch operations for zero-knowledge (ZK) blockchains secured by
               Ethereum infrastructure, including average finality times and
-              batch costs.
+              on-chain finality costs.
             </p>
           </div>
           <div className="flex min-w-96 flex-wrap items-center justify-end">
