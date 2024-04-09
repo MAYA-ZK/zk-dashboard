@@ -124,7 +124,7 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
     header: ({ column }) => {
       return (
         <div className="flex items-center gap-1.5">
-          Proving / Finality Time (Normalized)
+          Proving / Finality Time (per 100 txs)
           <InfoTooltip
             contentClassName="text-wrap"
             content="Average finality time, adjusted for batches containing exactly 100 transactions, over the selected period."

@@ -9,7 +9,6 @@ import {
 import { format } from 'date-fns'
 
 const columns = [
-  { key: 'blockchain', label: 'Blockchain' },
   { key: 'batchNum', label: 'Number' },
   { key: 'createdAt', label: 'Created At' },
   { key: 'committedAt', label: 'Committed At' },

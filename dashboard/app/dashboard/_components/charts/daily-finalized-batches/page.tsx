@@ -11,8 +11,8 @@ export async function DailyFinalizedBatchesPage({
 }) {
   return (
     <div className="flex flex-col gap-6 rounded-md bg-background p-4">
-      <ChartHeading subheading="The daily transactions and finalized batches completed to update the state of the rollup (L2) on Ethereum (L1).">
-        Daily batches finalized
+      <ChartHeading subheading="The daily number of transactions proven on the Ethereum network.">
+        Daily Proven Transactions
       </ChartHeading>
       <ChartWrapper>
         <SuspenseWithSkeleton>

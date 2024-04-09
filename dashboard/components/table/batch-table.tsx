@@ -31,7 +31,12 @@ type Batch = {
 export interface BatchTableInteractiveProps<TBatch extends Batch> {
   page: number
   pages: number
-  columns: Array<{ key: keyof TBatch; label: string; currency?: Currency }>
+  columns: Array<{
+    key: keyof TBatch
+    label: string
+    description?: string
+    currency?: Currency
+  }>
   searchParam: string
   linkLabel: string
   batches: Array<TBatch>
@@ -97,6 +102,13 @@ export function BatchTable<TBatch extends Batch>({
                 return (
                   <TableHead key={column.key.toString()}>
                     {column.label}
+                    {column.description && (
+                      <InfoTooltip
+                        contentClassName="text-wrap"
+                        content={column.description}
+                        className="ml-1.5"
+                      />
+                    )}
                   </TableHead>
                 )
               })}

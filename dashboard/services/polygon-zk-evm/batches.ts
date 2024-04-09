@@ -1,4 +1,4 @@
-import { count, desc, sql } from 'drizzle-orm'
+import { count, desc } from 'drizzle-orm'
 
 import { polygonZkEvmBatchDetails } from '@zk-dashboard/common/database/materialized-view/polygon-zk-evm'
 import { db } from '@zk-dashboard/common/database/utils'
@@ -10,15 +10,12 @@ export type GetFinalityTimeReturnType = Awaited<
   ReturnType<typeof getFinalityTime>
 >
 
-const blockchain = sql<string>`'Polygon zkEvm'`
-
 export async function getBatchesCostsBreakdown(
   page: number = 1,
   pageSize: number = 10
 ) {
   return await db
     .select({
-      blockchain: blockchain,
       batchNum: polygonZkEvmBatchDetails.batch_num,
       batchStatus: polygonZkEvmBatchDetails.batch_status,
       batchLink: polygonZkEvmBatchDetails.batch_link,
@@ -58,7 +55,6 @@ export async function getBatchesCostsBreakdownCount() {
 export async function getFinalityTime(page: number = 1, pageSize: number = 10) {
   return await db
     .select({
-      blockchain: blockchain,
       batchNum: polygonZkEvmBatchDetails.batch_num,
       batchStatus: polygonZkEvmBatchDetails.batch_status,
       batchLink: polygonZkEvmBatchDetails.batch_link,
