@@ -12,29 +12,35 @@ const INSIGHTS = {
   column1: [
     {
       title: 'Date Range',
-      copy: 'The start date for each of the four selectable date ranges is defined as the day preceding the current calendar date. This approach ensures the inclusion of the most recent complete set of data for analysis.',
+      description:
+        'The start date for each of the four selectable date ranges is defined as the day preceding the current calendar date. This approach ensures the inclusion of the most recent complete set of data for analysis.',
     },
     {
       title: 'Transactions (txs) per Proof',
-      copy: 'This metric covers the average number of transactions in a single proof submitted for verification on the Ethereum network.',
+      description:
+        'This metric covers the average number of transactions in a single proof submitted for verification on the Ethereum network.',
     },
     {
       title: 'Proving / Finality Time',
-      copy: 'The mean time from the instantiation of a submitted proof to its verification on the Ethereum network. For zkSync Era, the state update time can be found in the info box on the timestamp.',
+      description:
+        'The mean time from the instantiation of a submitted proof to its verification on the Ethereum network. For zkSync Era, the state update time can be found in the info box on the timestamp.',
     },
     {
       title: 'Proving / Finality Time (Per 100 txs)',
-      copy: 'This metric follows the methodology of finality time calculation, with an adjustment for transaction volume. It is calculated by dividing the average finality time by the average number of transactions per proof and scaled by a factor of 100. This normalization process facilitates a standardized comparison of proving and finality times.',
+      description:
+        'This metric follows the methodology of finality time calculation, with an adjustment for transaction volume. It is calculated by dividing the average finality time by the average number of transactions per proof and scaled by a factor of 100. This normalization process facilitates a standardized comparison of proving and finality times.',
     },
   ],
   column2: [
     {
       title: 'On-Chain Finality Cost',
-      copy: "This cost refers to the expenses incurred to verify proofs and update the rollup's state on the Ethereum network.",
+      description:
+        "This cost refers to the expenses incurred to verify proofs and update the rollup's state on the Ethereum network.",
     },
     {
       title: 'On-Chain Finality Cost (Per Tx)',
-      copy: 'This metric presents the average cost incurred on the rollup to achieve finality for each transaction within a given batch. It is determined by dividing the on-chain cost associated with finalizing the batch by the number of transactions recorded within that batch.',
+      description:
+        'This metric presents the average cost incurred on the rollup to achieve finality for each transaction within a given batch. It is determined by dividing the on-chain cost associated with finalizing the batch by the number of transactions recorded within that batch.',
     },
   ],
 }
@@ -73,7 +79,7 @@ export default async function Page() {
           {INSIGHTS.column1.map((insight, index) => (
             <p key={`key-${insight.title}-${index}`} className="pt-2">
               <span className="font-bold">{insight.title}: </span>
-              {insight.copy}
+              {insight.description}
             </p>
           ))}
         </div>
@@ -81,7 +87,7 @@ export default async function Page() {
           {INSIGHTS.column2.map((insight, index) => (
             <p key={`key-${insight.title}-${index}`} className="pt-2">
               <span className="font-bold">{insight.title}: </span>
-              {insight.copy}
+              {insight.description}
             </p>
           ))}
         </div>
