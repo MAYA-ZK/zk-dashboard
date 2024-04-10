@@ -10,16 +10,25 @@ import type { Currency } from '@zk-dashboard/common/lib/currency'
 import { TABLE_PAGE_SEARCH_PARAM } from './config'
 
 const columns = [
-  { key: 'blockchain', label: 'Rollup' },
   { key: 'batchNum', label: 'Number' },
-  { key: 'batchSize', label: 'Size' },
+  { key: 'batchSize', label: 'Published txs' },
   { key: 'sequenceCost', label: 'Sequence Cost' },
-  { key: 'verificationCost', label: 'Verification Cost' },
-  { key: 'finalityCost', label: 'Finality Cost' },
+  {
+    key: 'verificationCost',
+    label: 'Verification Cost',
+    description:
+      'Calculated by dividing the total cost by the number of batches in the same state update transaction',
+  },
+  {
+    key: 'finalityCost',
+    label: 'Finality Cost',
+    description: 'The cost is based on the cost of proof for each batch.',
+  },
   { key: 'dividedVerificationCost', label: 'Divided Verification Cost' },
 ] satisfies Array<{
   key: keyof GetBatchesCostsBreakdownReturnType[number]
   label: string
+  description?: string
   currency?: Currency
 }>
 

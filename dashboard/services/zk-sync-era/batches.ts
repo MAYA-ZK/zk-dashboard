@@ -1,4 +1,4 @@
-import { count, desc, sql } from 'drizzle-orm'
+import { count, desc } from 'drizzle-orm'
 
 import { zkSyncEraBatchDetails } from '@zk-dashboard/common/database/materialized-view/zk-sync-era'
 import { db } from '@zk-dashboard/common/database/utils'
@@ -10,15 +10,12 @@ export type GetFinalityTimeReturnType = Awaited<
   ReturnType<typeof getFinalityTime>
 >
 
-const blockchain = sql<string>`'zkSync Era'`
-
 export async function getBatchesCostsBreakdown(
   page: number = 1,
   pageSize: number = 10
 ) {
   return await db
     .select({
-      blockchain: blockchain,
       batchNum: zkSyncEraBatchDetails.batch_num,
       batchStatus: zkSyncEraBatchDetails.batch_status,
       batchLink: zkSyncEraBatchDetails.batch_link,
@@ -62,7 +59,6 @@ export async function getBatchesCostsBreakdownCount() {
 export async function getFinalityTime(page: number = 1, pageSize: number = 10) {
   return await db
     .select({
-      blockchain: blockchain,
       batchNum: zkSyncEraBatchDetails.batch_num,
       batchStatus: zkSyncEraBatchDetails.batch_status,
       batchLink: zkSyncEraBatchDetails.batch_link,

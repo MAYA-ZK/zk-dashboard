@@ -8,14 +8,23 @@ import {
 import { TABLE_PAGE_SEARCH_PARAM } from './config'
 
 const columns = [
-  { key: 'blockchain', label: 'Rollup' },
   { key: 'batchNum', label: 'Number' },
-  { key: 'batchSize', label: 'Size' },
-  { key: 'commitCost', label: 'Commit Cost' },
-  { key: 'finalityCost', label: 'Finality Cost' },
+  { key: 'batchSize', label: ' Published txs' },
+  {
+    key: 'commitCost',
+    label: 'Commit Cost',
+    description:
+      'The commit cost covers the L2 transaction data and block details are published on the Ethereum network to ensure data availability.',
+  },
+  {
+    key: 'finalityCost',
+    label: 'Finality Cost',
+    description: 'The cost is based on the cost of proof for each batch.',
+  },
 ] satisfies Array<{
   key: keyof GetBatchesCostsBreakdownReturnType[number]
   label: string
+  description?: string
 }>
 
 interface ScrollBatchTableProps {
