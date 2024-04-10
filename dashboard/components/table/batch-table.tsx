@@ -101,14 +101,16 @@ export function BatchTable<TBatch extends Batch>({
               {columns.map((column) => {
                 return (
                   <TableHead key={column.key.toString()}>
-                    {column.label}
-                    {column.description && (
-                      <InfoTooltip
-                        contentClassName="text-wrap"
-                        content={column.description}
-                        className="ml-1.5"
-                      />
-                    )}
+                    <div className="flex items-center gap-x-1">
+                      {column.label}
+                      {column.description && (
+                        <InfoTooltip
+                          contentClassName="text-wrap"
+                          content={column.description}
+                          className="ml-1.5"
+                        />
+                      )}
+                    </div>
                   </TableHead>
                 )
               })}
