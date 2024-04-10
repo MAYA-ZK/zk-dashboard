@@ -48,19 +48,19 @@ export async function DailyFinalizedBatchesChart({
         labels,
         datasets: [
           {
-            data: datasets.totalDailyFinalizedBatchCount,
-            label: 'Total daily finalized batch count',
+            data: datasets.totalDailyFinalizedTransactions,
+            label: 'Daily Proven Transactions',
             borderColor: COLORS.SECONDARY,
             backgroundColor: COLORS.SECONDARY,
             type: 'line',
             yAxisID: 'y1',
           },
           {
-            data: datasets.totalDailyFinalizedTransactions,
-            label: 'Total daily finalized transactions',
+            data: datasets.totalDailyFinalizedBatchCount,
+            label: 'Daily Proven Batches',
             borderColor: COLORS.PRIMARY,
             backgroundColor: COLORS.PRIMARY,
-            yAxisID: 'y',
+            type: 'bar',
           },
         ],
       }}

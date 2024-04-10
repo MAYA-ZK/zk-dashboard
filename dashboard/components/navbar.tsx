@@ -49,10 +49,14 @@ export function Navbar() {
   return (
     <nav className="fixed left-0 top-0 z-10 flex h-18 w-full justify-center bg-muted px-6">
       <div className="z-10 flex h-18 w-full max-w-screen-2xl items-center justify-between">
-        <Link href={routes.maya} className="flex items-center gap-2">
-          <MayaLogo className="h-full w-18 bg-black text-muted" />
-          <p className="text-2xl tracking-widest">Dashboard</p>
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link href={routes.maya}>
+            <MayaLogo className="h-full w-18 bg-black text-muted" />
+          </Link>
+          <Link href={routes.home}>
+            <p className="text-2xl tracking-widest">DASHBOARD</p>
+          </Link>
+        </div>
         <BackToDashboardLink />
       </div>
     </nav>

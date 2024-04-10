@@ -22,10 +22,8 @@ const normalizedBatchSizeBy100Query = db
     period: polygonZkEvmFinalityNormalizedBy100.period,
     normalizedBatchSizeBy100Finality:
       polygonZkEvmFinalityNormalizedBy100.norm_batch_size_by_100_finality,
-    normalizedBatchSizeBy100CostEth:
-      polygonZkEvmFinalityNormalizedBy100.norm_batch_size_by_100_cost_eth,
-    normalizedBatchSizeBy100CostUsd:
-      polygonZkEvmFinalityNormalizedBy100.norm_batch_size_by_100_cost_usd,
+    oneTxCostEth: polygonZkEvmFinalityNormalizedBy100.one_tx_cost_eth,
+    oneTxCostUsd: polygonZkEvmFinalityNormalizedBy100.one_tx_cost_usd,
   })
   .from(polygonZkEvmFinalityNormalizedBy100)
   .prepare('normalizedBatchSizeBy100')

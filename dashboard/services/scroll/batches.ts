@@ -1,4 +1,4 @@
-import { count, desc, sql } from 'drizzle-orm'
+import { count, desc } from 'drizzle-orm'
 
 import { scrollBatchDetails } from '@zk-dashboard/common/database/materialized-view/scroll'
 import { db } from '@zk-dashboard/common/database/utils'
@@ -10,15 +10,12 @@ export type GetFinalityTimeReturnType = Awaited<
   ReturnType<typeof getFinalityTime>
 >
 
-const blockchain = sql<string>`'Scroll'`
-
 export async function getBatchesCostsBreakdown(
   page: number = 1,
   pageSize: number = 10
 ) {
   return await db
     .select({
-      blockchain,
       batchNum: scrollBatchDetails.batch_num,
       batchStatus: scrollBatchDetails.batch_status,
       batchLink: scrollBatchDetails.batch_link,
@@ -50,7 +47,6 @@ export async function getBatchesCostsBreakdownCount() {
 export async function getFinalityTime(page: number = 1, pageSize: number = 10) {
   return await db
     .select({
-      blockchain,
       batchNum: scrollBatchDetails.batch_num,
       batchStatus: scrollBatchDetails.batch_status,
       batchLink: scrollBatchDetails.batch_link,

@@ -9,12 +9,14 @@ import {
 import { format } from 'date-fns'
 
 const columns = [
-  { key: 'blockchain', label: 'Blockchain' },
   { key: 'batchNum', label: 'Number' },
   { key: 'createdAt', label: 'Created At' },
   { key: 'committedAt', label: 'Committed At' },
   { key: 'finalizedAt', label: 'Finalized At' },
-  { key: 'createdToFinalizedDuration', label: 'Created to Finalized Duration' },
+  {
+    key: 'createdToFinalizedDuration',
+    label: 'Lead Time: Created to Finalized',
+  },
 ] satisfies Array<{
   key: keyof GetFinalityTimeReturnType[number]
   label: string

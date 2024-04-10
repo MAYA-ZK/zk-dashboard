@@ -23,10 +23,8 @@ const normalizedBatchSizeBy100Query = db
     period: zkSyncEraFinalityNormalizedBy100.period,
     normalizedBatchSizeBy100Finality:
       zkSyncEraFinalityNormalizedBy100.norm_batch_size_by_100_finality,
-    normalizedBatchSizeBy100CostEth:
-      zkSyncEraFinalityNormalizedBy100.norm_batch_size_by_100_cost_eth,
-    normalizedBatchSizeBy100CostUsd:
-      zkSyncEraFinalityNormalizedBy100.norm_batch_size_by_100_cost_usd,
+    oneTxCostEth: zkSyncEraFinalityNormalizedBy100.one_tx_cost_eth,
+    oneTxCostUsd: zkSyncEraFinalityNormalizedBy100.one_tx_cost_usd,
   })
   .from(zkSyncEraFinalityNormalizedBy100)
   .prepare('normalizedBatchSizeBy100')

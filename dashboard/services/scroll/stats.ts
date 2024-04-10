@@ -22,10 +22,8 @@ const normalizedBatchSizeBy100Query = db
     period: scrollFinalityNormalizedBy100.period,
     normalizedBatchSizeBy100Finality:
       scrollFinalityNormalizedBy100.norm_batch_size_by_100_finality,
-    normalizedBatchSizeBy100CostEth:
-      scrollFinalityNormalizedBy100.norm_batch_size_by_100_cost_eth,
-    normalizedBatchSizeBy100CostUsd:
-      scrollFinalityNormalizedBy100.norm_batch_size_by_100_cost_usd,
+    oneTxCostEth: scrollFinalityNormalizedBy100.one_tx_cost_eth,
+    oneTxCostUsd: scrollFinalityNormalizedBy100.one_tx_cost_usd,
   })
   .from(scrollFinalityNormalizedBy100)
   .prepare('normalizedBatchSizeBy100')

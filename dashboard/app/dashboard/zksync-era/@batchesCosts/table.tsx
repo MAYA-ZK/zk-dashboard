@@ -7,16 +7,33 @@ import {
 } from '@/services/zk-sync-era/batches'
 
 const columns = [
-  { key: 'blockchain', label: 'Blockchain' },
   { key: 'batchNum', label: 'Number' },
-  { key: 'batchSize', label: 'Size' },
-  { key: 'commitCost', label: 'Commit Cost' },
+  {
+    key: 'batchSize',
+    label: 'Published txs',
+  },
+  {
+    key: 'commitCost',
+    label: 'Commit Cost',
+    description:
+      'The commit cost covers the L2 transaction data and block details are published on the Ethereum network to ensure data availability.',
+  },
   { key: 'proveCost', label: 'Prove Cost' },
-  { key: 'executeCost', label: 'Execute Cost' },
-  { key: 'finalityCost', label: 'Finality Cost' },
+  {
+    key: 'executeCost',
+    label: 'Execute Cost',
+    description:
+      'Calculated by dividing the total cost by the number of batches in the same state update transaction',
+  },
+  {
+    key: 'finalityCost',
+    label: 'Finality Cost',
+    description: 'The cost is based on the cost of proof for each batch.',
+  },
 ] satisfies Array<{
   key: keyof GetBatchesCostsBreakdownReturnType[number]
   label: string
+  description?: string
 }>
 
 interface ZkSyncBatchTableProps {

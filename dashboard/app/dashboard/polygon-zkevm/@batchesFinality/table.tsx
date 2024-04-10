@@ -10,7 +10,6 @@ import { format } from 'date-fns'
 import { TABLE_PAGE_SEARCH_PARAM } from './config'
 
 const columns = [
-  { key: 'blockchain', label: 'Blockchain' },
   { key: 'batchNum', label: 'Number' },
   { key: 'createdAt', label: 'Created At' },
   { key: 'sequencedAt', label: 'Sequenced At' },
