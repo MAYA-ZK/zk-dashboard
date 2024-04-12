@@ -1,6 +1,7 @@
 import { Footer } from '@/components/footer'
 import { Navbar } from '@/components/navbar'
 import { cn } from '@/lib/utils'
+import { Analytics } from '@vercel/analytics/react'
 import type { Metadata } from 'next'
 import { Sora } from 'next/font/google'
 import type { ReactNode } from 'react'
@@ -32,6 +33,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <div className="flex size-full max-w-screen-2xl grow flex-col px-2 pt-16 md:px-10">
             {children}
           </div>
+          <Analytics />
           <Footer />
         </Providers>
       </body>
