@@ -3,7 +3,7 @@ import type { FMT_BYTES, FMT_NUMBER } from 'web3'
 import Web3 from 'web3'
 
 import { BLOCK_PI_API_URL, blockPiThrottle } from '../blockpi'
-import { getBatch } from './rollupScan'
+import { getBatch } from './rollup-scan'
 
 const scroll = new Web3(BLOCK_PI_API_URL.SCROLL).eth
 

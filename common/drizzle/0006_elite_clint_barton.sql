@@ -1,0 +1,23 @@
+CREATE TABLE IF NOT EXISTS "linea_transactions" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"blockNumber" varchar,
+	"timeStamp" varchar,
+	"hash" varchar,
+	"nonce" varchar,
+	"blockHash" varchar,
+	"transactionIndex" varchar,
+	"from" varchar,
+	"to" varchar,
+	"value" varchar,
+	"gas" varchar,
+	"gasPrice" varchar,
+	"isError" varchar,
+	"txreceipt_status" varchar,
+	"input" varchar,
+	"contractAddress" varchar,
+	"cumulativeGasUsed" varchar,
+	"gasUsed" varchar,
+	"confirmations" varchar,
+	"methodId" varchar,
+	"functionName" varchar
+);

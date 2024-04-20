@@ -316,3 +316,77 @@ export const ethUsdPrice = pgTable('eth_usd_price', {
   // in cents
   price: integer('price').notNull(),
 })
+
+// ------------------ Linea transactions ------------------
+
+// blockNumber: z.string(),
+// timeStamp: z.string(),
+// hash: z.string(),
+// nonce: z.string(),
+// blockHash: z.string(),
+// transactionIndex: z.string(),
+// from: z.string(),
+// to: z.string(),
+// value: z.string(),
+// gas: z.string(),
+// gasPrice: z.string(),
+// isError: z.string(),
+// txreceipt_status: z.string(),
+// input: z.string(),
+// contractAddress: z.string(),
+// cumulativeGasUsed: z.string(),
+// gasUsed: z.string(),
+// confirmations: z.string(),
+// methodId: z.string(),
+// functionName: z.string(),
+
+export const lineaTransactions = pgTable('linea_transactions', {
+  id: serial('id').primaryKey(),
+  blockNumber: varchar('blockNumber'),
+  timeStamp: varchar('timeStamp'),
+  hash: varchar('hash'),
+  nonce: varchar('nonce'),
+  blockHash: varchar('blockHash'),
+  transactionIndex: varchar('transactionIndex'),
+  from: varchar('from'),
+  to: varchar('to'),
+  value: varchar('value'),
+  gas: varchar('gas'),
+  gasPrice: varchar('gasPrice'),
+  isError: varchar('isError'),
+  txreceipt_status: varchar('txreceipt_status'),
+  input: varchar('input'),
+  contractAddress: varchar('contractAddress'),
+  cumulativeGasUsed: varchar('cumulativeGasUsed'),
+  gasUsed: varchar('gasUsed'),
+  confirmations: varchar('confirmations'),
+  methodId: varchar('methodId'),
+  functionName: varchar('functionName'),
+})
+
+// {
+//   address: '0xd19d4b5d358258f05d7b411e21a1460d11b0876f',
+//   topics: [
+//     '0x5c885a794662ebe3b08ae0874fc2c88b5343b0223ba9cd2cad92b69c0d0c901f',
+//     '0x000000000000000000000000000000000000000000000000000000000039b567'
+//   ],
+//   data: '0x10dce6e965a38927fa4462c27ae551db27e2c539eacc873dc3f4159666f4fec30f51a2da5a0adc1fdae489e084b7964b8fc665925996aa571f071f388ce96627',
+//   blockNumber: 19680260n,
+//   transactionHash: '0xb0c8923049101270b3251bf7f7e8202be7e4ac790c76c8ea7f5880ce34aca83a',
+//   transactionIndex: 93n,
+//   blockHash: '0x193c4d74e8a8f2ce2899a3a857713489e57559bb32675ec4a0c3fc1f33f32924',
+//   logIndex: 161n,
+//   removed: false
+// }
+export const lineTxLogs = pgTable('line_tx_logs', {
+  id: serial('id').primaryKey(),
+  address: varchar('address'),
+  topics: varchar('topics').array(),
+  data: varchar('data'),
+  block_number: bigint('block_number', { mode: 'bigint' }),
+  transaction_hash: varchar('transaction_hash'),
+  transaction_index: bigint('transaction_index', { mode: 'bigint' }),
+  block_hash: varchar('block_hash'),
+  log_index: bigint('log_index', { mode: 'bigint' }),
+  removed: boolean('removed'),
+})
