@@ -1,6 +1,7 @@
 import { Footer } from '@/components/footer'
 import { Navbar } from '@/components/navbar'
 import { cn } from '@/lib/utils'
+import { Analytics } from '@vercel/analytics/react'
 import type { Metadata } from 'next'
 import { Sora } from 'next/font/google'
 import type { ReactNode } from 'react'
@@ -34,6 +35,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           </div>
           <Footer />
         </Providers>
+        <Analytics />
       </body>
     </html>
   )
