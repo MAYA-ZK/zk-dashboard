@@ -33,9 +33,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <div className="flex size-full max-w-screen-2xl grow flex-col px-2 pt-16 md:px-10">
             {children}
           </div>
-          <Analytics />
           <Footer />
         </Providers>
+        <Analytics />
       </body>
     </html>
   )
