@@ -83,16 +83,19 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
     header: ({ column }) => {
       return (
         <div className="flex items-center gap-1.5">
+          <div className="flex flex-col items-center gap-1.5">
+            <InfoTooltip
+              contentClassName="text-wrap"
+              content="Average time from when a batch is created on L2 to its verification on L1 within the selected period."
+            />
+            <SortButton
+              sortedState={column.getIsSorted()}
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === 'asc')
+              }
+            />
+          </div>
           Proving / Finality Time
-          <InfoTooltip
-            contentClassName="text-wrap"
-            content="Average time from when a batch is created on L2 to its verification on L1 within the selected period."
-            className="ml-1.5"
-          />
-          <SortButton
-            sortedState={column.getIsSorted()}
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          />
         </div>
       )
     },
@@ -124,16 +127,19 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
     header: ({ column }) => {
       return (
         <div className="flex items-center gap-1.5">
+          <div className="flex flex-col items-center gap-1.5">
+            <InfoTooltip
+              contentClassName="text-wrap"
+              content="Average finality time, adjusted for batches containing exactly 100 transactions, over the selected period."
+            />
+            <SortButton
+              sortedState={column.getIsSorted()}
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === 'asc')
+              }
+            />
+          </div>
           Proving / Finality Time (per 100 txs)
-          <InfoTooltip
-            contentClassName="text-wrap"
-            content="Average finality time, adjusted for batches containing exactly 100 transactions, over the selected period."
-            className="ml-1.5"
-          />
-          <SortButton
-            sortedState={column.getIsSorted()}
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          />
         </div>
       )
     },
@@ -146,16 +152,19 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
     header: ({ column }) => {
       return (
         <div className="flex items-center gap-1.5">
+          <div className="flex flex-col items-center gap-1.5">
+            <InfoTooltip
+              contentClassName="text-wrap"
+              content="Average number of transactions per batch on L2, calculated over the selected date range."
+            />
+            <SortButton
+              sortedState={column.getIsSorted()}
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === 'asc')
+              }
+            />
+          </div>
           Txs per Proof
-          <InfoTooltip
-            contentClassName="text-wrap"
-            content="Average number of transactions per batch on L2, calculated over the selected date range."
-            className="ml-1.5"
-          />
-          <SortButton
-            sortedState={column.getIsSorted()}
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          />
         </div>
       )
     },
@@ -165,19 +174,25 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
     sortingFn: (a, b) => {
       return Number(a.original.batchCost.usd) - Number(b.original.batchCost.usd)
     },
-    header: ({ column }) => {
+    header: ({ column, table }) => {
+      const currency = getCurrencyFromMeta(table.options.meta)
+
       return (
         <div className="flex items-center gap-1.5">
+          <CurrencyLogo currency={currency} />
+          <div className="flex flex-col items-center gap-1.5">
+            <InfoTooltip
+              contentClassName="text-wrap"
+              content="Average cost incurred for confirming L2 state updates on L1, calculated over the selected date range."
+            />
+            <SortButton
+              sortedState={column.getIsSorted()}
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === 'asc')
+              }
+            />
+          </div>
           On-Chain Finality Cost
-          <InfoTooltip
-            contentClassName="text-wrap"
-            content="Average cost incurred for confirming L2 state updates on L1, calculated over the selected date range."
-            className="ml-1.5"
-          />
-          <SortButton
-            sortedState={column.getIsSorted()}
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          />
         </div>
       )
     },
@@ -185,7 +200,6 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
       const currency = getCurrencyFromMeta(context.table.options.meta)
       return (
         <div className="flex gap-x-1">
-          <CurrencyLogo currency={currency} />
           {context.row.original.batchCost[currency]}{' '}
           {context.row.original.batchCost.breakdown && (
             <InfoTooltip
@@ -210,19 +224,24 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
         Number(b.original.batchCostNormalized.usd)
       )
     },
-    header: ({ column }) => {
+    header: ({ column, table }) => {
+      const currency = getCurrencyFromMeta(table.options.meta)
       return (
         <div className="flex items-center justify-end gap-1.5">
+          <CurrencyLogo currency={currency} />
+          <div className="flex flex-col items-center gap-1.5">
+            <InfoTooltip
+              contentClassName="text-wrap"
+              content="Average L1 confirmation cost, adjusted for 1 transaction, over the selected period."
+            />
+            <SortButton
+              sortedState={column.getIsSorted()}
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === 'asc')
+              }
+            />
+          </div>
           On-Chain Finality Cost (per TX)
-          <InfoTooltip
-            contentClassName="text-wrap"
-            content="Average L1 confirmation cost, adjusted for 1 transaction, over the selected period."
-            className="ml-1.5"
-          />
-          <SortButton
-            sortedState={column.getIsSorted()}
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          />
         </div>
       )
     },
@@ -230,7 +249,6 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
       const currency = getCurrencyFromMeta(context.table.options.meta)
       return (
         <div className="flex justify-end gap-x-1">
-          <CurrencyLogo currency={currency} />
           {context.row.original.batchCostNormalized[currency]}{' '}
           {context.row.original.batchCostNormalized.breakdown && (
             <InfoTooltip

@@ -39,7 +39,7 @@ export function PeriodToggle() {
     >
       {PERIODS.map(({ value, label }) => {
         return (
-          <ToggleGroupItem key={value} value={value}>
+          <ToggleGroupItem key={value} value={value} className="w-12">
             {label}
           </ToggleGroupItem>
         )
