@@ -47,7 +47,7 @@ function BackToDashboardLink() {
 
 export function Navbar() {
   return (
-    <nav className="fixed left-0 top-0 z-10 flex h-18 w-full justify-center bg-muted px-6">
+    <nav className="fixed left-0 top-0 z-20 flex h-18 w-full justify-center bg-muted px-6">
       <div className="z-10 flex h-18 w-full max-w-screen-2xl items-center justify-between">
         <div className="flex items-center gap-2">
           <Link href={routes.maya}>

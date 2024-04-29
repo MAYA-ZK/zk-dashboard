@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { cn } from '@/lib/utils'
 import type { ColumnDef, SortingState } from '@tanstack/react-table'
 import {
   flexRender,
@@ -55,7 +56,7 @@ export function DataTable<TData, TValue>({
           <TableRow isHeader key={headerGroup.id}>
             {headerGroup.headers.map((header) => {
               return (
-                <TableHead className="last:text-right" key={header.id}>
+                <TableHead className="last:text-right " key={header.id}>
                   {header.isPlaceholder
                     ? null
                     : flexRender(
@@ -73,14 +74,24 @@ export function DataTable<TData, TValue>({
           table.getRowModel().rows.map((row) => (
             <TableRow
               key={row.id}
-              className="tabular-nums"
+              className=" tabular-nums"
               data-state={row.getIsSelected() && 'selected'}
             >
-              {row.getVisibleCells().map((cell) => (
-                <TableCell key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </TableCell>
-              ))}
+              {row.getVisibleCells().map((cell) => {
+                const isLogo = cell.id.includes('blockchain-logo')
+
+                return (
+                  <TableCell
+                    key={cell.id}
+                    className={cn(
+                      '',
+                      isLogo && 'bg-white first:sticky first:left-0 first:z-10'
+                    )}
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                )
+              })}
             </TableRow>
           ))
         ) : (
