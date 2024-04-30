@@ -14,8 +14,8 @@ export default async function Layout({
   batchesFinality: ReactNode
 }) {
   return (
-    <main className="flex h-full grow flex-col gap-5 pb-4">
-      <div className="flex flex-col items-center gap-4 py-6 text-center">
+    <div className="">
+      <div className="py-6 text-center">
         <h1 className="text-4xl font-semibold">zkSync Era</h1>
       </div>
       {children}
@@ -23,6 +23,6 @@ export default async function Layout({
       {dailyCost}
       {batchesCosts}
       {batchesFinality}
-    </main>
+    </div>
   )
 }
