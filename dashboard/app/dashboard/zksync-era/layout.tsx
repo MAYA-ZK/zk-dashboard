@@ -14,7 +14,7 @@ export default async function Layout({
   batchesFinality: ReactNode
 }) {
   return (
-    <div className="">
+    <div className="flex flex-col gap-4 py-6">
       <div className="py-6 text-center">
         <h1 className="text-4xl font-semibold">zkSync Era</h1>
       </div>

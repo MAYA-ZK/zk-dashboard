@@ -59,10 +59,10 @@ export default async function Page() {
               updates to the Ethereum network
             </p>
           </div>
-          <div className="flex min-w-96 flex-wrap items-center justify-end">
+          <div className="flex flex-wrap items-center justify-start gap-4 sm:min-w-96 sm:justify-end sm:gap-0">
             <Suspense>
               <PeriodToggle />
-              <span className="px-4">-</span>
+              <span className="hidden px-4 sm:block">-</span>
               <CurrencyToggle />
             </Suspense>
           </div>
