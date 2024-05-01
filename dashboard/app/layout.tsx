@@ -1,5 +1,5 @@
 import { Footer } from '@/components/footer'
-import { Navbar } from '@/components/navbar'
+import { Navbar } from '@/components/navigation/navbar'
 import { cn } from '@/lib/utils'
 import { Analytics } from '@vercel/analytics/react'
 import type { Metadata } from 'next'
