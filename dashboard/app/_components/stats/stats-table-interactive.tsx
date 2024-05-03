@@ -13,10 +13,6 @@ const COMING_SOON_ROLLUPS = [
     logo: 'linea-logo.svg',
     blockchain: 'Linea',
   },
-  {
-    logo: 'starknet-logo.svg',
-    blockchain: 'Starknet',
-  },
 ]
 
 export function StatsTableInteractive({
