@@ -1,6 +1,7 @@
 'use client'
 
 import { BLOCKCHAIN_LINKS } from '@/config/navigation'
+import { useMatchPath } from '@/lib/hooks/match-path'
 import { matchPath } from '@/lib/path'
 import { cn } from '@/lib/utils'
 import PolygonZkEvmSvg from '@/public/polygon-zk-evm-logo.svg'
@@ -74,6 +75,14 @@ export function BlockchainsNav({
   activeColor?: string
   drawerOnOpenChange?: (open: boolean) => void
 }) {
+  const shouldDisplay = useMatchPath(
+    '/dashboard/(scroll|zksync-era|polygon-zkevm)'
+  )
+
+  if (!shouldDisplay) {
+    return null
+  }
+
   return (
     <nav
       aria-labelledby="blockchains-navigation-title"

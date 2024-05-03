@@ -1,7 +1,6 @@
 import { GENERAL_LINKS } from '@/config/navigation'
 import { useMatchPath } from '@/lib/hooks/match-path'
 import { cn } from '@/lib/utils'
-import { ChevronLeft } from 'lucide-react'
 import Link from 'next/link'
 import type { ComponentProps } from 'react'
 
@@ -43,7 +42,6 @@ export function BackToDashboardLink({ onOpenChange }: NavigationLinkProps) {
 
   return (
     <NavLink href={path} className="flex items-center gap-x-2 hover:underline">
-      <ChevronLeft width={18} height={18} />
       {onOpenChange ? (
         <button onClick={() => onOpenChange(false)}>{title}</button>
       ) : (

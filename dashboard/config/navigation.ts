@@ -20,9 +20,12 @@ export const GENERAL_LINKS = {
     title: 'MAYA-ZK.com',
     path: routes.maya,
   },
-
   backToDashboard: {
     title: 'Back to main',
     path: routes.home,
+  },
+  documentation: {
+    title: 'Documentation',
+    path: routes.documentation,
   },
 }
