@@ -14,12 +14,14 @@ export async function DailyFinalizedCostPage({
 }) {
   return (
     <div className="flex flex-col gap-6 rounded-md bg-background p-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col items-start justify-between md:flex-row md:items-center">
         <ChartHeading subheading="The total cost spent on proving the state of the rollup on the Ethereum network.">
           Daily Finality Cost
         </ChartHeading>
         <Suspense>
-          <CurrencyToggle queryKey={CURRENCY_QUERY_KEY} />
+          <div className="pt-3">
+            <CurrencyToggle queryKey={CURRENCY_QUERY_KEY} />
+          </div>
         </Suspense>
       </div>
       <ChartWrapper>

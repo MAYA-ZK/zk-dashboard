@@ -240,7 +240,7 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
     header: ({ column, table }) => {
       const currency = getCurrencyFromMeta(table.options.meta)
       return (
-        <div className="flex items-center justify-end gap-1.5">
+        <div className="flex items-center gap-1.5">
           <CurrencyLogo currency={currency} />
           <div className="flex flex-col items-center gap-1.5">
             <InfoTooltip
@@ -254,7 +254,7 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
               }
             />
           </div>
-          <p className="line-clamp-2 min-w-40">
+          <p className="line-clamp-2 min-w-40 text-start">
             On-Chain Finality Cost (per TX)
           </p>
         </div>
@@ -263,7 +263,7 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
     cell: (context) => {
       const currency = getCurrencyFromMeta(context.table.options.meta)
       return (
-        <div className="flex justify-end gap-x-1">
+        <div className="flex gap-x-1">
           {context.row.original.batchCostNormalized[currency]}{' '}
           {context.row.original.batchCostNormalized.breakdown && (
             <InfoTooltip

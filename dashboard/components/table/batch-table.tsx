@@ -94,12 +94,7 @@ export function BatchTable<TBatch extends Batch>({
           <TableHeader>
             <TableRow isHeader>
               {columns.map((column) => {
-                const showCurrency =
-                  column.key === 'sequenceCost' ||
-                  column.key === 'verificationCost' ||
-                  column.key === 'finalityCost' ||
-                  column.key === 'commitCost' ||
-                  column.key === 'dividedVerificationCost'
+                const showCurrency = /Cost$/.test(column.key as string)
 
                 return (
                   <TableHead key={column.key.toString()}>
@@ -110,8 +105,9 @@ export function BatchTable<TBatch extends Batch>({
                           content={column.description}
                         />
                       )}
-                      {column.label}
+
                       {showCurrency && <CurrencyLogo currency={currency} />}
+                      <p className="line-clamp-2 min-w-40">{column.label}</p>
                     </div>
                   </TableHead>
                 )
