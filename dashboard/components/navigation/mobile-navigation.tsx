@@ -1,3 +1,4 @@
+import { DocumentationNav } from '@/app/(dashboard)/documentation/_components/documentation-nav'
 import { BlockchainsNav } from '@/components/navigation/blockchains-nav'
 import {
   Drawer,
@@ -52,8 +53,9 @@ export function MobileNavigation({
             className="w-full text-xl"
             drawerOnOpenChange={onOpenChange}
           />
+          <DocumentationNav />
 
-          <div className="pt-12">
+          <div className="flex flex-col gap-y-2 pt-12">
             {links.map((LinkComponent, index) => (
               <LinkComponent key={index} onOpenChange={onOpenChange} />
             ))}

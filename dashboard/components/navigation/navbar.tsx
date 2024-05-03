@@ -1,5 +1,6 @@
 'use client'
 
+import { ToDocumentationLink } from '@/app/(dashboard)/documentation/_components/documentation-nav'
 import { MobileNavigation } from '@/components/navigation/mobile-navigation'
 import { routes } from '@/config/routes'
 import MayaLogo from '@/public/maya-primary-logo.svg'
@@ -11,6 +12,7 @@ import { BackToDashboardLink } from './navigation-link'
 
 const NavigationLinkComponents: Array<FC<NavigationLinkProps>> = [
   BackToDashboardLink,
+  ToDocumentationLink,
 ]
 
 function NavHeader() {
@@ -31,7 +33,7 @@ export function Navbar() {
     <nav className="fixed left-0 top-0 z-20 flex h-18 w-full justify-center bg-muted px-6">
       <div className="z-10 flex h-18 w-full max-w-screen-2xl items-center justify-between">
         <NavHeader />
-        <div className="hidden md:block">
+        <div className="hidden md:flex md:gap-x-6">
           {NavigationLinkComponents.map((LinkComponent, index) => (
             <LinkComponent key={index} />
           ))}
