@@ -1,5 +1,5 @@
 {
-  "id": "339a7fe3-b08a-486a-9d02-1de32434a4b7",
+  "id": "67185fb5-5fbe-4e36-b633-70b0acf1be08",
   "prevId": "7dca7bef-755e-4503-9b5a-0fbd0adce2fd",
   "version": "5",
   "dialect": "pg",
@@ -50,80 +50,74 @@
           "primaryKey": true,
           "notNull": true
         },
-        "blockNumber": {
-          "name": "blockNumber",
-          "type": "varchar",
+        "block_number": {
+          "name": "block_number",
+          "type": "bigint",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "timeStamp": {
-          "name": "timeStamp",
-          "type": "varchar",
+        "timestamp": {
+          "name": "timestamp",
+          "type": "timestamp",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "hash": {
           "name": "hash",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "nonce": {
           "name": "nonce",
-          "type": "varchar",
+          "type": "bigint",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "blockHash": {
-          "name": "blockHash",
+        "block_hash": {
+          "name": "block_hash",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "transactionIndex": {
-          "name": "transactionIndex",
-          "type": "varchar",
+        "transaction_index": {
+          "name": "transaction_index",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "from": {
           "name": "from",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "to": {
           "name": "to",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "value": {
           "name": "value",
-          "type": "varchar",
+          "type": "numeric",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "gas": {
           "name": "gas",
-          "type": "varchar",
+          "type": "bigint",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "gasPrice": {
-          "name": "gasPrice",
-          "type": "varchar",
+        "gas_price": {
+          "name": "gas_price",
+          "type": "bigint",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "isError": {
-          "name": "isError",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "txreceipt_status": {
-          "name": "txreceipt_status",
+        "tx_receipt_status": {
+          "name": "tx_receipt_status",
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
@@ -132,29 +126,29 @@
           "name": "input",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "contractAddress": {
-          "name": "contractAddress",
+        "contract_address": {
+          "name": "contract_address",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "cumulativeGasUsed": {
-          "name": "cumulativeGasUsed",
-          "type": "varchar",
+        "cumulative_gas_used": {
+          "name": "cumulative_gas_used",
+          "type": "bigint",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "gasUsed": {
-          "name": "gasUsed",
-          "type": "varchar",
+        "gas_used": {
+          "name": "gas_used",
+          "type": "bigint",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "confirmations": {
           "name": "confirmations",
-          "type": "varchar",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
@@ -162,13 +156,13 @@
           "name": "methodId",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "functionName": {
-          "name": "functionName",
+        "function_name": {
+          "name": "function_name",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         }
       },
       "indexes": {},

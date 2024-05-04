@@ -5,6 +5,7 @@ import { zkSyncEraRpc } from '@zk-dashboard/common/integrations/zk-sync-era/rpc'
 import { logger } from '@zk-dashboard/common/lib/logger'
 
 import { createBlocksSynchronizer } from '../common/blocks'
+import { MAX_DATA_AGE_IN_DAYS } from '../common/constants'
 import { LOGGER_CONFIG } from './constants'
 
 const LOGGER_TAG = {
@@ -15,10 +16,6 @@ const LOGGER_TAG = {
  * When searching for the oldest batch, this specifies the span (step) between the batches to look for.
  */
 const ENTITY_NUMBER_SPAN = 10_000
-/**
- * Maximum age of the data in days, we want to collect.
- */
-const MAX_DATA_AGE_IN_DAYS = 91
 /**
  * Number of blocks fetched and inserted at once
  */

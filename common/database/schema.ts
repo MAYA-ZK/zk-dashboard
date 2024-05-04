@@ -317,76 +317,65 @@ export const ethUsdPrice = pgTable('eth_usd_price', {
   price: integer('price').notNull(),
 })
 
-// ------------------ Linea transactions ------------------
-
-// blockNumber: z.string(),
-// timeStamp: z.string(),
-// hash: z.string(),
-// nonce: z.string(),
-// blockHash: z.string(),
-// transactionIndex: z.string(),
-// from: z.string(),
-// to: z.string(),
-// value: z.string(),
-// gas: z.string(),
-// gasPrice: z.string(),
-// isError: z.string(),
-// txreceipt_status: z.string(),
-// input: z.string(),
-// contractAddress: z.string(),
-// cumulativeGasUsed: z.string(),
-// gasUsed: z.string(),
-// confirmations: z.string(),
-// methodId: z.string(),
-// functionName: z.string(),
+// ------------------ LINEA TABLES ------------------
 
 export const lineaTransactions = pgTable('linea_transactions', {
   id: serial('id').primaryKey(),
-  blockNumber: varchar('blockNumber'),
-  timeStamp: varchar('timeStamp'),
-  hash: varchar('hash'),
-  nonce: varchar('nonce'),
-  blockHash: varchar('blockHash'),
-  transactionIndex: varchar('transactionIndex'),
-  from: varchar('from'),
-  to: varchar('to'),
-  value: varchar('value'),
-  gas: varchar('gas'),
-  gasPrice: varchar('gasPrice'),
-  isError: varchar('isError'),
-  txreceipt_status: varchar('txreceipt_status'),
-  input: varchar('input'),
-  contractAddress: varchar('contractAddress'),
-  cumulativeGasUsed: varchar('cumulativeGasUsed'),
-  gasUsed: varchar('gasUsed'),
-  confirmations: varchar('confirmations'),
-  methodId: varchar('methodId'),
-  functionName: varchar('functionName'),
+  block_number: bigint('block_number', { mode: 'bigint' }).notNull(),
+  timestamp: timestamp('timestamp').notNull(),
+  hash: varchar('hash').notNull(),
+  nonce: bigint('nonce', { mode: 'bigint' }).notNull(),
+  block_hash: varchar('block_hash').notNull(),
+  transaction_index: integer('transaction_index').notNull(),
+  from: varchar('from').notNull(),
+  to: varchar('to').notNull(),
+  value: numeric('value').notNull(),
+  gas: bigint('gas', { mode: 'bigint' }).notNull(),
+  gas_price: bigint('gas_price', { mode: 'bigint' }).notNull(),
+  tx_receipt_status: varchar('tx_receipt_status'),
+  input: varchar('input').notNull(),
+  contract_address: varchar('contract_address').notNull(),
+  cumulative_gas_used: bigint('cumulative_gas_used', {
+    mode: 'bigint',
+  }).notNull(),
+  gas_used: bigint('gas_used', { mode: 'bigint' }).notNull(),
+  confirmations: integer('confirmations'),
+  method_id: varchar('methodId').notNull(),
+  function_name: varchar('function_name').notNull(),
 })
 
-// {
-//   address: '0xd19d4b5d358258f05d7b411e21a1460d11b0876f',
-//   topics: [
-//     '0x5c885a794662ebe3b08ae0874fc2c88b5343b0223ba9cd2cad92b69c0d0c901f',
-//     '0x000000000000000000000000000000000000000000000000000000000039b567'
-//   ],
-//   data: '0x10dce6e965a38927fa4462c27ae551db27e2c539eacc873dc3f4159666f4fec30f51a2da5a0adc1fdae489e084b7964b8fc665925996aa571f071f388ce96627',
-//   blockNumber: 19680260n,
-//   transactionHash: '0xb0c8923049101270b3251bf7f7e8202be7e4ac790c76c8ea7f5880ce34aca83a',
-//   transactionIndex: 93n,
-//   blockHash: '0x193c4d74e8a8f2ce2899a3a857713489e57559bb32675ec4a0c3fc1f33f32924',
-//   logIndex: 161n,
-//   removed: false
-// }
-export const lineTxLogs = pgTable('line_tx_logs', {
-  id: serial('id').primaryKey(),
-  address: varchar('address'),
-  topics: varchar('topics').array(),
-  data: varchar('data'),
-  block_number: bigint('block_number', { mode: 'bigint' }),
-  transaction_hash: varchar('transaction_hash'),
-  transaction_index: bigint('transaction_index', { mode: 'bigint' }),
-  block_hash: varchar('block_hash'),
-  log_index: bigint('log_index', { mode: 'bigint' }),
-  removed: boolean('removed'),
-})
+export type LineaTransaction = typeof lineaTransactions.$inferSelect
+
+export const lineaBlocks = pgTable(
+  'linea_blocks',
+  {
+    id: serial('id').primaryKey(),
+
+    difficulty: bigint('difficulty', { mode: 'bigint' }),
+    extra_data: varchar('extra_data').notNull(),
+    gas_limit: bigint('gas_limit', { mode: 'bigint' }).notNull(),
+    gas_used: bigint('gas_used', { mode: 'bigint' }).notNull(),
+    hash: varchar('hash'),
+    logs_bloom: varchar('logs_bloom'),
+    miner: varchar('miner').notNull(),
+    mix_hash: varchar('mix_hash').notNull(),
+    nonce: bigint('nonce', { mode: 'bigint' }).notNull(),
+    number: bigint('number', { mode: 'bigint' }).notNull().unique(),
+    parent_hash: varchar('parent_hash').notNull(),
+    receipts_root: varchar('receipts_root').notNull(),
+    sha3_uncles: varchar('sha3_uncles').notNull(),
+    size: bigint('size', { mode: 'bigint' }).notNull(),
+    state_root: varchar('state_root').notNull(),
+    timestamp: timestamp('timestamp').notNull(),
+    transactions_root: varchar('transactions_root').notNull(),
+    transactions: varchar('transactions').array().notNull(),
+    uncles: varchar('uncles').array().notNull(),
+  },
+  (table) => {
+    return {
+      numberIndex: uniqueIndex('linea_blocks_number_index').on(table.number),
+      timestampIndex: index('linea_blocks_timestamp_index').on(table.timestamp),
+    }
+  }
+)
+export type LineaBlock = typeof lineaBlocks.$inferSelect

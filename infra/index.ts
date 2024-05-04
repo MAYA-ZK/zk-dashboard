@@ -131,6 +131,10 @@ const service = new awsx.ecs.FargateService('service', {
           value: config.requireSecret('block_pi_zk_sync_era_api_key'),
         },
         {
+          name: 'BLOCK_PI_LINEA_API_KEY',
+          value: config.requireSecret('block_pi_linea_api_key'),
+        },
+        {
           name: 'BLOCK_PI_ETHEREUM_API_KEY',
           value: config.requireSecret('block_pi_ethereum_api_key'),
         },

@@ -1,7 +1,9 @@
-import { scrollBlocks } from '@zk-dashboard/common/database/schema'
+import { lineaBlocks } from '@zk-dashboard/common/database/schema'
 import { db } from '@zk-dashboard/common/database/utils'
-import type { ScrollRpcBlock } from '@zk-dashboard/common/integrations/scroll/rpc'
-import { scrollRpc } from '@zk-dashboard/common/integrations/scroll/rpc'
+import {
+  type LineaRpcBlock,
+  lineaRpc,
+} from '@zk-dashboard/common/integrations/linea/rpc'
 import { logger } from '@zk-dashboard/common/lib/logger'
 
 import { createBlocksSynchronizer } from '../common/blocks'
@@ -14,22 +16,19 @@ const LOGGER_TAG = {
 }
 
 /**
- * Time it takes to mine a block
+ * When searching for the oldest block, this specifies the span (step) between the blocks to look for.
+ */
+const ENTITY_NUMBER_SPAN = 1_000
+/**
+ * Number of blocks fetched and inserted at once
  */
 const BLOCKS_CHUNK_SIZE = 200
 /**
- * Number of blocks to get at once
+ * Number of blocks to get at once from database
  */
 const MAX_BLOCKS_TO_GET = 1_000
-/**
- * When searching for the oldest batch, this specifies the span (step) between the batches to look for.
- */
-const ENTITY_NUMBER_SPAN = 10_000
 
-async function insertBlocks(
-  blocksInput: Array<ScrollRpcBlock>,
-  returnValues: boolean = false
-) {
+async function insertBlocks(blocksInput: Array<LineaRpcBlock>) {
   logger.info(
     LOGGER_TAG,
     `inserting blocks from ${blocksInput[0]?.number} ${blocksInput[blocksInput.length - 1]?.number}`
@@ -40,6 +39,7 @@ async function insertBlocks(
     hash: block.hash,
     parent_hash: block.parentHash,
     nonce: block.nonce,
+    base_fee_per_gas: block.baseFeePerGas,
     sha3_uncles: block.sha3Uncles,
     logs_bloom: block.logsBloom,
     transactions_root: block.transactionsRoot,
@@ -53,30 +53,21 @@ async function insertBlocks(
     gas_limit: block.gasLimit,
     gas_used: block.gasUsed,
     timestamp: block.timestamp,
-    transactions: (block.transactions ?? []) as Array<string>,
+    transactions: (block.transactions as Array<string>) ?? [],
     uncles: block.uncles,
     mix_hash: block.mixHash,
-    base_fee_per_gas: block.baseFeePerGas,
   }))
 
-  if (returnValues) {
-    return db
-      .insert(scrollBlocks)
-      .values(values)
-      .onConflictDoNothing()
-      .returning({ id: scrollBlocks.id })
-  }
-
-  return db.insert(scrollBlocks).values(values).onConflictDoNothing()
+  return db.insert(lineaBlocks).values(values).onConflictDoNothing()
 }
 
 export const syncBlocks = createBlocksSynchronizer({
   blocksChunkSize: BLOCKS_CHUNK_SIZE,
   entityNumberSpan: ENTITY_NUMBER_SPAN,
-  getBlock: scrollRpc.getBlock,
+  getBlock: lineaRpc.getBlock,
   insertBlocks,
   loggerTag: LOGGER_TAG,
   maxBlocksToGet: MAX_BLOCKS_TO_GET,
   maxDataAgeInDays: MAX_DATA_AGE_IN_DAYS,
-  table: scrollBlocks,
+  table: lineaBlocks,
 })

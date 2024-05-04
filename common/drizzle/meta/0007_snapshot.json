@@ -1,6 +1,6 @@
 {
-  "id": "b69a4d3d-3317-4d4c-81f7-6c63d599028b",
-  "prevId": "339a7fe3-b08a-486a-9d02-1de32434a4b7",
+  "id": "a252997c-58cb-46c0-a5cc-a33c287e7e18",
+  "prevId": "67185fb5-5fbe-4e36-b633-70b0acf1be08",
   "version": "5",
   "dialect": "pg",
   "tables": {
@@ -40,8 +40,8 @@
         }
       }
     },
-    "line_tx_logs": {
-      "name": "line_tx_logs",
+    "linea_blocks": {
+      "name": "linea_blocks",
       "schema": "",
       "columns": {
         "id": {
@@ -50,65 +50,148 @@
           "primaryKey": true,
           "notNull": true
         },
-        "address": {
-          "name": "address",
+        "difficulty": {
+          "name": "difficulty",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "extra_data": {
+          "name": "extra_data",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "gas_limit": {
+          "name": "gas_limit",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "gas_used": {
+          "name": "gas_used",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hash": {
+          "name": "hash",
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
         },
-        "topics": {
-          "name": "topics",
+        "logs_bloom": {
+          "name": "logs_bloom",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "miner": {
+          "name": "miner",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mix_hash": {
+          "name": "mix_hash",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nonce": {
+          "name": "nonce",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "number": {
+          "name": "number",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "parent_hash": {
+          "name": "parent_hash",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "receipts_root": {
+          "name": "receipts_root",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sha3_uncles": {
+          "name": "sha3_uncles",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "size": {
+          "name": "size",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "state_root": {
+          "name": "state_root",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "timestamp": {
+          "name": "timestamp",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "transactions_root": {
+          "name": "transactions_root",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "transactions": {
+          "name": "transactions",
           "type": "varchar[]",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "data": {
-          "name": "data",
-          "type": "varchar",
+        "uncles": {
+          "name": "uncles",
+          "type": "varchar[]",
           "primaryKey": false,
-          "notNull": false
-        },
-        "block_number": {
-          "name": "block_number",
-          "type": "bigint",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "transaction_hash": {
-          "name": "transaction_hash",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "transaction_index": {
-          "name": "transaction_index",
-          "type": "bigint",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "block_hash": {
-          "name": "block_hash",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "log_index": {
-          "name": "log_index",
-          "type": "bigint",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "removed": {
-          "name": "removed",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false
+          "notNull": true
         }
       },
-      "indexes": {},
+      "indexes": {
+        "linea_blocks_number_index": {
+          "name": "linea_blocks_number_index",
+          "columns": [
+            "number"
+          ],
+          "isUnique": true
+        },
+        "linea_blocks_timestamp_index": {
+          "name": "linea_blocks_timestamp_index",
+          "columns": [
+            "timestamp"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {
+        "linea_blocks_number_unique": {
+          "name": "linea_blocks_number_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "number"
+          ]
+        }
+      }
     },
     "linea_transactions": {
       "name": "linea_transactions",
@@ -120,80 +203,74 @@
           "primaryKey": true,
           "notNull": true
         },
-        "blockNumber": {
-          "name": "blockNumber",
-          "type": "varchar",
+        "block_number": {
+          "name": "block_number",
+          "type": "bigint",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "timeStamp": {
-          "name": "timeStamp",
-          "type": "varchar",
+        "timestamp": {
+          "name": "timestamp",
+          "type": "timestamp",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "hash": {
           "name": "hash",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "nonce": {
           "name": "nonce",
-          "type": "varchar",
+          "type": "bigint",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "blockHash": {
-          "name": "blockHash",
+        "block_hash": {
+          "name": "block_hash",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "transactionIndex": {
-          "name": "transactionIndex",
-          "type": "varchar",
+        "transaction_index": {
+          "name": "transaction_index",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "from": {
           "name": "from",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "to": {
           "name": "to",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "value": {
           "name": "value",
-          "type": "varchar",
+          "type": "numeric",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "gas": {
           "name": "gas",
-          "type": "varchar",
+          "type": "bigint",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "gasPrice": {
-          "name": "gasPrice",
-          "type": "varchar",
+        "gas_price": {
+          "name": "gas_price",
+          "type": "bigint",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "isError": {
-          "name": "isError",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "txreceipt_status": {
-          "name": "txreceipt_status",
+        "tx_receipt_status": {
+          "name": "tx_receipt_status",
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
@@ -202,29 +279,29 @@
           "name": "input",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "contractAddress": {
-          "name": "contractAddress",
+        "contract_address": {
+          "name": "contract_address",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "cumulativeGasUsed": {
-          "name": "cumulativeGasUsed",
-          "type": "varchar",
+        "cumulative_gas_used": {
+          "name": "cumulative_gas_used",
+          "type": "bigint",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "gasUsed": {
-          "name": "gasUsed",
-          "type": "varchar",
+        "gas_used": {
+          "name": "gas_used",
+          "type": "bigint",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "confirmations": {
           "name": "confirmations",
-          "type": "varchar",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
@@ -232,13 +309,13 @@
           "name": "methodId",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "functionName": {
-          "name": "functionName",
+        "function_name": {
+          "name": "function_name",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         }
       },
       "indexes": {},
