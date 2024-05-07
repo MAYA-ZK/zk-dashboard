@@ -84,7 +84,6 @@ export function DataTable<TData, TValue>({
                   <TableCell
                     key={cell.id}
                     className={cn(
-                      '',
                       isLogo && 'bg-white first:sticky first:left-0 first:z-10'
                     )}
                   >

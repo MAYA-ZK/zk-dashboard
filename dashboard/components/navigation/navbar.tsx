@@ -5,7 +5,7 @@ import { MobileNavigation } from '@/components/navigation/mobile-navigation'
 import { routes } from '@/config/routes'
 import MayaLogo from '@/public/maya-primary-logo.svg'
 import Link from 'next/link'
-import type { FC } from 'react'
+import { type FC, Suspense } from 'react'
 
 import type { NavigationLinkProps } from './navigation-link'
 import { BackToDashboardLink } from './navigation-link'
@@ -40,10 +40,12 @@ export function Navbar() {
         </div>
 
         <div className="block md:hidden">
-          <MobileNavigation
-            header={<NavHeader />}
-            links={NavigationLinkComponents}
-          />
+          <Suspense>
+            <MobileNavigation
+              header={<NavHeader />}
+              links={NavigationLinkComponents}
+            />
+          </Suspense>
         </div>
       </div>
     </nav>

@@ -3,21 +3,12 @@ import { Navbar } from '@/components/navigation/navbar'
 import { Providers } from '@/components/providers'
 import { cn } from '@/lib/utils'
 import { Analytics } from '@vercel/analytics/react'
-import type { Metadata } from 'next'
 import { Sora } from 'next/font/google'
 import type { ReactNode } from 'react'
 
 import '../app/globals.css'
 
 const sora = Sora({ subsets: ['latin'] })
-
-export const metadata: Metadata = {
-  title: 'ZK Dashboard',
-  description: 'ZK Dashboard',
-  icons: {
-    icon: '/favicon.ico',
-  },
-}
 
 export default function RootLayout({
   children,

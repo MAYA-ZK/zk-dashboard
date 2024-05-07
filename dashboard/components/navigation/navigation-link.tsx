@@ -31,7 +31,7 @@ export interface NavigationLinkProps {
   onOpenChange?: (open: boolean) => void
 }
 
-export function BackToDashboardLink({ onOpenChange }: NavigationLinkProps) {
+export function BackToDashboardLink() {
   const path = GENERAL_LINKS.backToDashboard.path
   const title = GENERAL_LINKS.backToDashboard.title
   const shouldDisplay = !useMatchPath(path)
@@ -42,11 +42,7 @@ export function BackToDashboardLink({ onOpenChange }: NavigationLinkProps) {
 
   return (
     <NavLink href={path} className="flex items-center gap-x-2 hover:underline">
-      {onOpenChange ? (
-        <button onClick={() => onOpenChange(false)}>{title}</button>
-      ) : (
-        title
-      )}
+      {title}
     </NavLink>
   )
 }
