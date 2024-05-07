@@ -4,9 +4,7 @@ export interface DocSection {
   body?: string
 }
 
-export type Documentation = {
-  [key: string]: DocSection
-}
+export type Documentation = Record<string, DocSection>
 
 export const DOCUMENTATION: Documentation = {
   title: {

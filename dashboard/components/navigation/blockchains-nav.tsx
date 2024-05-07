@@ -32,14 +32,14 @@ const navigationConfig = {
   },
 }
 
+const shouldDisplayRegex = '/dashboard/(scroll|zksync-era|polygon-zkevm)'
+
 function BlockchainNavLink({
   blockchain,
   activeColor,
-  onOpenChange,
 }: {
   blockchain: BlockchainLink
   activeColor?: string
-  onOpenChange?: (open: boolean) => void
 }) {
   const path = usePathname()
 
@@ -53,15 +53,9 @@ function BlockchainNavLink({
       className="flex items-center gap-x-2 hover:underline"
     >
       {blockchain.logo}
-      {onOpenChange ? (
-        <button onClick={() => onOpenChange(false)}>
-          <p className={cn(isActive(blockchain.path) && activeColor)}>
-            {blockchain.title}
-          </p>
-        </button>
-      ) : (
-        blockchain.title
-      )}
+      <p className={cn(isActive(blockchain.path) && activeColor)}>
+        {blockchain.title}
+      </p>
     </NavLink>
   )
 }
@@ -69,15 +63,11 @@ function BlockchainNavLink({
 export function BlockchainsNav({
   className,
   activeColor,
-  drawerOnOpenChange,
 }: {
   className?: string
   activeColor?: string
-  drawerOnOpenChange?: (open: boolean) => void
 }) {
-  const shouldDisplay = useMatchPath(
-    '/dashboard/(scroll|zksync-era|polygon-zkevm)'
-  )
+  const shouldDisplay = useMatchPath(shouldDisplayRegex)
 
   if (!shouldDisplay) {
     return null
@@ -88,24 +78,21 @@ export function BlockchainsNav({
       aria-labelledby="blockchains-navigation-title"
       className={cn('w-40', className)}
     >
-      {navigationConfig && (
-        <>
-          <h2 id="blockchains-navigation" className="font-bold">
-            Blockchains
-          </h2>
-          <ol role="list" className="mt-4 space-y-3 font-medium">
-            {Object.values(navigationConfig).map((blockchain) => (
-              <li key={blockchain.path}>
-                <BlockchainNavLink
-                  blockchain={blockchain}
-                  onOpenChange={drawerOnOpenChange}
-                  activeColor={activeColor}
-                />
-              </li>
-            ))}
-          </ol>
-        </>
-      )}
+      <>
+        <h2 id="blockchains-navigation" className="font-bold">
+          Blockchains
+        </h2>
+        <ol role="list" className="mt-4 space-y-3 font-medium">
+          {Object.values(navigationConfig).map((blockchain) => (
+            <li key={blockchain.path}>
+              <BlockchainNavLink
+                blockchain={blockchain}
+                activeColor={activeColor}
+              />
+            </li>
+          ))}
+        </ol>
+      </>
     </nav>
   )
 }

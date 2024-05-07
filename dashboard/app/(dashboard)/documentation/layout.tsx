@@ -1,7 +1,16 @@
 import RootLayout from '@/components/layout'
+import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 
 import { DocumentationNav } from './_components/documentation-nav'
+
+export const metadata: Metadata = {
+  title: 'ZK Dashboard',
+  description: 'ZK Dashboard',
+  icons: {
+    icon: '/favicon.ico',
+  },
+}
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
