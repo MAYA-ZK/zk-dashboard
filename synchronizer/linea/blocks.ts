@@ -34,29 +34,33 @@ async function insertBlocks(blocksInput: Array<LineaRpcBlock>) {
     `inserting blocks from ${blocksInput[0]?.number} ${blocksInput[blocksInput.length - 1]?.number}`
   )
 
-  const values = blocksInput.map((block) => ({
-    number: block.number,
-    hash: block.hash,
-    parent_hash: block.parentHash,
-    nonce: block.nonce,
-    base_fee_per_gas: block.baseFeePerGas,
-    sha3_uncles: block.sha3Uncles,
-    logs_bloom: block.logsBloom,
-    transactions_root: block.transactionsRoot,
-    state_root: block.stateRoot,
-    receipts_root: block.receiptsRoot,
-    miner: block.miner,
-    difficulty: block.difficulty,
-    total_difficulty: block.totalDifficulty,
-    size: block.size,
-    extra_data: block.extraData,
-    gas_limit: block.gasLimit,
-    gas_used: block.gasUsed,
-    timestamp: block.timestamp,
-    transactions: (block.transactions as Array<string>) ?? [],
-    uncles: block.uncles,
-    mix_hash: block.mixHash,
-  }))
+  const values = blocksInput.map((block) => {
+    const transactions = (block.transactions as Array<string>) ?? []
+    return {
+      number: block.number,
+      hash: block.hash,
+      parent_hash: block.parentHash,
+      nonce: block.nonce,
+      base_fee_per_gas: block.baseFeePerGas,
+      sha3_uncles: block.sha3Uncles,
+      logs_bloom: block.logsBloom,
+      transactions_root: block.transactionsRoot,
+      state_root: block.stateRoot,
+      receipts_root: block.receiptsRoot,
+      miner: block.miner,
+      difficulty: block.difficulty,
+      total_difficulty: block.totalDifficulty,
+      size: block.size,
+      extra_data: block.extraData,
+      gas_limit: block.gasLimit,
+      gas_used: block.gasUsed,
+      timestamp: block.timestamp,
+      transactions: transactions,
+      transactions_count: transactions.length,
+      uncles: block.uncles,
+      mix_hash: block.mixHash,
+    }
+  })
 
   return db.insert(lineaBlocks).values(values).onConflictDoNothing()
 }

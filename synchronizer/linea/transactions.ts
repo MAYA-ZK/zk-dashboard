@@ -9,6 +9,11 @@ import { logger } from '@zk-dashboard/common/lib/logger'
 import { MAX_DATA_AGE_IN_DAYS } from '../common/constants'
 import { searchOldestEntity } from '../common/search'
 import { LOGGER_CONFIG } from './constants'
+import {
+  LINEA_TRANSACTION_INPUT_DATA_METHOD_ID,
+  decodeLineaTransactionInputData,
+  formatDecodedTransactionLineaData,
+} from './decoder'
 
 const ENTITY_NUMBER_SPAN = 100
 const LOGGER_TAG = {
@@ -124,27 +129,40 @@ export async function syncTransactions() {
           return prevTransaction.hash === transaction.hash
         })
       })
-      .map((transaction) => ({
-        hash: transaction.hash,
-        from: transaction.from,
-        to: transaction.to,
-        value: transaction.value.toString(),
-        gas: transaction.gas,
-        input: transaction.input,
-        method_id: transaction.methodId,
-        nonce: transaction.nonce,
-        block_hash: transaction.blockHash,
-        block_number: transaction.blockNumber,
-        function_name: transaction.functionName,
-        contract_address: transaction.contractAddress,
-        gas_price: transaction.gasPrice,
-        cumulative_gas_used: transaction.cumulativeGasUsed,
-        gas_used: transaction.gasUsed,
-        timestamp: transaction.timeStamp,
-        transaction_index: transaction.transactionIndex,
-        confirmations: transaction.confirmations,
-        tx_receipt_status: transaction.txreceipt_status,
-      }))
+      .map((transaction) => {
+        const decodedData =
+          transaction.methodId === LINEA_TRANSACTION_INPUT_DATA_METHOD_ID
+            ? formatDecodedTransactionLineaData(
+                decodeLineaTransactionInputData(transaction.input)
+              )
+            : null
+
+        return {
+          hash: transaction.hash,
+          from: transaction.from,
+          to: transaction.to,
+          value: transaction.value.toString(),
+          gas: transaction.gas,
+          input: transaction.input,
+          method_id: transaction.methodId,
+          nonce: transaction.nonce,
+          block_hash: transaction.blockHash,
+          block_number: transaction.blockNumber,
+          function_name: transaction.functionName,
+          contract_address: transaction.contractAddress,
+          gas_price: transaction.gasPrice,
+          cumulative_gas_used: transaction.cumulativeGasUsed,
+          gas_used: transaction.gasUsed,
+          timestamp: transaction.timeStamp,
+          transaction_index: transaction.transactionIndex,
+          confirmations: transaction.confirmations,
+          tx_receipt_status: transaction.txreceipt_status,
+          decoded_last_finalized_timestamp:
+            decodedData?.lastFinalizedTimestamp ?? null,
+          decoded_final_timestamp: decodedData?.finalTimestamp ?? null,
+          decoded_final_block_number: decodedData?.finalBlockNumber ?? null,
+        }
+      })
 
     logger.info(
       LOGGER_TAG,

@@ -1,7 +1,10 @@
 import type {
   lineaBlocks,
+  polygonZkEvmBatchReceipts,
   polygonZkEvmBlocks,
+  scrollBatchReceipts,
   scrollBlocks,
+  zkSyncEraBatchReceipts,
   zkSyncEraBlocks,
 } from '@zk-dashboard/common/database/schema'
 import type {
@@ -22,6 +25,16 @@ export type BlocksTable =
   | typeof zkSyncEraBlocks
   | typeof lineaBlocks
 
+export type BatchesTable =
+  | typeof polygonZkEvmBatches
+  | typeof zkSyncEraBatches
+  | typeof scrollBatches
+
+export type BatchReceiptsTable =
+  | typeof polygonZkEvmBatchReceipts
+  | typeof zkSyncEraBatchReceipts
+  | typeof scrollBatchReceipts
+
 export type BlocksApi =
   | typeof polygonZkEvmRpc
   | typeof scrollRpc
@@ -29,11 +42,6 @@ export type BlocksApi =
   | typeof lineaRpc
 
 export type GetBlockReturnType = Awaited<ReturnType<BlocksApi['getBlock']>>
-
-export type BatchesTable =
-  | typeof polygonZkEvmBatches
-  | typeof zkSyncEraBatches
-  | typeof scrollBatches
 
 export type BatchesApi =
   | typeof polygonZkEvmRpc

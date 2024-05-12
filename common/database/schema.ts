@@ -342,6 +342,13 @@ export const lineaTransactions = pgTable('linea_transactions', {
   confirmations: integer('confirmations'),
   method_id: varchar('methodId').notNull(),
   function_name: varchar('function_name').notNull(),
+  decoded_last_finalized_timestamp: timestamp(
+    'decoded_last_finalized_timestamp'
+  ),
+  decoded_final_timestamp: timestamp('decoded_final_timestamp'),
+  decoded_final_block_number: bigint('decoded_final_block_number', {
+    mode: 'bigint',
+  }),
 })
 
 export type LineaTransaction = typeof lineaTransactions.$inferSelect
@@ -369,6 +376,7 @@ export const lineaBlocks = pgTable(
     timestamp: timestamp('timestamp').notNull(),
     transactions_root: varchar('transactions_root').notNull(),
     transactions: varchar('transactions').array().notNull(),
+    transactions_count: integer('transactions_count').notNull().default(0),
     uncles: varchar('uncles').array().notNull(),
   },
   (table) => {
