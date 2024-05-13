@@ -54,7 +54,7 @@ const BaseLayoutConfig = {
   },
 }
 
-export default function BaseLayout({
+export function BaseLayout({
   variant,
   children,
 }: {

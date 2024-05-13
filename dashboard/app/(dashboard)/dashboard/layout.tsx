@@ -1,4 +1,4 @@
-import BaseLayout from '@/components/layout'
+import { BaseLayout } from '@/components/layout'
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 
