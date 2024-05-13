@@ -7,8 +7,6 @@ import {
   DrawerHeader,
   DrawerTrigger,
 } from '@/components/ui/drawer'
-import { routes } from '@/config/routes'
-import { useMatchPath } from '@/lib/hooks/match-path'
 import { Menu, X } from 'lucide-react'
 import { usePathname, useSearchParams } from 'next/navigation'
 import type { ReactNode } from 'react'
@@ -25,15 +23,10 @@ export function MobileNavigation({
   const searchParams = useSearchParams()
 
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const shouldDisplay = !useMatchPath(routes.home)
 
   useEffect(() => {
     setIsOpen(false)
   }, [pathname, searchParams])
-
-  if (!shouldDisplay) {
-    return null
-  }
 
   const onOpenChange = (open: boolean) => {
     setIsOpen(open)
