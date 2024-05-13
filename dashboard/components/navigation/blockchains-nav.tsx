@@ -15,8 +15,8 @@ interface BlockchainLink {
   logo: JSX.Element
 }
 
-const navigationConfig = {
-  scroll: {
+const navigationConfig = [
+  {
     ...BLOCKCHAIN_LINKS.scroll,
     logo: (
       <Image
@@ -28,7 +28,7 @@ const navigationConfig = {
       />
     ),
   },
-  zkSyncEra: {
+  {
     ...BLOCKCHAIN_LINKS.zkSyncEra,
     logo: (
       <Image
@@ -40,7 +40,7 @@ const navigationConfig = {
       />
     ),
   },
-  polygonZkEVM: {
+  {
     ...BLOCKCHAIN_LINKS.polygonZkEVM,
     logo: (
       <Image
@@ -52,7 +52,7 @@ const navigationConfig = {
       />
     ),
   },
-}
+]
 
 const shouldDisplayRegex = '/dashboard/(scroll|zksync-era|polygon-zkevm)'
 
@@ -93,7 +93,7 @@ export function BlockchainsNav({
     <SideNavigation
       shouldDisplayRegex={shouldDisplayRegex}
       className={className}
-      contentListChildren={Object.values(navigationConfig).map((blockchain) => (
+      contentListChildren={navigationConfig.map((blockchain) => (
         <li key={blockchain.path}>
           <BlockchainNavLink
             blockchain={blockchain}
