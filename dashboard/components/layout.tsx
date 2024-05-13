@@ -1,3 +1,4 @@
+import { DocumentationNav } from '@/app/(dashboard)/documentation/_components/documentation-nav'
 import { Footer } from '@/components/footer'
 import { Navbar } from '@/components/navigation/navbar'
 import { Providers } from '@/components/providers'
@@ -7,10 +8,11 @@ import { Sora } from 'next/font/google'
 import type { ReactNode } from 'react'
 
 import '../app/globals.css'
+import { BlockchainsNav } from './navigation/blockchains-nav'
 
 const sora = Sora({ subsets: ['latin'] })
 
-export default function RootLayout({
+export function RootLayout({
   children,
   className,
 }: {
@@ -36,5 +38,42 @@ export default function RootLayout({
         <Analytics />
       </body>
     </html>
+  )
+}
+
+const BaseLayoutConfig = {
+  documentation: {
+    style: 'bg-white',
+    navigation: <DocumentationNav />,
+  },
+  dashboard: {
+    style: 'bg-muted',
+    navigation: (
+      <BlockchainsNav activeColor="text-primary" className="text-sm" />
+    ),
+  },
+}
+
+export default function BaseLayout({
+  variant,
+  children,
+}: {
+  variant: keyof typeof BaseLayoutConfig
+  children: ReactNode
+}) {
+  const style = BaseLayoutConfig[variant].style
+  const Navigation = BaseLayoutConfig[variant].navigation
+
+  return (
+    <RootLayout className={cn(style)}>
+      <main className="flex h-full grow flex-col gap-5 pb-4">
+        <div className="flex gap-5">
+          <div className="hidden md:sticky md:top-[7.75rem] md:block md:h-fit md:flex-none md:overflow-y-auto md:py-16 md:pr-6 ">
+            {Navigation}
+          </div>
+          {children}
+        </div>
+      </main>
+    </RootLayout>
   )
 }

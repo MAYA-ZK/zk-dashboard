@@ -1,4 +1,3 @@
-import { GENERAL_LINKS } from '@/config/navigation'
 import { useMatchPath } from '@/lib/hooks/match-path'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
@@ -27,13 +26,13 @@ export function NavLink({
   )
 }
 
-export interface NavigationLinkProps {
-  onOpenChange?: (open: boolean) => void
-}
-
-export function BackToDashboardLink() {
-  const path = GENERAL_LINKS.backToDashboard.path
-  const title = GENERAL_LINKS.backToDashboard.title
+export function BaseNavigationLink({
+  path,
+  title,
+}: {
+  path: string
+  title: string
+}) {
   const shouldDisplay = !useMatchPath(path)
 
   if (!shouldDisplay) {
