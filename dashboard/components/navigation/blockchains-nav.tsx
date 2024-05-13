@@ -1,15 +1,13 @@
 'use client'
 
 import { BLOCKCHAIN_LINKS } from '@/config/navigation'
-import { useMatchPath } from '@/lib/hooks/match-path'
 import { matchPath } from '@/lib/path'
 import { cn } from '@/lib/utils'
-import PolygonZkEvmSvg from '@/public/polygon-zk-evm-logo.svg'
-import ScrollSvg from '@/public/scroll-logo.svg'
-import ZkSyncEraSvg from '@/public/zk-sync-era-logo.svg'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 
 import { NavLink } from './navigation-link'
+import SideNavigation from './side-navigation'
 
 interface BlockchainLink {
   path: string
@@ -20,15 +18,39 @@ interface BlockchainLink {
 const navigationConfig = {
   scroll: {
     ...BLOCKCHAIN_LINKS.scroll,
-    logo: <ScrollSvg className="size-5" />,
+    logo: (
+      <Image
+        src="/scroll-logo.svg"
+        alt="scroll-logo"
+        width={10}
+        height={10}
+        className="size-5"
+      />
+    ),
   },
   zkSyncEra: {
     ...BLOCKCHAIN_LINKS.zkSyncEra,
-    logo: <ZkSyncEraSvg className="size-5" />,
+    logo: (
+      <Image
+        src="/zk-sync-era-logo.svg"
+        alt="zk-sync-era-logo"
+        width={10}
+        height={10}
+        className="size-5"
+      />
+    ),
   },
   polygonZkEVM: {
     ...BLOCKCHAIN_LINKS.polygonZkEVM,
-    logo: <PolygonZkEvmSvg className="size-5" />,
+    logo: (
+      <Image
+        src="/polygon-zk-evm-logo.svg"
+        alt="polygon-zk-evm-logo"
+        width={10}
+        height={10}
+        className="size-5"
+      />
+    ),
   },
 }
 
@@ -67,32 +89,18 @@ export function BlockchainsNav({
   className?: string
   activeColor?: string
 }) {
-  const shouldDisplay = useMatchPath(shouldDisplayRegex)
-
-  if (!shouldDisplay) {
-    return null
-  }
-
   return (
-    <nav
-      aria-labelledby="blockchains-navigation-title"
-      className={cn('w-40', className)}
-    >
-      <>
-        <h2 id="blockchains-navigation" className="font-bold">
-          Blockchains
-        </h2>
-        <ol role="list" className="mt-4 space-y-3 font-medium">
-          {Object.values(navigationConfig).map((blockchain) => (
-            <li key={blockchain.path}>
-              <BlockchainNavLink
-                blockchain={blockchain}
-                activeColor={activeColor}
-              />
-            </li>
-          ))}
-        </ol>
-      </>
-    </nav>
+    <SideNavigation
+      shouldDisplayRegex={shouldDisplayRegex}
+      className={className}
+      contentListChildren={Object.values(navigationConfig).map((blockchain) => (
+        <li key={blockchain.path}>
+          <BlockchainNavLink
+            blockchain={blockchain}
+            activeColor={activeColor}
+          />
+        </li>
+      ))}
+    />
   )
 }

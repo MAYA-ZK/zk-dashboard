@@ -11,17 +11,15 @@ import { routes } from '@/config/routes'
 import { useMatchPath } from '@/lib/hooks/match-path'
 import { Menu, X } from 'lucide-react'
 import { usePathname, useSearchParams } from 'next/navigation'
-import type { FC, ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { useEffect, useState } from 'react'
-
-import type { NavigationLinkProps } from './navigation-link'
 
 export function MobileNavigation({
   header,
   links,
 }: {
   header: ReactNode
-  links: Array<FC<NavigationLinkProps>>
+  links: Array<ReactNode>
 }) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -59,11 +57,7 @@ export function MobileNavigation({
           <BlockchainsNav activeColor="text-white" className="w-full text-xl" />
           <DocumentationNav />
 
-          <div className="flex flex-col gap-y-2 pt-12">
-            {links.map((LinkComponent, index) => (
-              <LinkComponent key={index} />
-            ))}
-          </div>
+          <div className="flex flex-col gap-y-2 pt-12">{links}</div>
         </div>
       </DrawerContent>
     </Drawer>
