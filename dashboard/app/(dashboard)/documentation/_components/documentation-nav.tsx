@@ -3,7 +3,7 @@
 import { NavLink } from '@/components/navigation/navigation-link'
 import SideNavigation from '@/components/navigation/side-navigation'
 import { GENERAL_LINKS } from '@/config/navigation'
-import { documentationSection } from '@/config/routes'
+import { routes } from '@/config/routes'
 import { useMatchPath } from '@/lib/hooks/match-path'
 import Link from 'next/link'
 
@@ -28,7 +28,10 @@ export function ToDocumentationLink() {
 
 function DocumentationNavLink({ section }: { section: string }) {
   return (
-    <Link href={documentationSection(section)} className="hover:underline">
+    <Link
+      href={routes.documentationSection(section)}
+      className="hover:underline"
+    >
       {section}
     </Link>
   )

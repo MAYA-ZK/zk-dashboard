@@ -5,7 +5,6 @@ export const routes = {
   polygon: '/dashboard/polygon-zkevm',
   documentation: '/documentation',
   maya: 'https://maya-zk.com',
-} as const
 
-export const documentationSection = (section: string) =>
-  `/documentation#${section}`
+  documentationSection: (section: string) => `/documentation#${section}`,
+} as const
