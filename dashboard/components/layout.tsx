@@ -68,10 +68,11 @@ export function BaseLayout({
     <RootLayout className={cn(style)}>
       <main className="flex h-full grow flex-col gap-5 pb-4">
         <div className="flex gap-5">
-          <div className="hidden md:sticky md:top-[7.75rem] md:block md:h-fit md:flex-none md:overflow-y-auto md:py-16 md:pr-6 ">
+          <div className="hidden md:sticky md:top-[7.75rem] md:block md:h-fit md:flex-none md:overflow-y-auto md:py-16">
             {Navigation}
           </div>
-          {children}
+
+          <div className="overflow-auto">{children}</div>
         </div>
       </main>
     </RootLayout>
