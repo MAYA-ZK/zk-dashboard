@@ -13,34 +13,34 @@ const INSIGHTS = {
     {
       title: 'Date Range',
       description:
-        'The start date for each of the four selectable date ranges is defined as the day preceding the current calendar date. This approach ensures the inclusion of the most recent complete set of data for analysis.',
+        'The start date for each of the four selectable dates is defined as the day preceding the current calendar date. This approach ensures the inclusion of the most recent complete data set for analysis.',
     },
     {
       title: 'Transactions (txs) per Proof',
       description:
-        'This metric covers the average number of transactions in a single proof submitted for verification on the Ethereum network.',
+        'This metric covers the average count of L2 transactions in a single proof submitted for verification on the L1 network.',
     },
     {
       title: 'Proving / Finality Time',
       description:
-        'The mean time from the instantiation of a submitted proof to its verification on the Ethereum network. For zkSync Era, the state update time can be found in the info box on the timestamp.',
+        'The average duration from the instantiation of a submitted proof to its verification on the L1 network. For zkSync Era, the state update time can be found in the info box on the timestamp.',
     },
     {
       title: 'Proving / Finality Time (Per 100 txs)',
       description:
-        'This metric follows the methodology of finality time calculation, with an adjustment for transaction volume. It is calculated by dividing the average finality time by the average number of transactions per proof and scaled by a factor of 100. This normalization process facilitates a standardized comparison of proving and finality times.',
+        'This metric follows the methodology of finality time calculation, with an adjustment for L2 transaction size. It is calculated by dividing the average finality time by the average number of L2 transactions per proof and scaled by a factor of 100. This normalization process facilitates a standardized comparison of proving and finality times.',
     },
   ],
   column2: [
     {
       title: 'On-Chain Finality Cost',
       description:
-        "This cost refers to the expenses incurred to verify proofs and update the rollup's state on the Ethereum network.",
+        "This cost refers to the expenses incurred to generate proofs and update the rollup's state on the L1 network.",
     },
     {
       title: 'On-Chain Finality Cost (Per Tx)',
       description:
-        'This metric presents the average cost incurred on the rollup to achieve finality for each transaction within a given batch. It is determined by dividing the on-chain cost associated with finalizing the batch by the number of transactions recorded within that batch.',
+        'This metric presents the average cost incurred on the rollup to achieve finality for an L2 transaction. It is determined by dividing the on-chain cost associated with finalizing the batch by the number of L2 transactions recorded within that batch.',
     },
   ],
 }
@@ -54,9 +54,9 @@ export default async function Page() {
             <h3 className="text-xs font-semibold uppercase">ZK-Rollups</h3>
             <h2 className="text-4xl font-semibold">Finality</h2>
             <p className="max-w-2xl text-sm font-light">
-              This table presents the key metrics on the efficiency and cost for
-              validity proofs of zero-knowledge rollups that submit state
-              updates to the Ethereum network
+              This table presents the key metrics on the average efficiency and
+              cost for validity proofs of zero-knowledge rollups that submit
+              state updates to the Ethereum network over the past 90 days.
             </p>
           </div>
           <div className="flex flex-wrap items-center justify-start gap-4 sm:min-w-96 sm:justify-end sm:gap-0">

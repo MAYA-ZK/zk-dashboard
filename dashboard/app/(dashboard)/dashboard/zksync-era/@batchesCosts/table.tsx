@@ -7,28 +7,39 @@ import {
 } from '@/services/zk-sync-era/batches'
 
 const columns = [
-  { key: 'batchNum', label: 'Number' },
+  {
+    key: 'batchNum',
+    label: 'Number',
+    description:
+      'The sequential number given to the batch processed on the L1 network.',
+  },
   {
     key: 'batchSize',
     label: 'Published txs',
+    description: 'The count of L2 transactions inside the batch.',
   },
   {
     key: 'commitCost',
     label: 'Commit Cost',
     description:
-      'The commit cost covers the L2 transaction data and block details are published on the Ethereum network to ensure data availability.',
+      'The commit cost covers the L2 transaction data and block details are published on the L1 network to ensure data availability.',
   },
-  { key: 'proveCost', label: 'Prove Cost' },
+  {
+    key: 'proveCost',
+    label: 'Prove Cost',
+    description: 'Cost of proof on the L1 network.',
+  },
   {
     key: 'executeCost',
     label: 'Execute Cost',
     description:
-      'Calculated by dividing the total cost by the number of batches in the same state update transaction',
+      'Multiple batches can be included in a single state update transaction submitted to the L1 network, allowing the submission cost to be distributed across the batches included in the proof.',
   },
   {
     key: 'finalityCost',
     label: 'Finality Cost',
-    description: 'The cost is based on the cost of proof for each batch.',
+    description:
+      'The final cost to update the L2 transaction data on L1 is based on the cost of proof and distributed execution cost.',
   },
 ] satisfies Array<{
   key: keyof GetBatchesCostsBreakdownReturnType[number]

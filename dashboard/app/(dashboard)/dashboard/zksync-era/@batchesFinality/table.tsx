@@ -9,16 +9,52 @@ import {
 import { format } from 'date-fns'
 
 const columns = [
-  { key: 'batchNum', label: 'Number' },
-  { key: 'createdAt', label: 'Created At' },
-  { key: 'committedAt', label: 'Committed At' },
-  { key: 'provenAt', label: 'Proven At' },
-  { key: 'executedAt', label: 'Executed At' },
-  { key: 'createdToExecutedDuration', label: 'Created to Executed Duration' },
-  { key: 'createdToProvenDuration', label: 'Created to Proven Duration' },
+  {
+    key: 'batchNum',
+    label: 'Number',
+    description:
+      'The sequential number given to the batch processed on the L1 network.',
+  },
+  {
+    key: 'createdAt',
+    label: 'Created At',
+    description:
+      'The timestamp when the criterion for proposing a new batch was met.',
+  },
+  {
+    key: 'committedAt',
+    label: 'Committed At',
+    description:
+      'The timestamp when the rollup submitted the L2 transaction data to the L1 network to ensure data availability, which marks the data as part of the L1 state for transparency and security.',
+  },
+  {
+    key: 'provenAt',
+    label: 'Proven At',
+    description:
+      'The timestamp for when the L2 transactions were proven on the L1 network.',
+  },
+  {
+    key: 'executedAt',
+    label: 'Executed At',
+    description:
+      'The timestamp when the L2 transaction data got confirmed on the L1 network, withdrawal transactions from the rollup are now executable on L1 following successful verification.',
+  },
+  {
+    key: 'createdToExecutedDuration',
+    label: 'Created to Executed Duration',
+    description:
+      'The zkSync Era rollup takes an additional ~21 hours to complete the finality, as a security measurement.',
+  },
+  {
+    key: 'createdToProvenDuration',
+    label: 'Created to Proven Duration',
+    description:
+      'The duration from when the L2 transaction data got batched to it was proven, excluding the ~21 hours for execution.',
+  },
 ] satisfies Array<{
   key: keyof GetFinalityTimeReturnType[number]
   label: string
+  description?: string
 }>
 
 interface ZkSyncBatchesFinalityTableProps {
