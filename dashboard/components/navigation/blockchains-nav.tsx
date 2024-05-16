@@ -1,19 +1,12 @@
 'use client'
 
 import { BLOCKCHAIN_LINKS } from '@/config/navigation'
-import { matchPath } from '@/lib/path'
-import { cn } from '@/lib/utils'
+import { routes } from '@/config/routes'
+import { useMatchPath } from '@/lib/hooks/match-path'
 import Image from 'next/image'
-import { usePathname } from 'next/navigation'
 
 import { NavLink } from './navigation-link'
 import SideNavigation from './side-navigation'
-
-interface BlockchainLink {
-  path: string
-  title: string
-  logo: JSX.Element
-}
 
 const navigationConfig = [
   {
@@ -54,33 +47,7 @@ const navigationConfig = [
   },
 ]
 
-const shouldDisplayRegex = '/dashboard/(scroll|zksync-era|polygon-zkevm)'
-
-function BlockchainNavLink({
-  blockchain,
-  activeColor,
-}: {
-  blockchain: BlockchainLink
-  activeColor?: string
-}) {
-  const path = usePathname()
-
-  const isActive = (blockchainPath: string) => {
-    return matchPath(path, blockchainPath)
-  }
-
-  return (
-    <NavLink
-      href={blockchain.path}
-      className="flex items-center gap-x-2 hover:underline"
-    >
-      {blockchain.logo}
-      <p className={cn(isActive(blockchain.path) && activeColor)}>
-        {blockchain.title}
-      </p>
-    </NavLink>
-  )
-}
+const IS_MATCH_PATHS = [routes.scroll, routes.polygon, routes.zkSync]
 
 export function BlockchainsNav({
   className,
@@ -89,18 +56,26 @@ export function BlockchainsNav({
   className?: string
   activeColor?: string
 }) {
+  const isMatch = useMatchPath(IS_MATCH_PATHS)
+
+  if (!isMatch) {
+    return null
+  }
+
   return (
-    <SideNavigation
-      shouldDisplayRegex={shouldDisplayRegex}
-      className={className}
-      contentListChildren={navigationConfig.map((blockchain) => (
+    <SideNavigation className={className}>
+      {navigationConfig.map((blockchain) => (
         <li key={blockchain.path}>
-          <BlockchainNavLink
-            blockchain={blockchain}
+          <NavLink
+            href={blockchain.path}
+            variant="blockchain"
             activeColor={activeColor}
-          />
+          >
+            {blockchain.logo}
+            <p>{blockchain.title}</p>
+          </NavLink>
         </li>
       ))}
-    />
+    </SideNavigation>
   )
 }

@@ -1,5 +1,5 @@
-import { DocumentationNav } from '@/app/(dashboard)/documentation/_components/documentation-nav'
 import { Footer } from '@/components/footer'
+import { DocumentationNav } from '@/components/navigation/documentation-nav'
 import { Navbar } from '@/components/navigation/navbar'
 import { Providers } from '@/components/providers'
 import { cn } from '@/lib/utils'
@@ -41,7 +41,7 @@ export function RootLayout({
   )
 }
 
-const BaseLayoutConfig = {
+const BASE_LAYOUT_CONFIG = {
   documentation: {
     style: 'bg-white',
     navigation: <DocumentationNav />,
@@ -58,18 +58,18 @@ export function BaseLayout({
   variant,
   children,
 }: {
-  variant: keyof typeof BaseLayoutConfig
+  variant: keyof typeof BASE_LAYOUT_CONFIG
   children: ReactNode
 }) {
-  const style = BaseLayoutConfig[variant].style
-  const Navigation = BaseLayoutConfig[variant].navigation
+  const style = BASE_LAYOUT_CONFIG[variant].style
+  const navigation = BASE_LAYOUT_CONFIG[variant].navigation
 
   return (
     <RootLayout className={cn(style)}>
       <main className="flex h-full grow flex-col gap-5 pb-4">
         <div className="flex gap-5">
           <div className="hidden md:sticky md:top-[7.75rem] md:block md:h-fit md:flex-none md:overflow-y-auto md:py-16">
-            {Navigation}
+            {navigation}
           </div>
 
           <div className="overflow-auto">{children}</div>

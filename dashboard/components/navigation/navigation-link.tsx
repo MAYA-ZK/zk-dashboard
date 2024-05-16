@@ -1,47 +1,66 @@
 import { useMatchPath } from '@/lib/hooks/match-path'
 import { cn } from '@/lib/utils'
+import { type VariantProps, cva } from 'class-variance-authority'
 import Link from 'next/link'
 import type { ComponentProps } from 'react'
+
+const navLinkVariants = cva('text-primary-foreground hover:underline', {
+  variants: {
+    variant: {
+      blockchain: 'flex items-center gap-x-2',
+      documentation: '',
+    },
+  },
+  defaultVariants: {
+    variant: undefined,
+  },
+})
+
+export interface NavLinkProps
+  extends ComponentProps<typeof Link>,
+    VariantProps<typeof navLinkVariants> {
+  activeColor?: string
+}
 
 export function NavLink({
   href,
   className,
+  activeColor,
+  variant,
   ...props
-}: ComponentProps<typeof Link>) {
+}: NavLinkProps) {
   const path = typeof href === 'string' ? href : href.pathname
   const isLinkActive = useMatchPath(path ?? null)
+
+  const color = isLinkActive && activeColor ? activeColor : 'text-black'
 
   return (
     <Link
       href={href}
       className={cn(
-        'text-primary-foreground',
-        {
-          'text-muted  md:text-primary': isLinkActive,
-        },
-        className
+        navLinkVariants({
+          variant,
+          className,
+        }),
+        color
       )}
       {...props}
     />
   )
 }
 
-export function BaseNavigationLink({
+export function HideOnActiveNavLink({
   path,
   title,
 }: {
   path: string
   title: string
 }) {
-  const shouldDisplay = !useMatchPath(path)
+  const isMatch = useMatchPath(path)
 
-  if (!shouldDisplay) {
+  if (isMatch) {
     return null
   }
 
-  return (
-    <NavLink href={path} className="flex items-center gap-x-2 hover:underline">
-      {title}
-    </NavLink>
-  )
+  return <NavLink href={path}>{title}</NavLink>
 }
