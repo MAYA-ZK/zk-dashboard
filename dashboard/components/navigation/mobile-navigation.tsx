@@ -1,5 +1,5 @@
-import { DocumentationNav } from '@/app/(dashboard)/documentation/_components/documentation-nav'
 import { BlockchainsNav } from '@/components/navigation/blockchains-nav'
+import { DocumentationNav } from '@/components/navigation/documentation-nav'
 import {
   Drawer,
   DrawerClose,
@@ -17,7 +17,7 @@ export function MobileNavigation({
   links,
 }: {
   header: ReactNode
-  links: Array<ReactNode>
+  links: ReactNode
 }) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -28,9 +28,7 @@ export function MobileNavigation({
     setIsOpen(false)
   }, [pathname, searchParams])
 
-  const onOpenChange = (open: boolean) => {
-    setIsOpen(open)
-  }
+  const onOpenChange = (open: boolean) => setIsOpen(open)
 
   return (
     <Drawer direction="top" open={isOpen} onOpenChange={onOpenChange}>

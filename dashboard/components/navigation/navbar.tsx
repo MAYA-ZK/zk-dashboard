@@ -7,9 +7,9 @@ import MayaLogo from '@/public/maya-primary-logo.svg'
 import Link from 'next/link'
 import { Suspense } from 'react'
 
-import { BaseNavigationLink } from './navigation-link'
+import { HideOnActiveNavLink } from './navigation-link'
 
-const NavigationLinksConfig = [
+const NAVIGATION_LINKS_CONFIG = [
   {
     path: GENERAL_LINKS.documentation.path,
     title: GENERAL_LINKS.documentation.title,
@@ -34,8 +34,8 @@ function NavHeader() {
 }
 
 export function Navbar() {
-  const links = NavigationLinksConfig.map((link, index) => (
-    <BaseNavigationLink key={index} {...link} />
+  const links = NAVIGATION_LINKS_CONFIG.map((link, index) => (
+    <HideOnActiveNavLink key={index} {...link} />
   ))
 
   return (
