@@ -1,8 +1,10 @@
 import { desc, sql } from 'drizzle-orm'
+import pTimeout, { TimeoutError } from 'p-timeout'
 
 import { db } from '@zk-dashboard/common/database/utils'
 import { logger } from '@zk-dashboard/common/lib/logger'
 
+import { REQUEST_TIMEOUT } from './constants'
 import { searchOldestEntity } from './search'
 import type {
   BlocksApi,
@@ -94,7 +96,7 @@ export async function getMissingBlocksNumbers({
   return res[0]?.array as Array<number>
 }
 
-export function getBlocksByNumbers<
+export async function getBlocksByNumbers<
   TBlock extends Awaited<ReturnType<BlocksApi['getBlock']>>,
 >(
   blocksNumbers: Array<number>,
@@ -184,15 +186,25 @@ export function createBlocksSynchronizer<TBlock extends GetBlockReturnType>({
         i,
         i + blocksChunkSize
       )
+
       logger.info(
         loggerTag,
         `getting missing blocks from ${missingBlocksNumbersChunk[0]} to ${missingBlocksNumbersChunk[missingBlocksNumbersChunk.length - 1]}...`
       )
-
-      const blocksByNumber = await getBlocksByNumbers(
-        missingBlocksNumbersChunk,
-        getBlock
+      // this request sometimes hangs indefinitely, so we need to add a timeout
+      const blocksByNumber = await pTimeout(
+        getBlocksByNumbers(missingBlocksNumbersChunk, getBlock),
+        {
+          milliseconds: REQUEST_TIMEOUT,
+          fallback: () => {
+            throw new TimeoutError(
+              'getBlocksByNumbers() timeout after 1 minute'
+            )
+          },
+        }
       )
+
+      logger.info(loggerTag, `inserting ${blocksByNumber.length} blocks...`)
       await insertBlocks(blocksByNumber)
     }
 

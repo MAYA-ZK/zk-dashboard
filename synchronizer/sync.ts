@@ -1,3 +1,5 @@
+import * as Sentry from '@sentry/node'
+
 import { refreshPolygonZkEvmMaterializedViews } from '@zk-dashboard/common/database/materialized-view/polygon-zk-evm'
 import { refreshScrollMaterializedViews } from '@zk-dashboard/common/database/materialized-view/scroll'
 import { refreshZkSyncEraMaterializedViews } from '@zk-dashboard/common/database/materialized-view/zk-sync-era'
@@ -27,7 +29,16 @@ export async function sync(runNumber = 0) {
     await refreshScrollMaterializedViews()
     await refreshZkSyncEraMaterializedViews()
     await refreshPolygonZkEvmMaterializedViews()
+
+    Sentry.metrics.increment('materialized_views_refreshed', 1, {
+      timestamp: new Date().getTime(),
+    })
   }
+
+  Sentry.metrics.increment('synchronizer_done', 1, {
+    timestamp: new Date().getTime(),
+  })
+
   logger.info(`DONE SYNCING SLEEPING FOR ${SLEEP_FOR / 60 / 1_000} MINUTES...`)
   await new Promise((resolve) => setTimeout(resolve, SLEEP_FOR))
   await sync(runNumber >= REFRESH_RATE ? 0 : runNumber + 1)
