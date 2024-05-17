@@ -17,13 +17,18 @@ export default async function Page() {
               switch (section.type) {
                 case 'title':
                   return (
-                    <p className="text-2xl font-semibold">{section.content}</p>
+                    <p
+                      key={`section-${index}`}
+                      className="text-2xl font-semibold"
+                    >
+                      {section.content}
+                    </p>
                   )
                 case 'text':
-                  return <span key={index}>{section.content}</span>
+                  return <span key={`section-${index}`}>{section.content}</span>
                 case 'link':
                   return (
-                    <span>
+                    <span key={`section-${index}`}>
                       <Link
                         target="_blank"
                         className="font-semibold text-primary hover:underline"
@@ -36,7 +41,7 @@ export default async function Page() {
                   )
                 case 'formula':
                   return (
-                    <div className="py-4">
+                    <div key={`section-${index}`} className="py-4">
                       <p className="pb-2 text-base">{section.content}</p>
                       <p className="text-center font-mono text-base">
                         {section.formula}
@@ -45,7 +50,7 @@ export default async function Page() {
                   )
                 case 'list':
                   return (
-                    <div className="py-4">
+                    <div key={`section-${index}`} className="py-4">
                       <p>{section.content}</p>
                       <ol className="list-disc px-4 pt-2">
                         {section.listItems?.map((item, listItemIndex) => (
