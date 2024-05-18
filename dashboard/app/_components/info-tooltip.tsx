@@ -10,7 +10,7 @@ import type { ReactNode } from 'react'
 
 const icons = {
   info: <Info className="size-3" />,
-  checkCircle: <CheckCircle className="size-4 text-green-500" />,
+  checkCircle: <CheckCircle className="size-4 text-primary" />,
 }
 
 export function InfoTooltip({
