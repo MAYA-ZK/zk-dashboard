@@ -1,18 +1,1 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-<svg width="800px" height="800px" viewBox="-80.5 0 417 417" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid">
-	<g>
-		<polygon fill="#343434" points="127.9611 0 125.1661 9.5 125.1661 285.168 127.9611 287.958 255.9231 212.32">
-</polygon>
-		<polygon fill="#8C8C8C" points="127.962 0 0 212.32 127.962 287.959 127.962 154.158">
-</polygon>
-		<polygon fill="#3C3C3B" points="127.9611 312.1866 126.3861 314.1066 126.3861 412.3056 127.9611 416.9066 255.9991 236.5866">
-</polygon>
-		<polygon fill="#8C8C8C" points="127.962 416.9052 127.962 312.1852 0 236.5852">
-</polygon>
-		<polygon fill="#141414" points="127.9611 287.9577 255.9211 212.3207 127.9611 154.1587">
-</polygon>
-		<polygon fill="#393939" points="0.0009 212.3208 127.9609 287.9578 127.9609 154.1588">
-</polygon>
-	</g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="12" height="17" fill="none"><path fill="#000" d="M5.985 0a.798.798 0 0 0-.404.116.705.705 0 0 0-.27.297L.167 8.495a.645.645 0 0 0-.044.811v.002a.7.7 0 0 0 .016.023l5.192 6.8.002.002c.063.111.158.204.275.268a.801.801 0 0 0 .774 0 .717.717 0 0 0 .276-.268l5.194-6.802.008-.012.002-.003a.645.645 0 0 0-.069-.869L6.679.409a.707.707 0 0 0-.28-.3A.8.8 0 0 0 5.985 0Zm-.738 3.235v6.166l-3.362-.882 3.362-5.284Zm1.498 0 3.362 5.284-3.362.882V3.235Zm-4.168 6.893 2.67.7v2.798l-2.67-3.498Zm6.838 0-2.67 3.497v-2.797l2.67-.7Z"/></svg>

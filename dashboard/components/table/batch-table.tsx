@@ -53,14 +53,9 @@ function getColumnValue<TBatch extends Batch>(
   }
 
   if (typeof value === 'object' && value[currency]) {
-    return (
-      <div className="flex gap-x-1">
-        <CurrencyLogo currency={currency} />
-        {formatStringNumber(
-          value[currency].toString(),
-          currency === 'usd' ? 2 : 8
-        )}
-      </div>
+    return formatStringNumber(
+      value[currency].toString(),
+      currency === 'usd' ? 2 : 8
     )
   }
 
@@ -99,17 +94,20 @@ export function BatchTable<TBatch extends Batch>({
           <TableHeader>
             <TableRow isHeader>
               {columns.map((column) => {
+                const showCurrency = /Cost$/.test(column.key as string)
+
                 return (
                   <TableHead key={column.key.toString()}>
-                    <div className="flex items-center gap-x-1">
-                      {column.label}
+                    <div className="flex flex-none items-center gap-x-2">
                       {column.description && (
                         <InfoTooltip
                           contentClassName="text-wrap"
                           content={column.description}
-                          className="ml-1.5"
                         />
                       )}
+
+                      {showCurrency && <CurrencyLogo currency={currency} />}
+                      <p className="line-clamp-2 min-w-40">{column.label}</p>
                     </div>
                   </TableHead>
                 )
