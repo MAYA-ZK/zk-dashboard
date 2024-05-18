@@ -3,30 +3,26 @@ import type { FMT_BYTES, FMT_NUMBER } from 'web3'
 import Web3 from 'web3'
 
 import { BLOCK_PI_API_URL, blockPiThrottle } from '../blockpi'
-import { getBatch } from './rollup-scan'
 
-const scroll = new Web3(BLOCK_PI_API_URL.SCROLL).eth
+export type LineaRpcBlock = Awaited<ReturnType<typeof getBlock>>
 
-export type ScrollRpcBlock = Awaited<ReturnType<typeof getBlock>>
-export type ScrollRpcBatch = Awaited<ReturnType<typeof getBatch>>
+const linea = new Web3(BLOCK_PI_API_URL.LINEA).eth
 
 const getBlock = (
   ...args: Parameters<
-    typeof scroll.getBlock<{
+    typeof linea.getBlock<{
       readonly number: FMT_NUMBER.BIGINT
       readonly bytes: FMT_BYTES.HEX
     }>
   >
 ) =>
-  scroll.getBlock(...args).then((block) => ({
+  linea.getBlock(...args).then((block) => ({
     ...block,
     timestamp: new Date(
       BigNumber(block.timestamp.toString()).times(1_000).toNumber()
     ),
   }))
 
-export const scrollRpc = {
+export const lineaRpc = {
   getBlock: blockPiThrottle(getBlock),
-  // This API (scroll rollup scan) is not rate limited at the moment
-  getBatch: getBatch,
 }

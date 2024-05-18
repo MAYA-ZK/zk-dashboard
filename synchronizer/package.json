@@ -12,10 +12,11 @@
     "tsx": "^4.7.0"
   },
   "dependencies": {
-    "@sentry/node": "^7.100.1",
+    "@sentry/node": "7.114",
     "date-fns": "^3.3.1",
     "lodash": "^4.17.21",
     "p-retry": "^6.2.0",
-    "p-throttle": "^6.1.0"
+    "p-throttle": "^6.1.0",
+    "p-timeout": "^6.1.2"
   }
 }

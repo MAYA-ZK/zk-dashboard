@@ -1,0 +1,1 @@
+ALTER TABLE "linea_blocks" ADD COLUMN "transactions_count" integer DEFAULT 0 NOT NULL;
