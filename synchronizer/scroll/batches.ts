@@ -5,7 +5,8 @@ import { scrollRpc } from '@zk-dashboard/common/integrations/scroll/rpc'
 import { logger } from '@zk-dashboard/common/lib/logger'
 
 import { createBatchSynchronizer } from '../common/batches'
-import { LOGGER_CONFIG, MAX_DATA_AGE_IN_DAYS } from './constants'
+import { MAX_DATA_AGE_IN_DAYS } from '../common/constants'
+import { LOGGER_CONFIG } from './constants'
 
 const LOGGER_TAG = {
   id: LOGGER_CONFIG.id,

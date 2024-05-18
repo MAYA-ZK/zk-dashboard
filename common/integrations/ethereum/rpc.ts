@@ -30,6 +30,12 @@ const getBlock = async (
   }
 }
 
+const getPastLogs = async (
+  ...args: Parameters<typeof ethereum.getPastLogs>
+) => {
+  return ethereum.getPastLogs(...args)
+}
+
 export const ethereumRpc = {
   getTransactionReceipt: blockPiThrottle(
     (...args: Parameters<typeof ethereum.getTransactionReceipt>) => {
@@ -52,4 +58,5 @@ export const ethereumRpc = {
     return transactionFee
   }),
   getBlock: blockPiThrottle(getBlock),
+  getPastLogs: blockPiThrottle(getPastLogs),
 }

@@ -1,6 +1,10 @@
 import type {
+  lineaBlocks,
+  polygonZkEvmBatchReceipts,
   polygonZkEvmBlocks,
+  scrollBatchReceipts,
   scrollBlocks,
+  zkSyncEraBatchReceipts,
   zkSyncEraBlocks,
 } from '@zk-dashboard/common/database/schema'
 import type {
@@ -8,6 +12,7 @@ import type {
   scrollBatches,
   zkSyncEraBatches,
 } from '@zk-dashboard/common/database/schema'
+import type { lineaRpc } from '@zk-dashboard/common/integrations/linea/rpc'
 import type { polygonZkEvmRpc } from '@zk-dashboard/common/integrations/polygon-zk-evm/rpc'
 import type { scrollRpc } from '@zk-dashboard/common/integrations/scroll/rpc'
 import type { zkSyncEraRpc } from '@zk-dashboard/common/integrations/zk-sync-era/rpc'
@@ -18,18 +23,25 @@ export type BlocksTable =
   | typeof polygonZkEvmBlocks
   | typeof scrollBlocks
   | typeof zkSyncEraBlocks
-
-export type BlocksApi =
-  | typeof polygonZkEvmRpc
-  | typeof scrollRpc
-  | typeof zkSyncEraRpc
-
-export type GetBlockReturnType = Awaited<ReturnType<BlocksApi['getBlock']>>
+  | typeof lineaBlocks
 
 export type BatchesTable =
   | typeof polygonZkEvmBatches
   | typeof zkSyncEraBatches
   | typeof scrollBatches
+
+export type BatchReceiptsTable =
+  | typeof polygonZkEvmBatchReceipts
+  | typeof zkSyncEraBatchReceipts
+  | typeof scrollBatchReceipts
+
+export type BlocksApi =
+  | typeof polygonZkEvmRpc
+  | typeof scrollRpc
+  | typeof zkSyncEraRpc
+  | typeof lineaRpc
+
+export type GetBlockReturnType = Awaited<ReturnType<BlocksApi['getBlock']>>
 
 export type BatchesApi =
   | typeof polygonZkEvmRpc

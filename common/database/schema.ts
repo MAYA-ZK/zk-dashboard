@@ -316,3 +316,74 @@ export const ethUsdPrice = pgTable('eth_usd_price', {
   // in cents
   price: integer('price').notNull(),
 })
+
+// ------------------ LINEA TABLES ------------------
+
+export const lineaTransactions = pgTable('linea_transactions', {
+  id: serial('id').primaryKey(),
+  block_number: bigint('block_number', { mode: 'bigint' }).notNull(),
+  timestamp: timestamp('timestamp').notNull(),
+  hash: varchar('hash').notNull(),
+  nonce: bigint('nonce', { mode: 'bigint' }).notNull(),
+  block_hash: varchar('block_hash').notNull(),
+  transaction_index: integer('transaction_index').notNull(),
+  from: varchar('from').notNull(),
+  to: varchar('to').notNull(),
+  value: numeric('value').notNull(),
+  gas: bigint('gas', { mode: 'bigint' }).notNull(),
+  gas_price: bigint('gas_price', { mode: 'bigint' }).notNull(),
+  tx_receipt_status: varchar('tx_receipt_status'),
+  input: varchar('input').notNull(),
+  contract_address: varchar('contract_address').notNull(),
+  cumulative_gas_used: bigint('cumulative_gas_used', {
+    mode: 'bigint',
+  }).notNull(),
+  gas_used: bigint('gas_used', { mode: 'bigint' }).notNull(),
+  confirmations: integer('confirmations'),
+  method_id: varchar('methodId').notNull(),
+  function_name: varchar('function_name').notNull(),
+  decoded_last_finalized_timestamp: timestamp(
+    'decoded_last_finalized_timestamp'
+  ),
+  decoded_final_timestamp: timestamp('decoded_final_timestamp'),
+  decoded_final_block_number: bigint('decoded_final_block_number', {
+    mode: 'bigint',
+  }),
+})
+
+export type LineaTransaction = typeof lineaTransactions.$inferSelect
+
+export const lineaBlocks = pgTable(
+  'linea_blocks',
+  {
+    id: serial('id').primaryKey(),
+
+    difficulty: bigint('difficulty', { mode: 'bigint' }),
+    extra_data: varchar('extra_data').notNull(),
+    gas_limit: bigint('gas_limit', { mode: 'bigint' }).notNull(),
+    gas_used: bigint('gas_used', { mode: 'bigint' }).notNull(),
+    hash: varchar('hash'),
+    logs_bloom: varchar('logs_bloom'),
+    miner: varchar('miner').notNull(),
+    mix_hash: varchar('mix_hash').notNull(),
+    nonce: bigint('nonce', { mode: 'bigint' }).notNull(),
+    number: bigint('number', { mode: 'bigint' }).notNull().unique(),
+    parent_hash: varchar('parent_hash').notNull(),
+    receipts_root: varchar('receipts_root').notNull(),
+    sha3_uncles: varchar('sha3_uncles').notNull(),
+    size: bigint('size', { mode: 'bigint' }).notNull(),
+    state_root: varchar('state_root').notNull(),
+    timestamp: timestamp('timestamp').notNull(),
+    transactions_root: varchar('transactions_root').notNull(),
+    transactions: varchar('transactions').array().notNull(),
+    transactions_count: integer('transactions_count').notNull().default(0),
+    uncles: varchar('uncles').array().notNull(),
+  },
+  (table) => {
+    return {
+      numberIndex: uniqueIndex('linea_blocks_number_index').on(table.number),
+      timestampIndex: index('linea_blocks_timestamp_index').on(table.timestamp),
+    }
+  }
+)
+export type LineaBlock = typeof lineaBlocks.$inferSelect
