@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/node'
 
+import { refreshLineaMaterializedViews } from '@zk-dashboard/common/database/materialized-view/linea'
 import { refreshPolygonZkEvmMaterializedViews } from '@zk-dashboard/common/database/materialized-view/polygon-zk-evm'
 import { refreshScrollMaterializedViews } from '@zk-dashboard/common/database/materialized-view/scroll'
 import { refreshZkSyncEraMaterializedViews } from '@zk-dashboard/common/database/materialized-view/zk-sync-era'
@@ -29,6 +30,7 @@ export async function sync(runNumber = 0) {
     await refreshScrollMaterializedViews()
     await refreshZkSyncEraMaterializedViews()
     await refreshPolygonZkEvmMaterializedViews()
+    await refreshLineaMaterializedViews()
 
     Sentry.metrics.increment('materialized_views_refreshed', 1, {
       timestamp: new Date().getTime(),

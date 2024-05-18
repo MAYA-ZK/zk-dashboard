@@ -1,7 +1,7 @@
 import { Option, program } from 'commander'
 import fs from 'fs'
 
-const CHOICES = ['scroll', 'polygon-zk-evm', 'zk-sync-era'] as const
+const CHOICES = ['scroll', 'polygon-zk-evm', 'zk-sync-era', 'linea'] as const
 program
   .addOption(
     new Option(
@@ -30,6 +30,7 @@ import('dotenv').then(async ({ config }) => {
   const { creatOrReplaceZkSyncEraMaterializedViews } = await import(
     './zk-sync-era'
   )
+  const { createOrReplaceLineaMaterializedViews } = await import('./linea')
 
   if (options.target === 'scroll') {
     console.log('Creating materialized views for Scroll...')
@@ -45,6 +46,11 @@ import('dotenv').then(async ({ config }) => {
     console.log('Creating materialized views for zkSync era...')
     await creatOrReplaceZkSyncEraMaterializedViews()
     console.log('Materialized views for zkSync era created!')
+  }
+  if (options.target === 'linea') {
+    console.log('Creating materialized views for Linea...')
+    await createOrReplaceLineaMaterializedViews()
+    console.log('Materialized views for Linea created!')
   }
 
   console.log('Closing connection...')
