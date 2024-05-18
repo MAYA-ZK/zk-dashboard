@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/node'
+import pTimeout, { TimeoutError } from 'p-timeout'
 
 import { refreshLineaMaterializedViews } from '@zk-dashboard/common/database/materialized-view/linea'
 import { refreshPolygonZkEvmMaterializedViews } from '@zk-dashboard/common/database/materialized-view/polygon-zk-evm'
@@ -14,15 +14,29 @@ import { syncZkSyncEra } from './zk-sync-era/sync'
 
 const SLEEP_FOR = 20 * 60 * 1_000 // 20 minutes
 const REFRESH_RATE = 6
+const MAX_SYNC_RUN_TIME = 1_000 * 60 * 60 * 1 // 1 hour
 
 export async function sync(runNumber = 0) {
   logger.info('START SYNCING')
 
-  await syncEthUsdPrices()
-  await syncScroll()
-  await syncZkSyncEra()
-  await syncPolygonZkEvm()
-  await syncLinea()
+  const runDataSync = async () => {
+    await syncEthUsdPrices()
+    await syncScroll()
+    await syncZkSyncEra()
+    await syncPolygonZkEvm()
+    await syncLinea()
+  }
+
+  await pTimeout(runDataSync(), {
+    // Expect for initial run, sync should not take more than 1 hour.
+    // Thats the sign that something went wrong.
+    milliseconds: MAX_SYNC_RUN_TIME,
+    fallback: () => {
+      throw new TimeoutError(
+        `runDataSync timeout after ${MAX_SYNC_RUN_TIME} ms`
+      )
+    },
+  })
 
   if (runNumber >= REFRESH_RATE) {
     // Some views take long time to refresh,
@@ -31,15 +45,7 @@ export async function sync(runNumber = 0) {
     await refreshZkSyncEraMaterializedViews()
     await refreshPolygonZkEvmMaterializedViews()
     await refreshLineaMaterializedViews()
-
-    Sentry.metrics.increment('materialized_views_refreshed', 1, {
-      timestamp: new Date().getTime(),
-    })
   }
-
-  Sentry.metrics.increment('synchronizer_done', 1, {
-    timestamp: new Date().getTime(),
-  })
 
   logger.info(`DONE SYNCING SLEEPING FOR ${SLEEP_FOR / 60 / 1_000} MINUTES...`)
   await new Promise((resolve) => setTimeout(resolve, SLEEP_FOR))

@@ -101,7 +101,6 @@ export function normalizeZkSyncEraStats(stats: ZkSyncEraStats) {
 
 export function normalizeLineaStats(stats: LineaStats) {
   return mapValues(stats, (value) => {
-    console.log('value', value)
     return {
       logo: 'linea-logo.svg',
       blockchain: 'Linea',
