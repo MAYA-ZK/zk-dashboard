@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/node'
 import pTimeout, { TimeoutError } from 'p-timeout'
 
 import { refreshLineaMaterializedViews } from '@zk-dashboard/common/database/materialized-view/linea'
@@ -15,8 +16,9 @@ import { syncZkSyncEra } from './zk-sync-era/sync'
 const SLEEP_FOR = 20 * 60 * 1_000 // 20 minutes
 const REFRESH_RATE = 6
 const MAX_SYNC_RUN_TIME = 1_000 * 60 * 60 * 1 // 1 hour
+const MAX_TIMEOUT_RETRIES = 3
 
-export async function sync(runNumber = 0) {
+export async function sync(runNumber = 0, retry = 0) {
   logger.info('START SYNCING')
 
   const runDataSync = async () => {
@@ -31,10 +33,18 @@ export async function sync(runNumber = 0) {
     // Expect for initial run, sync should not take more than 1 hour.
     // Thats the sign that something went wrong.
     milliseconds: MAX_SYNC_RUN_TIME,
-    fallback: () => {
-      throw new TimeoutError(
-        `runDataSync timeout after ${MAX_SYNC_RUN_TIME} ms`
+    fallback: async () => {
+      logger.error(`SYNC TIMED OUT RETRYING ${retry + 1}...`)
+      Sentry.captureException(
+        new TimeoutError(`SYNC TIMED OUT RETRY NUMBER ${retry + 1}...`)
       )
+      if (retry >= MAX_TIMEOUT_RETRIES) {
+        logger.error('MAX RETRIES REACHED')
+        Sentry.captureException(new Error('MAX RETRIES REACHED'))
+        // Restart entire process
+        process.exit()
+      }
+      await sync(runNumber, retry + 1)
     },
   })
 
