@@ -43,7 +43,6 @@ async function insertBatches(batchesInput: Array<PolygonZkEvmRpcBatch>) {
 
   const finalized = batchesInput.filter((batch): batch is FilteredBatch => {
     if (!isValid(batch.timestamp)) {
-      console.log(batch.timestamp)
       logger.warn(
         LOGGER_TAG,
         `batch ${batch.number} has invalid timestamp, skipping...`
