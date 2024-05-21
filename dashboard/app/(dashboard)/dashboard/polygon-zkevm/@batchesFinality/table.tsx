@@ -10,14 +10,40 @@ import { format } from 'date-fns'
 import { TABLE_PAGE_SEARCH_PARAM } from './config'
 
 const columns = [
-  { key: 'batchNum', label: 'Number' },
-  { key: 'createdAt', label: 'Created At' },
-  { key: 'sequencedAt', label: 'Sequenced At' },
-  { key: 'verifiedAt', label: 'Verified At' },
-  { key: 'createdToVerifiedDuration', label: 'Created to Verified Duration' },
+  {
+    key: 'batchNum',
+    label: 'Number',
+    description:
+      'The sequential number given to the batch processed on the L1 network.',
+  },
+  {
+    key: 'createdAt',
+    label: 'Created At',
+    description:
+      'The timestamp when the criterion for proposing a new batch was met.',
+  },
+  {
+    key: 'sequencedAt',
+    label: 'Commited At',
+    description:
+      'The timestamp when the rollup submitted the L2 transaction data to the L1 network to ensure data availability, which marks the data as part of the L1 state for transparency and security.',
+  },
+  {
+    key: 'verifiedAt',
+    label: 'Finalized At',
+    description:
+      'The timestamp when the L2 transaction data got confirmed on the L1 network, withdrawal transactions from the rollup are now executable on L1 following successful verification.',
+  },
+  {
+    key: 'createdToVerifiedDuration',
+    label: 'Created to Verified Duration',
+    description:
+      'The duration from when the L2 transaction data got batched to it was proven.',
+  },
 ] satisfies Array<{
   key: keyof GetFinalityTimeReturnType[number]
   label: string
+  description?: string
 }>
 
 interface PolygonBatchesFinalityTableProps {

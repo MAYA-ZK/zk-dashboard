@@ -9,17 +9,40 @@ import {
 import { format } from 'date-fns'
 
 const columns = [
-  { key: 'batchNum', label: 'Number' },
-  { key: 'createdAt', label: 'Created At' },
-  { key: 'committedAt', label: 'Committed At' },
-  { key: 'finalizedAt', label: 'Finalized At' },
+  {
+    key: 'batchNum',
+    label: 'Number',
+    description:
+      'The sequential number given to the batch processed on the L1 network.',
+  },
+  {
+    key: 'createdAt',
+    label: 'Created At',
+    description:
+      'The timestamp when the criterion for proposing a new batch was met.',
+  },
+  {
+    key: 'committedAt',
+    label: 'Committed At',
+    description:
+      'The timestamp when the rollup submitted the L2 transaction data to the L1 network to ensure data availability, which marks the data as part of the L1 state for transparency and security.',
+  },
+  {
+    key: 'finalizedAt',
+    label: 'Finalized At',
+    description:
+      'The timestamp when the L2 transaction data got confirmed on the L1 network, withdrawal transactions from the rollup are now executable on L1 following successful verification.',
+  },
   {
     key: 'createdToFinalizedDuration',
     label: 'Lead Time: Created to Finalized',
+    description:
+      'The duration from when the L2 transaction data got batched to it was proven.',
   },
 ] satisfies Array<{
   key: keyof GetFinalityTimeReturnType[number]
   label: string
+  description?: string
 }>
 
 interface ScrollBatchesFinalityTableProps {
