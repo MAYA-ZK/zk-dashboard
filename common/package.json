@@ -11,7 +11,8 @@
     "db:migrate": "npx tsx database/migrate.ts",
     "db:mv:cor:scroll": "npx tsx database/materialized-view/create-or-replace.ts --target scroll",
     "db:mv:cor:polygon-zk-evm": "npx tsx database/materialized-view/create-or-replace.ts --target polygon-zk-evm",
-    "db:mv:cor:zk-sync-era": "npx tsx database/materialized-view/create-or-replace.ts --target zk-sync-era"
+    "db:mv:cor:zk-sync-era": "npx tsx database/materialized-view/create-or-replace.ts --target zk-sync-era",
+    "db:mv:cor:linea": "npx tsx database/materialized-view/create-or-replace.ts --target linea"
   },
   "dependencies": {
     "@zodios/core": "^10.9.6",

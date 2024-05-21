@@ -3,6 +3,7 @@ import { commonOptions } from '@/components/chart/config'
 import type { Blockchain } from '@/config/blockchain'
 import { COLORS } from '@/config/colors'
 import type { ChartData } from '@/services/chart'
+import { getDailyFinalizedStats as getDailyFinalizedStatsLinea } from '@/services/linea/charts'
 import { getDailyFinalizedStats as getDailyFinalizedStatsPolygonZkEvm } from '@/services/polygon-zk-evm/charts'
 import { getDailyFinalizedStats as getDailyFinalizedStatsScroll } from '@/services/scroll/charts'
 import { getDailyFinalizedStats as getDailyFinalizedStatsZkSyncEra } from '@/services/zk-sync-era/charts'
@@ -11,6 +12,7 @@ const getBlockchainData = {
   'zk-sync-era': getDailyFinalizedStatsZkSyncEra,
   scroll: getDailyFinalizedStatsScroll,
   'polygon-zk-evm': getDailyFinalizedStatsPolygonZkEvm,
+  linea: getDailyFinalizedStatsLinea,
 } satisfies Record<
   Blockchain,
   () => Promise<

@@ -7,9 +7,13 @@ import { useMatchPath } from '@/lib/hooks/match-path'
 
 import { NavLink } from './navigation-link'
 
-const IS_MATCH_PATH = routes.documentation
-
 export function DocumentationNav({ className }: { className?: string }) {
+  const isMatch = useMatchPath(routes.documentation)
+
+  if (!isMatch) {
+    return null
+  }
+
   const tableOfContents = DOCUMENTATION.map((block) => {
     const sectionTitle = block.sections.filter(
       (section) => section.type === 'title'
@@ -26,11 +30,6 @@ export function DocumentationNav({ className }: { className?: string }) {
       </li>
     ))
   })
-  const isMatch = useMatchPath(IS_MATCH_PATH)
-
-  if (!isMatch) {
-    return null
-  }
 
   return (
     <SideNavigation className={className}>{tableOfContents}</SideNavigation>
