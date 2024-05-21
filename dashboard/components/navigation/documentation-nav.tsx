@@ -1,33 +1,37 @@
 'use client'
 
 import { DOCUMENTATION } from '@/app/(dashboard)/documentation/documentation'
-import { NavLink } from '@/components/navigation/navigation-link'
 import SideNavigation from '@/components/navigation/side-navigation'
 import { routes } from '@/config/routes'
 import { useMatchPath } from '@/lib/hooks/match-path'
 
-const IS_MATCH_PATH = routes.documentation
+import { NavLink } from './navigation-link'
 
-export function DocumentationNav() {
-  const isMatch = useMatchPath(IS_MATCH_PATH)
+export function DocumentationNav({ className }: { className?: string }) {
+  const isMatch = useMatchPath(routes.documentation)
 
   if (!isMatch) {
     return null
   }
 
-  return (
-    <SideNavigation>
-      {Object.values(DOCUMENTATION).map((section) => {
-        const path = routes.documentationSection(section.title)
+  const tableOfContents = DOCUMENTATION.map((block) => {
+    const sectionTitle = block.sections.filter(
+      (section) => section.type === 'title'
+    )
 
-        return (
-          <li key={section.title}>
-            <NavLink href={path} variant="documentation">
-              {section.title}
-            </NavLink>
-          </li>
-        )
-      })}
-    </SideNavigation>
+    return sectionTitle.map((section) => (
+      <li key={section.content}>
+        <NavLink
+          href={routes.documentationSection(block.id)}
+          variant="documentation"
+        >
+          {section.content}
+        </NavLink>
+      </li>
+    ))
+  })
+
+  return (
+    <SideNavigation className={className}>{tableOfContents}</SideNavigation>
   )
 }

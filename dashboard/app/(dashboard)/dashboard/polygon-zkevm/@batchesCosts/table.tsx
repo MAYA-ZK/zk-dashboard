@@ -10,21 +10,40 @@ import type { Currency } from '@zk-dashboard/common/lib/currency'
 import { TABLE_PAGE_SEARCH_PARAM } from './config'
 
 const columns = [
-  { key: 'batchNum', label: 'Number' },
-  { key: 'batchSize', label: 'Published txs' },
-  { key: 'sequenceCost', label: 'Sequence Cost' },
+  {
+    key: 'batchNum',
+    label: 'Number',
+    description:
+      'The sequential number given to the batch processed on the L1 network.',
+  },
+  {
+    key: 'batchSize',
+    label: 'Published txs',
+    description: 'The count of L2 transactions inside the batch.',
+  },
+  {
+    key: 'sequenceCost',
+    label: 'Sequence Cost',
+    description:
+      'The sequencer cost covers the L2 transaction data and block details are published on the Ethereum network to ensure data availability.',
+  },
   {
     key: 'verificationCost',
     label: 'Verification Cost',
     description:
-      'Calculated by dividing the total cost by the number of batches in the same state update transaction',
+      'Calculated by dividing the total cost by the number of batches in the same state update transaction.',
   },
   {
     key: 'finalityCost',
     label: 'Finality Cost',
-    description: 'The cost is based on the cost of proof for each batch.',
+    description: 'The cost is based on the cost of proof for each batch',
   },
-  { key: 'dividedVerificationCost', label: 'Divided Verification Cost' },
+  {
+    key: 'dividedVerificationCost',
+    label: 'Divided Verification Cost',
+    description:
+      'Multiple batches can be included in a single state update transaction submitted to the L1 network, allowing the submission cost to be distributed across the batches included in the proof.',
+  },
 ] satisfies Array<{
   key: keyof GetBatchesCostsBreakdownReturnType[number]
   label: string

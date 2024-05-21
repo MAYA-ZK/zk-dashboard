@@ -8,8 +8,17 @@ import {
 import { TABLE_PAGE_SEARCH_PARAM } from './config'
 
 const columns = [
-  { key: 'batchNum', label: 'Number' },
-  { key: 'batchSize', label: ' Published txs' },
+  {
+    key: 'batchNum',
+    label: 'Number',
+    description:
+      'The sequential number given to the batch processed on the L1 network.',
+  },
+  {
+    key: 'batchSize',
+    label: ' Published txs',
+    description: 'The count of L2 transactions inside the batch.',
+  },
   {
     key: 'commitCost',
     label: 'Commit Cost',
@@ -19,7 +28,8 @@ const columns = [
   {
     key: 'finalityCost',
     label: 'Finality Cost',
-    description: 'The cost is based on the cost of proof for each batch.',
+    description:
+      'The final cost to update the L2 transaction data on L1 is based on the cost of proof.',
   },
 ] satisfies Array<{
   key: keyof GetBatchesCostsBreakdownReturnType[number]
