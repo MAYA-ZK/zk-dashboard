@@ -32,7 +32,7 @@ export default async function Page() {
                       <Link
                         target="_blank"
                         className="font-semibold text-primary hover:underline"
-                        href={section.href!}
+                        href={section.href}
                         key={index}
                       >
                         {section.content}

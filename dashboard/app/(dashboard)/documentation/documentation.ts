@@ -1,10 +1,37 @@
-interface DocumentSection {
-  type: 'title' | 'text' | 'link' | 'list' | 'formula'
+type LinkSection = {
+  type: 'link'
   content: string
-  href?: string
-  listItems?: Array<string>
-  formula?: string
+  href: string
 }
+
+type TextSection = {
+  type: 'text'
+  content: string
+}
+
+type TitleSection = {
+  type: 'title'
+  content: string
+}
+
+type ListSection = {
+  type: 'list'
+  content: string
+  listItems: Array<string>
+}
+
+type FormulaSection = {
+  type: 'formula'
+  content: string
+  formula: string
+}
+
+type DocumentSection =
+  | LinkSection
+  | TextSection
+  | TitleSection
+  | ListSection
+  | FormulaSection
 
 interface DocumentBlock {
   id: string
@@ -52,11 +79,11 @@ export const DOCUMENTATION: Array<DocumentBlock> = [
       {
         type: 'link',
         content: 'Polygon zkEVM',
-        href: 'https://linea.build/ https://polygon.technology/polygon-zkevm',
+        href: 'https://polygon.technology/polygon-zkevm',
       },
       {
         type: 'text',
-        content: ', and',
+        content: ', and ',
       },
 
       {
@@ -221,7 +248,7 @@ export const DOCUMENTATION: Array<DocumentBlock> = [
       {
         type: 'formula',
         content: 'The formula is:',
-        formula: 'Cost in ETH = (Gas Used * Gas Price) / 10^18',
+        formula: 'Cost in ETH = (Gas Used * Gas Price) / 10¹⁸',
       },
       {
         type: 'text',
