@@ -5,6 +5,7 @@ import { scrollRpc } from '@zk-dashboard/common/integrations/scroll/rpc'
 import { logger } from '@zk-dashboard/common/lib/logger'
 
 import { createBlocksSynchronizer } from '../common/blocks'
+import { MAX_DATA_AGE_IN_DAYS } from '../common/constants'
 import { LOGGER_CONFIG } from './constants'
 
 const LOGGER_TAG = {
@@ -12,10 +13,6 @@ const LOGGER_TAG = {
   category: LOGGER_CONFIG.category.blocks,
 }
 
-/**
- * Maximum age of the data in days, we want to collect.
- */
-const MAX_DATA_AGE_IN_DAYS = 91
 /**
  * Time it takes to mine a block
  */

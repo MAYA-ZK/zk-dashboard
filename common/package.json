@@ -11,7 +11,8 @@
     "db:migrate": "npx tsx database/migrate.ts",
     "db:mv:cor:scroll": "npx tsx database/materialized-view/create-or-replace.ts --target scroll",
     "db:mv:cor:polygon-zk-evm": "npx tsx database/materialized-view/create-or-replace.ts --target polygon-zk-evm",
-    "db:mv:cor:zk-sync-era": "npx tsx database/materialized-view/create-or-replace.ts --target zk-sync-era"
+    "db:mv:cor:zk-sync-era": "npx tsx database/materialized-view/create-or-replace.ts --target zk-sync-era",
+    "db:mv:cor:linea": "npx tsx database/materialized-view/create-or-replace.ts --target linea"
   },
   "dependencies": {
     "@zodios/core": "^10.9.6",
@@ -19,6 +20,7 @@
     "dotenv": "^16.4.1",
     "drizzle-orm": "^0.29.3",
     "mobula-sdk": "^1.5.4",
+    "p-retry": "^6.2.0",
     "p-throttle": "^6.1.0",
     "pino": "^8.17.2",
     "postgres": "^3.4.3",

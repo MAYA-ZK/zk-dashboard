@@ -1,7 +1,9 @@
 import { matchPath } from '@/lib/path'
 import { usePathname } from 'next/navigation'
 
-export function useMatchPath(pattern: string | null) {
+export function useMatchPath(pattern: string | Array<string> | null) {
   const pathname = usePathname()
-  return matchPath(pathname, pattern)
+  const parsedPattern = Array.isArray(pattern) ? pattern.join('|') : pattern
+
+  return matchPath(pathname, parsedPattern)
 }

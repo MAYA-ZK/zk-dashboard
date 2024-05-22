@@ -10,8 +10,8 @@ export function ComingSoonRow({
 }) {
   return (
     <TableRow>
-      <TableCell className="flex gap-2">
-        <div className="flex size-5 items-center">
+      <TableCell className="flex gap-2 first:sticky first:left-0 first:z-10 first:bg-white">
+        <div className="size-5">
           <Image
             src={logo}
             alt={`${blockchain}-logo`}
@@ -20,8 +20,8 @@ export function ComingSoonRow({
             className="size-auto"
           />
         </div>
-        {blockchain}
       </TableCell>
+      <TableCell className="">{blockchain}</TableCell>
       <TableCell colSpan={5}>Coming soon...</TableCell>
     </TableRow>
   )

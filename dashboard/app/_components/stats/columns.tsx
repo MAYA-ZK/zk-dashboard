@@ -48,6 +48,28 @@ const getCurrencyFromMeta = (
 
 export const columns: Array<ColumnDef<StatsRowData>> = [
   {
+    accessorKey: 'blockchain-logo',
+    header: '',
+    cell: (cell) => {
+      return (
+        <Link
+          className="hover:underline"
+          href={cell.row.original.blockchainPath}
+        >
+          <div className="size-5">
+            <Image
+              src={cell.row.original.logo}
+              alt={`${cell.row.original.blockchain}-logo`}
+              width={10}
+              height={10}
+              className="size-auto"
+            />
+          </div>
+        </Link>
+      )
+    },
+  },
+  {
     accessorKey: 'blockchain',
     header: 'Rollup',
     cell: (cell) => {
@@ -56,18 +78,7 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
           className="hover:underline"
           href={cell.row.original.blockchainPath}
         >
-          <div className="flex gap-2">
-            <div className="flex size-5 items-center">
-              <Image
-                src={cell.row.original.logo}
-                alt={`${cell.row.original.blockchain}-logo`}
-                width={10}
-                height={10}
-                className="size-auto"
-              />
-            </div>
-            {cell.row.getValue('blockchain')}
-          </div>
+          {cell.row.getValue('blockchain')}
         </Link>
       )
     },
@@ -83,16 +94,19 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
     header: ({ column }) => {
       return (
         <div className="flex items-center gap-1.5">
-          Proving / Finality Time
-          <InfoTooltip
-            contentClassName="text-wrap"
-            content="Average time from when a batch is created on L2 to its verification on L1 within the selected period."
-            className="ml-1.5"
-          />
-          <SortButton
-            sortedState={column.getIsSorted()}
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          />
+          <div className="flex flex-col items-center gap-1.5">
+            <InfoTooltip
+              contentClassName="text-wrap"
+              content="Average time from when a batch is created on L2 to its verification on L1 within the selected period (hh:mm:ss)."
+            />
+            <SortButton
+              sortedState={column.getIsSorted()}
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === 'asc')
+              }
+            />
+          </div>
+          <p className="line-clamp-2 min-w-28">Proving / Finality Time</p>
         </div>
       )
     },
@@ -124,16 +138,21 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
     header: ({ column }) => {
       return (
         <div className="flex items-center gap-1.5">
-          Proving / Finality Time (per 100 txs)
-          <InfoTooltip
-            contentClassName="text-wrap"
-            content="Average finality time, adjusted for batches containing exactly 100 transactions, over the selected period."
-            className="ml-1.5"
-          />
-          <SortButton
-            sortedState={column.getIsSorted()}
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          />
+          <div className="flex flex-col items-center gap-1.5">
+            <InfoTooltip
+              contentClassName="text-wrap"
+              content="Average finality time, adjusted for batches containing exactly 100 L2 transactions, over the selected period (hh:mm:ss)."
+            />
+            <SortButton
+              sortedState={column.getIsSorted()}
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === 'asc')
+              }
+            />
+          </div>
+          <p className="line-clamp-2 min-w-40">
+            Proving / Finality Time (per 100 txs)
+          </p>
         </div>
       )
     },
@@ -146,16 +165,19 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
     header: ({ column }) => {
       return (
         <div className="flex items-center gap-1.5">
-          Txs per Proof
-          <InfoTooltip
-            contentClassName="text-wrap"
-            content="Average number of transactions per batch on L2, calculated over the selected date range."
-            className="ml-1.5"
-          />
-          <SortButton
-            sortedState={column.getIsSorted()}
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          />
+          <div className="flex flex-col items-center gap-1.5">
+            <InfoTooltip
+              contentClassName="text-wrap"
+              content="Average number of L2 transactions per batch, calculated over the selected date range."
+            />
+            <SortButton
+              sortedState={column.getIsSorted()}
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === 'asc')
+              }
+            />
+          </div>
+          <p className="line-clamp-2 min-w-32">Txs per Proof</p>
         </div>
       )
     },
@@ -165,19 +187,25 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
     sortingFn: (a, b) => {
       return Number(a.original.batchCost.usd) - Number(b.original.batchCost.usd)
     },
-    header: ({ column }) => {
+    header: ({ column, table }) => {
+      const currency = getCurrencyFromMeta(table.options.meta)
+
       return (
         <div className="flex items-center gap-1.5">
-          On-Chain Finality Cost
-          <InfoTooltip
-            contentClassName="text-wrap"
-            content="Average cost incurred for confirming L2 state updates on L1, calculated over the selected date range."
-            className="ml-1.5"
-          />
-          <SortButton
-            sortedState={column.getIsSorted()}
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          />
+          <CurrencyLogo currency={currency} />
+          <div className="flex flex-col items-center gap-1.5">
+            <InfoTooltip
+              contentClassName="text-wrap"
+              content="Average cost incurred for confirming L2 state updates on L1, calculated over the selected date range."
+            />
+            <SortButton
+              sortedState={column.getIsSorted()}
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === 'asc')
+              }
+            />
+          </div>
+          <p className="line-clamp-2 min-w-32">On-Chain Finality Cost</p>
         </div>
       )
     },
@@ -185,7 +213,6 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
       const currency = getCurrencyFromMeta(context.table.options.meta)
       return (
         <div className="flex gap-x-1">
-          <CurrencyLogo currency={currency} />
           {context.row.original.batchCost[currency]}{' '}
           {context.row.original.batchCost.breakdown && (
             <InfoTooltip
@@ -210,27 +237,33 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
         Number(b.original.batchCostNormalized.usd)
       )
     },
-    header: ({ column }) => {
+    header: ({ column, table }) => {
+      const currency = getCurrencyFromMeta(table.options.meta)
       return (
-        <div className="flex items-center justify-end gap-1.5">
-          On-Chain Finality Cost (per TX)
-          <InfoTooltip
-            contentClassName="text-wrap"
-            content="Average L1 confirmation cost, adjusted for 1 transaction, over the selected period."
-            className="ml-1.5"
-          />
-          <SortButton
-            sortedState={column.getIsSorted()}
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          />
+        <div className="flex items-center gap-1.5">
+          <CurrencyLogo currency={currency} />
+          <div className="flex flex-col items-center gap-1.5">
+            <InfoTooltip
+              contentClassName="text-wrap"
+              content="Average L1 confirmation cost, adjusted for one L2  transaction, over the selected period."
+            />
+            <SortButton
+              sortedState={column.getIsSorted()}
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === 'asc')
+              }
+            />
+          </div>
+          <p className="line-clamp-2 min-w-40 text-start">
+            On-Chain Finality Cost (per TX)
+          </p>
         </div>
       )
     },
     cell: (context) => {
       const currency = getCurrencyFromMeta(context.table.options.meta)
       return (
-        <div className="flex justify-end gap-x-1">
-          <CurrencyLogo currency={currency} />
+        <div className="flex gap-x-1">
           {context.row.original.batchCostNormalized[currency]}{' '}
           {context.row.original.batchCostNormalized.breakdown && (
             <InfoTooltip

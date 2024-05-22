@@ -2,8 +2,10 @@ import pThrottle from 'p-throttle'
 
 // https://docs.blockpi.io/documentations/pricing-and-rate-limit
 export const blockPiThrottle = pThrottle({
-  limit: 10,
-  interval: 650,
+  limit: 400, // payed limit
+  interval: 1_000, // payed limit
+  // limit: 10, // free limit
+  // interval: 650, // free limit
 })
 
 export const BLOCK_PI_API_URL = {
@@ -19,4 +21,7 @@ export const BLOCK_PI_API_URL = {
   POLYGON_ZK_EVM:
     'https://polygon-zkevm.blockpi.network/v1/rpc/' +
     process.env.BLOCK_PI_POLYGON_ZK_EVM_API_KEY,
+  LINEA:
+    'https://linea.blockpi.network/v1/rpc/' +
+    process.env.BLOCK_PI_LINEA_API_KEY,
 }

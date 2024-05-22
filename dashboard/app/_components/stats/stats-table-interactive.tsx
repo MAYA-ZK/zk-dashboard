@@ -8,15 +8,11 @@ import { useCurrencyState, usePeriodState } from '@/app/_utils/query-state'
 
 import type { Period } from '@zk-dashboard/common/lib/period'
 
-const COMING_SOON_ROLLUPS = [
-  {
-    logo: 'linea-logo.svg',
-    blockchain: 'Linea',
-  },
-  {
-    logo: 'starknet-logo.svg',
-    blockchain: 'Starknet',
-  },
+const COMING_SOON_ROLLUPS: Array<{
+  blockchain: string
+  logo: string
+}> = [
+  // currently there are no plans for adding more rollups.
 ]
 
 export function StatsTableInteractive({
