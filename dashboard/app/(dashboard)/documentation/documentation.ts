@@ -45,7 +45,7 @@ export const DOCUMENTATION: Array<DocumentBlock> = [
       {
         type: 'text',
         content:
-          'At Maya-ZK, we aim to provide qualitative insights on the rollups built on zero-knowledge proof (zk) technologies, built to be compatible with the Ethereum virtual machine (EVM). On our dashboard page, you will find historical data from the past 90 days on the average finality time and cost of proof for state updates.',
+          'At Maya-ZK, we aim to provide qualitative insights on the rollups built on zero-knowledge proof (ZKP) technologies, built to be compatible with the Ethereum virtual machine (EVM). On our dashboard page, you will find historical data from the past 90 days on the average finality time and cost of proof for state updates.',
       },
     ],
   },
@@ -104,11 +104,11 @@ export const DOCUMENTATION: Array<DocumentBlock> = [
       {
         type: 'text',
         content:
-          'The core purpose of this dashboard is to showcase the time and cost required for finality in zk-rollups. Finality refers to the point at which L2 transaction data, processed off-chain, is securely proven and committed on the L1 network. This finalization process updates the state of the L2 network and ensures that transactions are irreversible. In zk-rollups, cryptographic proofs, such as zero-knowledge proofs (ZKPs), allow for immediate withdrawals and state confirmations within a few hours, in contrast to optimistic rollups that require a challenge period of several days to ensure transaction validity ',
+          'The core purpose of this dashboard is to showcase the time and cost required for finality in zk-rollups. Finality refers to the point at which L2 transaction data, processed off-chain, is securely proven and committed on the L1 network. This finalization process updates the state of the L2 network and ensures that transactions are irreversible. In zk-rollups, cryptographic proofs, such as zero-knowledge proofs, allow for immediate withdrawals and state confirmations within a few hours, in contrast to optimistic rollups that require a challenge period of several days to ensure transaction validity ',
       },
       {
         type: 'link',
-        content: '(source)',
+        content: '[1]',
         href: 'https://ethereum.org/en/developers/docs/scaling/zk-rollups/',
       },
     ],
@@ -124,12 +124,12 @@ export const DOCUMENTATION: Array<DocumentBlock> = [
       },
       {
         type: 'link',
-        content: '(source 1)',
+        content: '[2]',
         href: 'https://ethereum.org/en/developers/docs/scaling/zk-rollups/',
       },
       {
         type: 'link',
-        content: '(source 2)',
+        content: '[3]',
         href: 'https://www.kvarnx.com/content/what-is-the-difference-between-optimistic-rollups-and-zk-rollups',
       },
     ],
@@ -242,7 +242,7 @@ export const DOCUMENTATION: Array<DocumentBlock> = [
       {
         type: 'text',
         content:
-          'Users can view transaction costs in on-chain ETH or USD based on the market price. The cost in ETH is calculated from transaction data within the selected date range. The calculation involves multiplying the gas used by the gas price, then dividing by 1018 to convert from wei to ETH.',
+          'Users can view transaction costs in on-chain ETH or USD based on the market price. The cost in ETH is calculated from transaction data within the selected date range. The calculation involves multiplying the gas used by the gas price, then dividing by 10^18 to convert from wei to ETH.',
       },
 
       {
@@ -293,18 +293,18 @@ export const DOCUMENTATION: Array<DocumentBlock> = [
   {
     id: 'terminologies',
     sections: [
-      { type: 'title', content: 'Terminologies (ABC)/Acronyms' },
+      { type: 'title', content: 'Acronyms' },
       {
         type: 'list',
         content: '',
         listItems: [
+          'DA: Data availability',
+          'EVM: Ethereum Virtual Machine',
           'L1: Layer 1',
           'L2: Layer 2',
+          'MV: Materialized view',
           'TX/TXS: Transaction(s)',
           'ZKP: Zero-Knowledge Proof',
-          'DA: Data availability',
-          'MV: Materialized view',
-          'EVM: Ethereum Virtual Machine',
         ],
       },
       {
@@ -313,7 +313,7 @@ export const DOCUMENTATION: Array<DocumentBlock> = [
       },
       {
         type: 'link',
-        content: '[contact@maya-zk.com]',
+        content: 'contact@maya-zk.com',
         href: 'mailto:contact@maya-zk.com',
       },
     ],
