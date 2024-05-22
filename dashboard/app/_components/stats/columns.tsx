@@ -97,7 +97,7 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
           <div className="flex flex-col items-center gap-1.5">
             <InfoTooltip
               contentClassName="text-wrap"
-              content="Average time from when a batch is created on L2 to its verification on L1 within the selected period."
+              content="Average time from when a batch is created on L2 to its verification on L1 within the selected period (hh:mm:ss)."
             />
             <SortButton
               sortedState={column.getIsSorted()}
@@ -141,7 +141,7 @@ export const columns: Array<ColumnDef<StatsRowData>> = [
           <div className="flex flex-col items-center gap-1.5">
             <InfoTooltip
               contentClassName="text-wrap"
-              content="Average finality time, adjusted for batches containing exactly 100 L2 transactions, over the selected period."
+              content="Average finality time, adjusted for batches containing exactly 100 L2 transactions, over the selected period (hh:mm:ss)."
             />
             <SortButton
               sortedState={column.getIsSorted()}
