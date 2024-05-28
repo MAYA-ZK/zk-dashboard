@@ -1,5 +1,10 @@
 import { type ReactNode } from 'react'
 
+// This is statically analyzed so it can not be computed
+// https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#revalidate
+export const revalidate = 3600 // 1 hour in seconds
+export const dynamic = 'force-dynamic'
+
 export default async function Layout({
   children,
   dailyBatches,
