@@ -7,6 +7,7 @@ import { refreshScrollMaterializedViews } from '@zk-dashboard/common/database/ma
 import { refreshZkSyncEraMaterializedViews } from '@zk-dashboard/common/database/materialized-view/zk-sync-era'
 import { logger } from '@zk-dashboard/common/lib/logger'
 
+import { MONITORING_LOGS_ID } from './common/constants'
 import { syncEthUsdPrices } from './ethereum/price'
 import { syncLinea } from './linea/sync'
 import { syncPolygonZkEvm } from './polygon-zk-evm/sync'
@@ -19,7 +20,7 @@ const MAX_SYNC_RUN_TIME = 1_000 * 60 * 60 * 1 // 1 hour
 const MAX_TIMEOUT_RETRIES = 3
 
 export async function sync(runNumber = 0, retry = 0) {
-  logger.info('START SYNCING')
+  logger.info(MONITORING_LOGS_ID.SYNC_START)
 
   const runDataSync = async () => {
     await syncEthUsdPrices()
@@ -51,13 +52,18 @@ export async function sync(runNumber = 0, retry = 0) {
   if (runNumber >= REFRESH_RATE) {
     // Some views take long time to refresh,
     // there is no need to refresh so frequently, since we show > 1 day data
+    logger.info(MONITORING_LOGS_ID.MATERIALIZED_VIEW_REFRESH_START)
     await refreshScrollMaterializedViews()
     await refreshZkSyncEraMaterializedViews()
     await refreshPolygonZkEvmMaterializedViews()
     await refreshLineaMaterializedViews()
+    logger.info(MONITORING_LOGS_ID.MATERIALIZED_VIEW_REFRESH_END)
   }
 
-  logger.info(`DONE SYNCING SLEEPING FOR ${SLEEP_FOR / 60 / 1_000} MINUTES...`)
+  logger.info(
+    MONITORING_LOGS_ID.SYNC_END,
+    `done syncing sleeping for ${SLEEP_FOR / 60 / 1_000} minutes...`
+  )
   await new Promise((resolve) => setTimeout(resolve, SLEEP_FOR))
   await sync(runNumber >= REFRESH_RATE ? 0 : runNumber + 1)
 }

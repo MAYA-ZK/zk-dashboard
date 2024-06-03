@@ -7,6 +7,8 @@ import * as awsx from '@pulumi/awsx'
 import * as pulumi from '@pulumi/pulumi'
 import * as random from '@pulumi/random'
 
+import { MONITORING_LOGS_ID } from '@zk-dashboard/synchronizer/common/constants'
+
 const config = new pulumi.Config()
 
 const vpc = new awsx.ec2.Vpc('aurora-vpc', {
@@ -104,12 +106,15 @@ const image = new awsx.ecr.Image('image', {
   context: '../',
 })
 
+const logGroup = new aws.cloudwatch.LogGroup('logGroup', {
+  retentionInDays: 7, // 7 days
+})
+
 // Define the service and configure it to use our image
 const service = new awsx.ecs.FargateService('service', {
   networkConfiguration: {
     subnets: vpc.privateSubnetIds,
   },
-  // assignPublicIp: true,
   cluster: cluster.arn,
   taskDefinitionArgs: {
     container: {
@@ -156,6 +161,86 @@ const service = new awsx.ecs.FargateService('service', {
       cpu: 128,
       memory: 512,
       essential: true,
+      logConfiguration: {
+        logDriver: 'awslogs',
+        options: {
+          'awslogs-group': logGroup.name,
+          'awslogs-region': aws.config.region,
+          'awslogs-stream-prefix': 'ecs',
+        },
+      },
     },
   },
 })
+
+// Create an SNS topic
+const snsTopic = new aws.sns.Topic('snsTopic')
+const logMetricTransformationNamespace = 'MayaDashboardMetrics'
+
+// Create an SNS email subscription to send notifications to slack channel
+const emailSubscription = new aws.sns.TopicSubscription('emailSubscription', {
+  topic: snsTopic.arn,
+  protocol: 'email',
+  endpoint: config.require('slack_alerts_email'),
+})
+
+const synchronizerMetricFilter = new aws.cloudwatch.LogMetricFilter(
+  'syncMetricFilter',
+  {
+    logGroupName: logGroup.name,
+    pattern: MONITORING_LOGS_ID.SYNC_END,
+    metricTransformation: {
+      name: 'SyncStart',
+      namespace: logMetricTransformationNamespace,
+      value: '1',
+    },
+  }
+)
+
+// Create a CloudWatch Alarm to alert when the metric is not increased at least once in a day
+const syncMetricAlarm = new aws.cloudwatch.MetricAlarm('syncMetricAlarm', {
+  name: 'SyncEndAlarm',
+  comparisonOperator: 'LessThanThreshold',
+  threshold: 1, // at least once in a `period`
+  period: 60 * 60 * 24, // 1 day
+  evaluationPeriods: 1, // 1 day
+  metricName: synchronizerMetricFilter.metricTransformation.name,
+  namespace: synchronizerMetricFilter.metricTransformation.namespace,
+  statistic: 'Sum',
+  alarmDescription:
+    'Alarm when SyncEnd metric is not increased at least once in a day',
+  actionsEnabled: true,
+  alarmActions: [snsTopic.arn], // Add SNS topic ARN or other actions here
+})
+
+const materializedViewMetricFilter = new aws.cloudwatch.LogMetricFilter(
+  'materializedViewMetricFilter',
+  {
+    logGroupName: logGroup.name,
+    pattern: MONITORING_LOGS_ID.MATERIALIZED_VIEW_REFRESH_END,
+    metricTransformation: {
+      name: 'MaterializedViewRefreshStart',
+      namespace: logMetricTransformationNamespace,
+      value: '1',
+    },
+  }
+)
+
+// Create a CloudWatch Alarm to alert when the metric is not increased at least once in a day
+const materializedViewMetricAlarm = new aws.cloudwatch.MetricAlarm(
+  'materializedViewMetricAlarm',
+  {
+    name: 'MaterializedViewRefreshStartAlarm',
+    comparisonOperator: 'LessThanThreshold',
+    threshold: 1, // at least once in a `period`
+    period: 60 * 60 * 24, // 1 day
+    evaluationPeriods: 1, // 1 day
+    metricName: materializedViewMetricFilter.metricTransformation.name,
+    namespace: materializedViewMetricFilter.metricTransformation.namespace,
+    statistic: 'Sum',
+    alarmDescription:
+      'Alarm when MaterializedViewRefreshEnd metric is not increased at least once in a day',
+    actionsEnabled: true,
+    alarmActions: [snsTopic.arn], // Add SNS topic ARN or other actions here
+  }
+)
