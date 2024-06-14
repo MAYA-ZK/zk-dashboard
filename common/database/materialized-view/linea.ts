@@ -57,6 +57,7 @@ export const {
           linea_transactions
         WHERE
           "methodId" = '0xd630280f'
+          OR "methodId" = '0xabffac32'
         GROUP BY
           DATE ("timestamp")
       )
