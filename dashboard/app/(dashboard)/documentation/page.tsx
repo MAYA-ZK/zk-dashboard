@@ -26,6 +26,12 @@ export default async function Page() {
                   )
                 case 'text':
                   return <span key={`section-${index}`}>{section.content}</span>
+                case 'paragraph-text':
+                  return (
+                    <p className="pt-2" key={`section-${index}`}>
+                      {section.content}
+                    </p>
+                  )
                 case 'link':
                   return (
                     <span key={`section-${index}`}>
