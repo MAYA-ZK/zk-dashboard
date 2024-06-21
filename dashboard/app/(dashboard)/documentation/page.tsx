@@ -56,7 +56,7 @@ export default async function Page() {
                   )
                 case 'list':
                   return (
-                    <div key={`section-${index}`} className="py-4">
+                    <div key={`section-${index}`} className="pb-4">
                       <p>{section.content}</p>
                       <ol className="list-disc px-4 pt-2">
                         {section.listItems?.map((item, listItemIndex) => (

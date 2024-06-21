@@ -128,7 +128,12 @@ export const DOCUMENTATION: Array<DocumentBlock> = [
       {
         type: 'text',
         content:
-          'The data used in the dashboard comes from multiple sources. On-chain data, including timestamps and transaction costs, are obtained through an RPC connection to the Ethereum network. Off-chain L2 transaction data is collected via RPC connections to various zk-rollup networks. Market price data is sourced from a Mobula, supplying the daily average ETH market price. ',
+          'The data used in the dashboard comes from multiple sources. On-chain data, including timestamps and transaction costs, are obtained through an RPC connection to the Ethereum network. Off-chain L2 transaction data is collected via RPC connections to various zk-rollup networks. Market price data is sourced from a Mobula, supplying the daily average ETH market price ',
+      },
+      {
+        type: 'link',
+        content: '[2]',
+        href: 'https://mobula.io/',
       },
     ],
   },
