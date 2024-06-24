@@ -57,6 +57,7 @@ export const {
           linea_transactions
         WHERE
           "methodId" = '0xd630280f'
+          OR "methodId" = '0xabffac32'
         GROUP BY
           DATE ("timestamp")
       )
@@ -81,6 +82,8 @@ export const {
       linea_blocks lb
       JOIN linea_l1_daily_proofs lp ON lb."timestamp" BETWEEN lp.l1_first_proof AND lp.l1_last_proof
       JOIN eth_usd_price ep ON lp.l1_block_date = DATE_TRUNC('day', ep."date")
+    WHERE
+      lp.l1_block_date <> CURRENT_DATE
     GROUP BY
       lp.l1_block_date,
       lp.total_proofs,

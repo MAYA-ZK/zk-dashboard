@@ -9,11 +9,7 @@ import { logger } from '@zk-dashboard/common/lib/logger'
 import { MAX_DATA_AGE_IN_DAYS } from '../common/constants'
 import { searchOldestEntity } from '../common/search'
 import { LOGGER_CONFIG } from './constants'
-import {
-  LINEA_TRANSACTION_INPUT_DATA_METHOD_ID,
-  decodeLineaTransactionInputData,
-  formatDecodedTransactionLineaData,
-} from './decoder'
+import { decodeLineaTransactionInputData } from './decoder'
 
 const ENTITY_NUMBER_SPAN = 100
 const LOGGER_TAG = {
@@ -130,12 +126,10 @@ export async function syncTransactions() {
         })
       })
       .map((transaction) => {
-        const decodedData =
-          transaction.methodId === LINEA_TRANSACTION_INPUT_DATA_METHOD_ID
-            ? formatDecodedTransactionLineaData(
-                decodeLineaTransactionInputData(transaction.input)
-              )
-            : null
+        const decodedData = decodeLineaTransactionInputData(
+          transaction.input,
+          transaction.methodId
+        )
 
         return {
           hash: transaction.hash,

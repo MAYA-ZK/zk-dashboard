@@ -19,3 +19,5 @@ config:
     secure: AAABAB1d6+LJQbDD4luICWlIksoiEQbIfM0TJAaw364YjWZvjjbgxFtyxu7NEKmpZN3jv0UbsEmDVXkLOn/u8O93poXQq5pZ0wPiAytCL6P7VicdR2S2jZZWURXNStB4Pa6X6KwLl+SicRG+KIn10/HLXO+lQWGCbHXXM46a8aP0IIg=
   infra:sentry_dsn:
     secure: AAABAKXnZ2oI66rjPs9vGU7fpDBK8HDhRUAV0OhnmYxlR583yyW3hS2KTW/gKE7FBKaVFj8lGWLq3iR5oG++v21OSCgowuYFL6RAi+FX7L74y/wOJQY5KpTDOVsprmjOIFB6yKNj+uRph1mE7ta1glNd5IFdH2/rqxfI9w==
+  infra:slack_alerts_email:
+    secure: AAABAI/8ROD7YXKnBvny1c2/pTc+NohrhRyiv31TfXwmvpjs4c/EJJToOhKD1jFj/XxzoDAFjQFfo7rG+x/hdLNHbbG9ufFTb++n5HtAfu4d7jB7HABbxSY=
