@@ -26,6 +26,12 @@ export default async function Page() {
                   )
                 case 'text':
                   return <span key={`section-${index}`}>{section.content}</span>
+                case 'paragraph-text':
+                  return (
+                    <p className="pt-2" key={`section-${index}`}>
+                      {section.content}
+                    </p>
+                  )
                 case 'link':
                   return (
                     <span key={`section-${index}`}>
@@ -50,7 +56,7 @@ export default async function Page() {
                   )
                 case 'list':
                   return (
-                    <div key={`section-${index}`} className="py-4">
+                    <div key={`section-${index}`} className="pb-4">
                       <p>{section.content}</p>
                       <ol className="list-disc px-4 pt-2">
                         {section.listItems?.map((item, listItemIndex) => (
