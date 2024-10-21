@@ -14,6 +14,7 @@ const config = new pulumi.Config()
 const vpc = new awsx.ec2.Vpc('aurora-vpc', {
   subnetStrategy: 'Auto',
   enableDnsHostnames: true,
+  numberOfAvailabilityZones: 2,
   subnetSpecs: [
     {
       name: 'public',
@@ -39,6 +40,14 @@ const dbSecurityGroup = new aws.ec2.SecurityGroup('DbSecurityGroup', {
       cidrBlocks: ['0.0.0.0/0'],
     },
   ],
+  egress: [
+    {
+      protocol: '-1',
+      fromPort: 0,
+      toPort: 0,
+      cidrBlocks: ['0.0.0.0/0'],
+    },
+  ],
   tags: { project: 'zk-dashboard' },
 })
 
@@ -50,6 +59,7 @@ const dbMasterPassword = new random.RandomPassword('dbPassword', {
 const dbMasterUsername = new random.RandomString('dbUsername', {
   length: 8,
   lower: true,
+  numeric: false,
   special: false,
 })
 
@@ -59,6 +69,7 @@ const awsRdsSubnetGroup = new aws.rds.SubnetGroup('aws-rds-subnet-group', {
 
 const dbCluster = new aws.rds.Cluster('AuroraServerlessCluster', {
   engine: 'aurora-postgresql',
+  storageType: 'aurora-iopt1',
   databaseName: 'zkdashboard',
   storageEncrypted: true,
   masterUsername: dbMasterUsername.result,
