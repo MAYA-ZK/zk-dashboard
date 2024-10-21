@@ -28,9 +28,15 @@ const nextConfig = {
     return config
   },
   redirects: () => [
+    // {
+    //   source: '/dashboard',
+    //   destination: '/',
+    //   permanent: false,
+    // },
     {
-      source: '/dashboard',
-      destination: '/',
+      // temporary redirect until all the data are synced
+      source: '/((?!under-construction).*)', // Matches all routes except /under-construction
+      destination: '/under-construction',
       permanent: false,
     },
   ],
