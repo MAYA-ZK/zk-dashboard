@@ -8,15 +8,15 @@
     "start": "tsx index.ts"
   },
   "devDependencies": {
-    "eslint": "^8.56.0",
-    "tsx": "^4.7.0"
+    "eslint": "^8.57.1",
+    "tsx": "^4.19.1"
   },
   "dependencies": {
-    "@sentry/node": "7.114",
-    "date-fns": "^3.3.1",
+    "@sentry/node": "7.119",
+    "date-fns": "^3.6.0",
     "lodash": "^4.17.21",
     "p-retry": "^6.2.0",
-    "p-throttle": "^6.1.0",
-    "p-timeout": "^6.1.2"
+    "p-throttle": "^6.2.0",
+    "p-timeout": "^6.1.3"
   }
 }
