@@ -32,7 +32,7 @@ export const scrollBlocks = pgTable(
     logs_bloom: varchar('logs_bloom'),
     miner: varchar('miner').notNull(),
     mix_hash: varchar('mix_hash').notNull(),
-    nonce: bigint('nonce', { mode: 'bigint' }).notNull(),
+    nonce: numeric('nonce').notNull(),
     number: bigint('number', { mode: 'bigint' }).notNull().unique(),
     parent_hash: varchar('parent_hash').notNull(),
     receipts_root: varchar('receipts_root').notNull(),

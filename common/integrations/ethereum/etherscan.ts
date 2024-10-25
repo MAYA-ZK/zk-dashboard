@@ -15,7 +15,7 @@ const API_KEY_QUERY_PARAM = `apikey=${process.env.ETHERSCAN_API_KEY}`
  */
 export const etherscanThrottle = pThrottle({
   limit: 5,
-  interval: 1100, // 100ms extra for safety
+  interval: 1250, // 1250 ms for extra safety
 })
 
 export const etherscanApi = new Zodios(ETHERSCAN_API_URL, [

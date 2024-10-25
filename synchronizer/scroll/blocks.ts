@@ -14,9 +14,9 @@ const LOGGER_TAG = {
 }
 
 /**
- * Time it takes to mine a block
+ * Number of blocks fetched and inserted at once
  */
-const BLOCKS_CHUNK_SIZE = 200
+const BLOCKS_CHUNK_SIZE = 400
 /**
  * Number of blocks to get at once
  */
@@ -26,10 +26,7 @@ const MAX_BLOCKS_TO_GET = 1_000
  */
 const ENTITY_NUMBER_SPAN = 10_000
 
-async function insertBlocks(
-  blocksInput: Array<ScrollRpcBlock>,
-  returnValues: boolean = false
-) {
+async function insertBlocks(blocksInput: Array<ScrollRpcBlock>) {
   logger.info(
     LOGGER_TAG,
     `inserting blocks from ${blocksInput[0]?.number} ${blocksInput[blocksInput.length - 1]?.number}`
@@ -39,7 +36,7 @@ async function insertBlocks(
     number: block.number,
     hash: block.hash,
     parent_hash: block.parentHash,
-    nonce: block.nonce,
+    nonce: block.nonce.toString(),
     sha3_uncles: block.sha3Uncles,
     logs_bloom: block.logsBloom,
     transactions_root: block.transactionsRoot,
@@ -58,14 +55,6 @@ async function insertBlocks(
     mix_hash: block.mixHash,
     base_fee_per_gas: block.baseFeePerGas,
   }))
-
-  if (returnValues) {
-    return db
-      .insert(scrollBlocks)
-      .values(values)
-      .onConflictDoNothing()
-      .returning({ id: scrollBlocks.id })
-  }
 
   return db.insert(scrollBlocks).values(values).onConflictDoNothing()
 }

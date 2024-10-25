@@ -27,6 +27,5 @@ const getBlock = (
 
 export const scrollRpc = {
   getBlock: blockPiThrottle(getBlock),
-  // This API (scroll rollup scan) is not rate limited at the moment
-  getBatch: getBatch,
+  getBatch: getBatch, // This API (scroll rollup scan) is not rate limited at the moment
 }

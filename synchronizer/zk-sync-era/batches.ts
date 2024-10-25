@@ -16,7 +16,7 @@ const LOGGER_TAG = {
 /**
  * When searching for the oldest batch, this specifies the span (step) between the batches to look for.
  */
-const ENTITY_NUMBER_SPAN = 10_000
+const ENTITY_NUMBER_SPAN = 5_000
 /**
  * Number of batches fetched and inserted at once
  */
