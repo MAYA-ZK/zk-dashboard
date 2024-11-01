@@ -1,12 +1,5 @@
 import { sql } from 'drizzle-orm'
-import {
-  bigint,
-  integer,
-  interval,
-  numeric,
-  text,
-  timestamp,
-} from 'drizzle-orm/pg-core'
+import { bigint, integer, interval, numeric, text } from 'drizzle-orm/pg-core'
 
 import { period } from './common'
 import {
@@ -23,7 +16,7 @@ export const {
   {
     chain_id: integer('chain_id').notNull(),
     blockchain: text('blockchain').notNull(),
-    l1_block_date: timestamp('l1_block_date').notNull(),
+    l1_block_date: text('l1_block_date').notNull(),
     daily_total_l1_proofs: bigint('daily_total_l1_proofs', {
       mode: 'number',
     }).notNull(),
