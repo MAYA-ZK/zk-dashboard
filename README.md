@@ -1,6 +1,6 @@
 # ZK Dashboard
 
-TODO: Description
+Not maintained anymore. This project was used to visualize the data from the ZK ecosystem. Sunsetting in August 2025.
 
 ## Table of contents
 
